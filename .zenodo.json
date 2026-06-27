@@ -1,0 +1,35 @@
+{
+  "title": "automated-domainmodel-benchmark",
+  "description": "A benchmark for automated domain-modelling approaches: 4 LLM candidates + a rule-based heuristic, evaluated on two PlantUML datasets with the domain-model-metrics library.",
+  "upload_type": "software",
+  "publication_date": "2026-06-27",
+  "creators": [
+    {
+      "name": "Seibert, Vasiliy",
+      "affiliation": "Institute for Software and Systems Engineering, TU Clausthal",
+      "orcid": "0000-0002-7121-6816"
+    }
+  ],
+  "keywords": [
+    "benchmark",
+    "domain-modeling",
+    "class-diagrams",
+    "plantuml",
+    "large-language-models",
+    "FAIR4RS"
+  ],
+  "license": "MIT",
+  "access_right": "open",
+  "related_identifiers": [
+    {
+      "identifier": "https://github.com/VasiliySeibert/Automated-DomainModel-Benchmark",
+      "relation": "isSupplementTo",
+      "scheme": "url"
+    },
+    {
+      "identifier": "10.5281/zenodo.20942597",
+      "relation": "requires",
+      "scheme": "doi"
+    }
+  ]
+}

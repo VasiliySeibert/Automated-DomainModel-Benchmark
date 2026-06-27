@@ -1,0 +1,1 @@
+Generate the lists of model classes and associations from a given description.

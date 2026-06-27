@@ -1,0 +1,29 @@
+cff-version: 1.2.0
+message: "If you use this software, please cite it using the metadata from this file."
+title: "automated-domainmodel-benchmark: a benchmark for automated domain-modelling approaches on two PlantUML class-diagram corpora"
+abstract: >-
+  A reusable benchmark for comparing automated domain-modelling approaches:
+  four large-language-model candidates (GLM-5.1, Kimi-K2.6, Minimax-M3,
+  Nemotron-3-Super) and a rule-based spaCy heuristic are evaluated on two
+  PlantUML corpora (45 Kaiser synthetic models + 8 reference models) and
+  scored with metrik-4 from the FAIR4RS `domain-model-metrics` package. The
+  benchmark covers the end-to-end pipeline — data load, candidate execution
+  via `opencode run` in detached mode, scoring, and per-element visualisation
+  (mean, bucket distribution, per-model heatmap). Released with CFF, CodeMeta,
+  Zenodo deposit metadata, version-pinned dependencies, and an MIT license.
+type: software
+authors:
+  - family-names: Seibert
+    given-names: Vasiliy
+    orcid: "https://orcid.org/0000-0002-7121-6816"
+keywords:
+  - benchmark
+  - domain-modeling
+  - class-diagrams
+  - plantuml
+  - large-language-models
+  - research-software
+  - FAIR4RS
+license: MIT
+repository-code: "https://github.com/VasiliySeibert/Automated-DomainModel-Benchmark"
+url: "https://github.com/VasiliySeibert/Automated-DomainModel-Benchmark"

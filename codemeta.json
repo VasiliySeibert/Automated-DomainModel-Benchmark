@@ -1,0 +1,58 @@
+{
+  "@context": "https://doi.org/10.5063/schema/codemeta-2.0",
+  "@type": "SoftwareSourceCode",
+  "identifier": [
+    "automated-domainmodel-benchmark",
+    "https://github.com/VasiliySeibert/Automated-DomainModel-Benchmark"
+  ],
+  "name": "automated-domainmodel-benchmark",
+  "description": "A benchmark for automated domain-modelling approaches: 4 LLM candidates + a rule-based heuristic, evaluated on two PlantUML datasets with the domain-model-metrics library.",
+  "version": "1.0.0",
+  "dateCreated": "2026-06-27",
+  "license": "https://spdx.org/licenses/MIT",
+  "codeRepository": "https://github.com/VasiliySeibert/Automated-DomainModel-Benchmark",
+  "url": "https://github.com/VasiliySeibert/Automated-DomainModel-Benchmark",
+  "programmingLanguage": [
+    {
+      "@type": "ComputerLanguage",
+      "name": "Python",
+      "version": ">=3.11"
+    }
+  ],
+  "runtimePlatform": "Python 3",
+  "operatingSystem": ["Linux", "macOS", "Windows"],
+  "developmentStatus": "active",
+  "applicationCategory": "Scientific/Engineering",
+  "keywords": [
+    "benchmark",
+    "domain-modeling",
+    "class-diagrams",
+    "plantuml",
+    "large-language-models",
+    "evaluation",
+    "research-software",
+    "FAIR4RS"
+  ],
+  "author": [
+    {
+      "@type": "Person",
+      "givenName": "Vasiliy",
+      "familyName": "Seibert",
+      "email": "vasiliy.seibert@tu-clausthal.de",
+      "@id": "https://orcid.org/0000-0002-7121-6816"
+    }
+  ],
+  "softwareRequirements": [
+    {
+      "@type": "SoftwareApplication",
+      "name": "domain-model-metrics",
+      "version": ">=1.0.0",
+      "identifier": "https://doi.org/10.5281/zenodo.20942597"
+    },
+    {
+      "@type": "SoftwareApplication",
+      "name": "spacy",
+      "version": ">=3.7"
+    }
+  ]
+}

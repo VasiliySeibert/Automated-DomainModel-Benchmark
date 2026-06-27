@@ -1,0 +1,51 @@
+Step 3:
+
+You will be asked to extract, from text specification and a list of classes, the associations and
+inheritance relationships amongst the classes to use in a UML conceptual model diagram.
+
+**Associations** are structural links between classes (not specialization).
+Use only classes from the list.
+
+Output associations with multiplicities using the format:
+mul1 Class1 -- mul2 Class2
+
+where mul1 and mul2 are one of: [0..*, 1..1, 0..1, 1..*]
+
+For example:
+0..* Student -- 0..5 Registration
+1..1 Student -- 0..1 StudentProfile
+
+**Inheritance** represents is-a / specialization: a more specific class that is a type of a more
+general class. Identify all such pairs from the text.
+
+Output inheritance as:
+[(ChildClass, ParentClass), ...]
+
+If there are no inheritance relationships output an empty list: []
+
+Notes:
+1. Use only the given class list. Do NOT add new classes.
+2. In most cases there is only 1 relationship between the same two classes.
+
+Output the results in two labelled sections and no other text:
+
+ASSOCIATIONS:
+mul1 Class1 -- mul2 Class2
+...
+
+INHERITANCE:
+[(ChildClass, ParentClass), ...]
+
+##############
+
+The class list is:
+
+{classes}
+
+#############
+
+The specification text is:
+
+{nlt}
+
+##############

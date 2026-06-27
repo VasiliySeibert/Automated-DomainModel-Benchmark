@@ -1,0 +1,9 @@
+{
+  "source": "ai4se_benchmarkPaper",
+  "strategy": "rule_based",
+  "uses_llm": false,
+  "harness_default": null,
+  "skip_folders": [],
+  "timeout_seconds": 0,
+  "description": "spaCy SVO + verb-lemma heuristic. No LLM; ignores spec.model."
+}

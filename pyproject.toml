@@ -1,0 +1,75 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "automated-domainmodel-benchmark"
+version = "1.0.0"
+description = "Benchmark for automated domain-modelling approaches: 4 LLM candidates + a rule-based heuristic, evaluated on two PlantUML datasets with the domain-model-metrics library."
+readme = "README.md"
+license = { text = "MIT" }
+requires-python = ">=3.11"
+authors = [
+    { name = "Vasiliy Seibert", email = "vasiliy.seibert@tu-clausthal.de" },
+]
+maintainers = [
+    { name = "Vasiliy Seibert", email = "vasiliy.seibert@tu-clausthal.de" },
+]
+keywords = [
+    "research-software",
+    "FAIR4RS",
+    "domain-modeling",
+    "class-diagrams",
+    "plantuml",
+    "large-language-models",
+    "benchmark",
+    "opencode",
+]
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Intended Audience :: Science/Research",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Topic :: Scientific/Engineering",
+]
+
+dependencies = [
+    "domain-model-metrics>=1.0.0,<2.0",
+    "spacy>=3.7,<4.0",
+    "pyyaml>=6.0,<7.0",
+]
+
+[project.optional-dependencies]
+notebooks = [
+    "ipywidgets>=8.0",
+    "notebook>=7.0",
+    "jupyterlab>=4.0",
+    "matplotlib>=3.5,<4.0",
+    "pandas>=2.0,<4.0",
+]
+dev = [
+    "pytest>=8.0,<9.0",
+]
+
+[project.urls]
+Homepage = "https://github.com/VasiliySeibert/Automated-DomainModel-Benchmark"
+Repository = "https://github.com/VasiliySeibert/Automated-DomainModel-Benchmark"
+Issues = "https://github.com/VasiliySeibert/Automated-DomainModel-Benchmark/issues"
+Changelog = "https://github.com/VasiliySeibert/Automated-DomainModel-Benchmark/blob/main/CHANGELOG.md"
+Zenodo = "https://zenodo.org/"
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["Data*", "Metric*", "Candidates*", "Workflow*"]
+
+[tool.setuptools.package-data]
+"Data" = ["*.json"]
+"Candidates.rule_based" = ["*.py"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+python_files = ["test_*.py"]
+addopts = "-v --tb=short"

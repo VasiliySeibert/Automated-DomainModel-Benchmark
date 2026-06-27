@@ -1,0 +1,11 @@
+{
+  "source": "AutomatedDomainModelling-zenodo",
+  "strategy": "two_shot",
+  "uses_llm": true,
+  "harness_default": "ollama",
+  "skip_folders": ["BTMS", "H2S-Short", "HelpingHands"],
+  "timeout_seconds": 600,
+  "description": "Two-shot with BTMS + H2S-Short examples.",
+  "prompt_files": ["prompt_system.txt", "prompt_task.txt"],
+  "examples_file": "examples.json"
+}

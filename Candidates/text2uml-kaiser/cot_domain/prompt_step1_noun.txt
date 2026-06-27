@@ -1,0 +1,14 @@
+Step 1:
+
+Identify all the nouns in the specification text which can potentially be the class name.
+Include as much as nouns as possible and do not care about their functions for now.
+
+###########
+
+The specification text is:
+
+{nlt}
+
+##############
+
+The class list is:

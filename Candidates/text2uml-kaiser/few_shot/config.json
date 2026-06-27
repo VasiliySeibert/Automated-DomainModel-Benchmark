@@ -1,0 +1,11 @@
+{
+  "source": "text2uml-kaiser",
+  "strategy": "few_shot",
+  "uses_llm": true,
+  "harness_default": "ollama",
+  "skip_folders": ["AlphaInsurance", "GasStation_KUL", "GasStation_TUW"],
+  "timeout_seconds": 600,
+  "description": "Single-call few-shot prompt with AlphaInsurance + GasStation as the verbatim examples.",
+  "prompt_file": "prompt.txt",
+  "examples_file": "examples.json"
+}

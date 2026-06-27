@@ -1,0 +1,49 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+*.egg
+.eggs/
+build/
+dist/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+htmlcov/
+.tox/
+
+# Virtualenvs
+.venv/
+venv/
+env/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Benchmark outputs (regenerable)
+Workflow/Results/*/generated/
+Workflow/Results/*.log
+Workflow/Results/*.tmp
+Workflow/_smoke/
+
+# Candidate raw outputs (regenerable)
+Candidates/*/output/
+Candidates/*/runs/
+
+# Data outputs (regenerable)
+Data/dist/
+
+# Notebooks
+.ipynb_checkpoints/
+
+# Local env
+.env
+.env.local

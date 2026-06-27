@@ -1,0 +1,18 @@
+Create a class diagram for the following description by giving the enumerations, classes, and relationships using format:
+Enumerations:
+enumerationName(literals)
+(there might be no or multiple enumerations)
+
+Class:
+className(attributeType attributeName (there might be multiple attributes))
+(there might be multiple classes)
+
+Relationships
+mul1 class1 associate mul2 class2 (class1 and2 are classes above. mul1 and mul2 are one of the following options[0..*, 1, 0..1, 1..*])
+(there might be multiple associations)
+
+class1 inherit class2 (class1 and class2 are classes above)
+(there might be multiple inheritance)
+
+mul1 class1 contain mul2 class2 (class1 and2 are classes above. mul1 and mul2 are one of the following options[0..*, 1, 0..1, 1..*])
+(there might be multiple composition)

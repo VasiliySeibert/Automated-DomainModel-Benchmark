@@ -1,0 +1,10 @@
+{
+  "source": "AutomatedDomainModelling-zenodo",
+  "strategy": "zero_shot",
+  "uses_llm": true,
+  "harness_default": "ollama",
+  "skip_folders": [],
+  "timeout_seconds": 600,
+  "description": "Zero-shot prompt from zenodo §1. Emits zenodo text format; auto-converted to PlantUML via bundled helper.",
+  "prompt_files": ["prompt_system.txt", "prompt_task.txt"]
+}

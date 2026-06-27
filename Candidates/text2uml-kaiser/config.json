@@ -1,0 +1,14 @@
+{
+  "source": "text2uml-kaiser",
+  "harness_default": "ollama",
+  "timeout_seconds": 600,
+  "strategies": [
+    "zero_shot",
+    "one_shot",
+    "few_shot",
+    "cot",
+    "cot_domain"
+  ],
+  "prompt_source": "text2uml-kaiser/src/run.py (lines 51-746, _ZERO_SHOT_SYSTEM, _SHOT_BASE, _COT_*, _DOMAIN_*)",
+  "examples_source": "text2uml-kaiser/dataset/AlphaInsurance/, text2uml-kaiser/dataset/GasStation_TUW/"
+}

@@ -1,0 +1,11 @@
+{
+  "source": "text2uml-kaiser",
+  "strategy": "zero_shot",
+  "uses_llm": true,
+  "harness_default": "ollama",
+  "skip_folders": [],
+  "timeout_seconds": 600,
+  "description": "Single-call direct generation, no examples. Verbatim reuse of _ZERO_SHOT_SYSTEM from text2uml-kaiser/src/run.py.",
+  "prompt_file": "prompt.txt",
+  "user_template": "Transform into plant uml this specification text: {nlt}"
+}

@@ -1,0 +1,17 @@
+{
+  "source": "text2uml-kaiser",
+  "strategy": "cot_domain",
+  "uses_llm": true,
+  "harness_default": "ollama",
+  "skip_folders": [],
+  "timeout_seconds": 600,
+  "description": "5-step domain-aware CoT. Nouns → classes → associations+inheritance → attributes → PlantUML.",
+  "prompt_files": [
+    "prompt_step1_noun.txt",
+    "prompt_step2_class.txt",
+    "prompt_step3_assoc.txt",
+    "prompt_step2b_attr.txt",
+    "prompt_step5_plantuml_system.txt",
+    "prompt_step5_plantuml_user.txt"
+  ]
+}

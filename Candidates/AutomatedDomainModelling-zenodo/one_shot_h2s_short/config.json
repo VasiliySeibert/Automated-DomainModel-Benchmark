@@ -1,0 +1,11 @@
+{
+  "source": "AutomatedDomainModelling-zenodo",
+  "strategy": "one_shot_h2s_short",
+  "uses_llm": true,
+  "harness_default": "ollama",
+  "skip_folders": ["H2S-Short", "HelpingHands"],
+  "timeout_seconds": 600,
+  "description": "One-shot with H2S-Short as the example.",
+  "prompt_files": ["prompt_system.txt", "prompt_task.txt"],
+  "examples_file": "examples.json"
+}

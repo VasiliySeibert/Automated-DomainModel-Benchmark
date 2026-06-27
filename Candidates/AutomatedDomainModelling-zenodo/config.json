@@ -1,0 +1,13 @@
+{
+  "source": "AutomatedDomainModelling-zenodo",
+  "harness_default": "ollama",
+  "timeout_seconds": 600,
+  "strategies": [
+    "zero_shot",
+    "one_shot_btms",
+    "one_shot_h2s_short",
+    "two_shot",
+    "cot"
+  ],
+  "prompt_source": "AutomatedDomainModelling-zenodo/prompts.md + LLM_for_modelling/llm-model-generation-master/prompt_generation.py"
+}

@@ -1,0 +1,11 @@
+{
+  "source": "text2uml-kaiser",
+  "strategy": "one_shot",
+  "uses_llm": true,
+  "harness_default": "ollama",
+  "skip_folders": ["AlphaInsurance"],
+  "timeout_seconds": 600,
+  "description": "Single-call one-shot prompt with AlphaInsurance as the verbatim example. Skips AlphaInsurance from the evaluation set.",
+  "prompt_file": "prompt.txt",
+  "examples_file": "examples.json"
+}

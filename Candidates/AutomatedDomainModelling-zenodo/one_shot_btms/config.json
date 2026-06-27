@@ -1,0 +1,11 @@
+{
+  "source": "AutomatedDomainModelling-zenodo",
+  "strategy": "one_shot_btms",
+  "uses_llm": true,
+  "harness_default": "ollama",
+  "skip_folders": ["BTMS"],
+  "timeout_seconds": 600,
+  "description": "One-shot with BTMS as the example. Skips BTMS from evaluation.",
+  "prompt_files": ["prompt_system.txt", "prompt_task.txt"],
+  "examples_file": "examples.json"
+}
