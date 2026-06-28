@@ -5,7 +5,7 @@ of three pre-existing prompt suites:
 
 1. **`text2uml-kaiser/src/run.py`** (Kaiser 2026) — zero-shot, one-shot,
    few-shot, CoT, CoT-domain prompts.
-2. **`AutomatedDomainModelling-zenodo/prompts.md`** (Bademoses 2024) +
+2. **`AutomatedDomainModelling_zenodo (the reconstruction in the local sibling repo) — see Candidates/AutomatedDomainModelling_zenodo/README.md`** (Chen et al. 2023 (MODELS) — see Candidates/AutomatedDomainModelling_zenodo/README.md) +
    `LLM_for_modelling/llm-model-generation-master/prompt_generation.py` —
    zero-shot (text format), one-shot BTMS, one-shot H2S-Short, two-shot,
    CoT (H2S annotated).
@@ -16,26 +16,35 @@ of three pre-existing prompt suites:
 
 Per the user's explicit requirement, **every candidate folder contains
 everything it needs** — `strategy.py`, `prompt*.txt`, `examples.json`,
-`config.json`, `README.md`. There is no global `base.py`, no shared
-`Strategy` class, no shared plan / execute modules.
+`config.json`, `README.md`, plus an inlined `_ollama.py` (byte-identical
+copy of the Ollama `/api/chat` HTTP wrapper) for every LLM-driven
+strategy. There is no shared harness module anywhere in the repo.
 
-Each strategy imports **one harness** at the top of `strategy.py`:
+Each LLM-driven strategy imports its own inlined wrapper with a relative
+import at the top of `strategy.py`:
 ```python
-from Candidates.ollama.harness import call as call_llm
+from ._ollama import call as call_llm
 ```
-Swapping to the `opencode` harness is a one-line edit per strategy.
+No cross-folder imports are required for LLM access.
 
-## 2. The two harnesses
+## 2. LLM access (inlined)
 
-| Folder              | Type          | Default | Endpoint                                |
-|---------------------|---------------|---------|-----------------------------------------|
-| `Candidates/ollama/`     | HTTP wrapper  | ✓       | `POST $OLLAMA_HOST/api/chat` (default `http://localhost:11434`) |
-| `Candidates/opencode/`   | subprocess    | ✗       | `opencode run --model <id>`            |
+The LLM HTTP wrapper was previously a shared `Candidates/ollama/harness.py`
+module and later a top-level `Harnesses/ollama/harness.py` module,
+before finally being inlined into each strategy folder as `_ollama.py`
+in Phase 5.
+In Phase 5 the harness was inlined into every LLM-driven strategy
+folder as `_ollama.py`, eliminating the shared module entirely. This
+honours the "every candidate is fully self-contained" rule (Phase 3)
+and removes the conceptual indirection of having an LLM-access layer
+that lives outside `Candidates/`.
 
-The ollama harness is 2-3× faster than opencode for the same model
-(no subprocess overhead, no "system prompt" CLI-flag workaround). The
-opencode harness exists as a candidate for completeness — it can be
-swapped in per-strategy if desired.
+| Inlined helper | Endpoint | Per-strategy file |
+|---|---|---|
+| `_ollama.py` (byte-identical × 10) | `POST $OLLAMA_HOST/api/chat` (default `http://localhost:11434`) | `Candidates/text2uml-kaiser/{*,}/_ollama.py`, `Candidates/AutomatedDomainModelling_zenodo/{*,}/_ollama.py` |
+
+The 10 inlined copies are guaranteed byte-identical by
+`tests/test_ollama_inlined.py::test_all_10_inlined_ollama_copies_are_byte_identical`.
 
 ## 3. Discovery via `Candidates/registry.py`
 
@@ -43,8 +52,6 @@ The registry walks the tree:
 
 ```
 Candidates/
-├── ollama/                  # harness, NOT a strategy
-├── opencode/                # harness, NOT a strategy
 ├── text2uml-kaiser/         # SOURCE GROUP
 │   └── <strategy>/strategy.py
 ├── AutomatedDomainModelling_zenodo/   # SOURCE GROUP
@@ -98,7 +105,7 @@ in the per-strategy prompt files. The LLM sees valid PlantUML.
 
 ## 6. Zenodo strategies — verified inventory
 
-Re-audited against `AutomatedDomainModelling-zenodo/prompts.md` and
+Re-audited against `AutomatedDomainModelling_zenodo (the reconstruction in the local sibling repo) — see Candidates/AutomatedDomainModelling_zenodo/README.md` and
 the source code in `LLM_for_modelling/llm-model-generation-master/
 prompt_generation.py`. The five-setting inventory (`zero_shot`,
 `one_shot_btms`, `one_shot_h2s_short`, `two_shot`, `cot`) is
@@ -108,10 +115,11 @@ prompt_generation.py`. The five-setting inventory (`zero_shot`,
 - 5 entries in `Round 2 Evaluation/second_round.csv` Setting column.
 - 5 × 3 = 15 saved result XLSX files in `experiments_result/`.
 
-**Chat-form fidelity.** The ollama harness exposes only one `system`
-slot plus one `user` slot per call, so the upstream multi-turn chat
-list (built by `generate_prompts_chatgpt` / `generate_prompts_chatgpt_COT`)
-is flattened via the source-group-shared helper
+**Chat-form fidelity.** The inlined `_ollama` HTTP wrapper exposes
+only one `system` slot plus one `user` slot per call, so the upstream
+multi-turn chat list (built by `generate_prompts_chatgpt` /
+`generate_prompts_chatgpt_COT`) is flattened via the source-group-shared
+helper
 `AutomatedDomainModelling_zenodo/_messages.py`: the system message
 goes to the harness `system=` argument; the remaining turns are
 concatenated into the user prompt with `USER:` / `ASSISTANT:` role
@@ -129,7 +137,8 @@ Verbatim text reuse:
 | `cot/annotated_example.txt`                      | `models_cot.csv` H2S row (sentence-by-sentence `->` arrows) |
 
 **Upstream sampling defaults.** All 5 zenodo strategies pass
-`temperature=0.7` and `num_predict=1024` to the ollama harness (from
+`temperature=0.7` and `num_predict=1024` to the inlined `_ollama`
+wrapper (from
 upstream `config.yaml` running_params block), set as `CandidateSpec`
 fields so the registry carries them.
 
@@ -177,7 +186,7 @@ PlantUML accepts both `A "1" -- "*" B` (quoted) and `A 1 -- * B`
 | `AutomatedDomainModelling_zenodo/cot`       | `H2S`, `H2S-Short`, `HelpingHands`                   |
 | `rule_based`                                | —                                                    |
 | `text2uml-kaiser/{zero_shot,cot,cot_domain}` | —                                                    |
-| `AutomatedDomainModelling-zenodo/zero_shot` | —                                                    |
+| `AutomatedDomainModelling_zenodo/zero_shot` | —                                                    |
 
 ## 10. Failure handling
 

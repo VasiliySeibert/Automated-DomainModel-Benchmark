@@ -83,8 +83,8 @@ def _run_one_cell(
     """Run a single (source, strategy, model, dataset) cell, write JSON.
 
     `model` is the **short** name (e.g. `glm`); `model_id` is the full
-    Ollama/opencode tag (e.g. `glm-5.1:cloud`). The strategy module
-    uses `spec.model` (set to model_id) for the actual LLM call.
+    Ollama tag (e.g. `glm-5.1:cloud`). The strategy module uses
+    `spec.model` for the actual LLM call (via its inlined `_ollama.py`).
     """
     cell_rows = _filter_records(rows, spec.skip_folders)
     if limit is not None:

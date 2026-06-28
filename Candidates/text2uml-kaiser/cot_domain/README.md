@@ -23,5 +23,11 @@ spec ──► step1 (noun list)
 | `prompt_step2b_attr.txt`          | `_COT_ATTR` verbatim (reused as `_DOMAIN_ATTR`). |
 | `prompt_step5_plantuml_system.txt`| System prompt enforcing parser-compatible syntax.|
 | `prompt_step5_plantuml_user.txt`  | `_DOMAIN_PLANT` user template verbatim.           |
-| `strategy.py`                     | 5-step chain; imports `Candidates.ollama.harness`. |
+| `strategy.py`                     | 5-step chain; uses the inlined `_ollama.py` HTTP wrapper. |
 | `config.json`                     | Discovery metadata.                              |
+## Source
+
+Re-uses the prompt verbatim from
+[Calamo, Mecella & Snoeck (2025)](https://github.com/IlKaiser/text2uml)
+— see [`../README.md`](../README.md) for the full citation block.
+

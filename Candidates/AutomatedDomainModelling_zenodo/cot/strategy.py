@@ -2,7 +2,7 @@
 with H2S annotated example.
 
 Faithful re-implementation of `generate_prompts_chatgpt_COT` from
-`AutomatedDomainModelling-zenodo/prompts.md` §5. The example provides
+`AutomatedDomainModelling_zenodo (the reconstruction in the local sibling repo) — see Candidates/AutomatedDomainModelling_zenodo/README.md` §5. The example provides
 only the H2S **description** annotated with `->` arrows (sentence by
 sentence, showing which classes / relationships are derived from each
 sentence) — but **no assistant answer**. The model is expected to
@@ -27,7 +27,7 @@ import re
 from pathlib import Path
 from typing import Optional
 
-from Candidates.ollama.harness import call as call_llm
+from ._ollama import call as call_llm
 from Candidates.AutomatedDomainModelling_zenodo._messages import flatten
 from Candidates.AutomatedDomainModelling_zenodo.zenodo_text_format import (
     text_to_plantuml,

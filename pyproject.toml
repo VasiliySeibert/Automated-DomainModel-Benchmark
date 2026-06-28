@@ -73,3 +73,11 @@ include = ["Data*", "Metric*", "Candidates*", "Workflow*"]
 testpaths = ["tests"]
 python_files = ["test_*.py"]
 addopts = "-v --tb=short"
+filterwarnings = [
+    # The Candidates/registry.py uses importlib.util.spec_from_file_location
+    # to load strategy modules, then sets their __package__ attribute so the
+    # strategies can use relative imports (`from ._ollama import …`). Python
+    # emits a DeprecationWarning when __package__ and __spec__.parent disagree
+    # — they're consistent here, but the importlib machinery doesn't know.
+    "ignore:__package__ != __spec__.parent:DeprecationWarning",
+]

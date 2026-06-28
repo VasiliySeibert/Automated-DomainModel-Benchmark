@@ -11,7 +11,7 @@ for `Book` / `Page`) and the user's natural-language specification.
 | File           | Purpose                                              |
 |----------------|------------------------------------------------------|
 | `prompt.txt`   | Verbatim copy of `_ZERO_SHOT_SYSTEM` from upstream.  |
-| `strategy.py`  | Self-contained strategy; imports `Candidates.ollama.harness`. |
+| `strategy.py`  | Self-contained strategy; uses the inlined `_ollama.py` HTTP wrapper. |
 | `config.json`  | Discovery metadata consumed by `Candidates.registry`. |
 | `README.md`    | This file.                                            |
 
@@ -22,11 +22,12 @@ PYTHONPATH=. python Workflow/run_full.py \
     --strategies text2uml-kaiser --models glm minimax
 ```
 
-To swap to the opencode harness, edit `strategy.py` and change:
-```python
-from Candidates.ollama.harness import call as call_llm
-```
-to
-```python
-from Candidates.opencode.harness import call as call_llm
-```
+The strategy uses its inlined `_ollama.py` HTTP wrapper — see
+[`_ollama.py`](_ollama.py) for the Ollama `/api/chat` schema.
+
+## Source
+
+Re-uses the prompt verbatim from
+[Calamo, Mecella & Snoeck (2025)](https://github.com/IlKaiser/text2uml)
+— see [`../README.md`](../README.md) for the full citation block.
+

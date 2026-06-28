@@ -1,6 +1,6 @@
 """Build chat-style message lists for the zenodo prompt strategies.
 
-The upstream `AutomatedDomainModelling-zenodo` repo (`prompt_generation.py`)
+The upstream `AutomatedDomainModelling_zenodo` repo (`prompt_generation.py`)
 constructs prompts as a list of `{"role", "content"}` message dicts, exactly
 as they would be passed to the OpenAI Chat API. Three patterns are used:
 
@@ -10,9 +10,9 @@ as they would be passed to the OpenAI Chat API. Three patterns are used:
         system + one user message with the annotated example + final user task
         with the target description. **No assistant turn** for the shot.
 
-The local ollama harness exposes only one `system` slot plus one `user`
-slot per call. To preserve fidelity to the upstream multi-turn structure
-we:
+The local ollama HTTP wrapper exposes only one `system` slot plus one
+`user` slot per call. To preserve fidelity to the upstream multi-turn
+structure we:
 
   1. Pass the system message via the harness `system=` parameter.
   2. Concatenate the remaining turns into a single user string, each

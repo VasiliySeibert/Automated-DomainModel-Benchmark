@@ -1,4 +1,30 @@
 
+"""Rule-based UML extraction — spaCy pipeline.
+
+Re-implementation of the algorithm described in:
+
+    Abdelnabi, E. A., Maatuk, A. M., Abdelaziz, T. M., & Elakeili, S. M.
+    (2020). Generating UML Class Diagram using NLP Techniques and
+    Heuristic Rules. In 2020 20th Int. Conf. on Sciences and Techniques
+    of Automatic Control and Computer Engineering (STA), pp. 277–282.
+    IEEE. DOI: 10.1109/STA50679.2020.9329301.
+
+Self-authored by Vasiliy Seibert, 2024 (originally in
+`ai4se_benchmarkPaper/benchmark/candidates/rule_based/utils.py`).
+
+The original paper uses a flat NLP pipeline (tokenisation + POS-tagging
++ removal of "to-be" verbs + flat regex-style patterns). This
+re-implementation preserves the spirit of the paper but uses spaCy
+dependency parsing instead, which gives richer per-verb context
+(subjects, objects, prepositional phrases, conjuncts) without explicit
+"to-be" removal.
+
+Public API:
+    generate_uml_from_text(text: str) -> str
+        Top-level entry point: clean → spaCy parse → extract classes
+        → extract SVO → generate PlantUML.
+"""
+
 import spacy
 from spacy import displacy
 import re

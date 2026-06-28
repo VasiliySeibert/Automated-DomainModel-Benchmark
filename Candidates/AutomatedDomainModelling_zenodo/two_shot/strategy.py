@@ -2,7 +2,7 @@
 with BTMS + H2S-Short as the examples.
 
 Faithful re-implementation of `generate_prompts_chatgpt` with
-`shots=["BTMS", "H2S-Short"]` from `AutomatedDomainModelling-zenodo/prompts.md` §4b.
+`shots=["BTMS", "H2S-Short"]` from `AutomatedDomainModelling_zenodo (the reconstruction in the local sibling repo) — see Candidates/AutomatedDomainModelling_zenodo/README.md` §4b.
 
 Skips `BTMS`, `H2S-Short`, and `HelpingHands` (the local folder for the
 H2S-Short example) from the evaluation set.
@@ -16,7 +16,7 @@ import re
 from pathlib import Path
 from typing import Optional
 
-from Candidates.ollama.harness import call as call_llm
+from ._ollama import call as call_llm
 from Candidates.AutomatedDomainModelling_zenodo._messages import flatten
 from Candidates.AutomatedDomainModelling_zenodo.zenodo_text_format import (
     text_to_plantuml,

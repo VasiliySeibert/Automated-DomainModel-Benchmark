@@ -1,9 +1,0 @@
-{
-  "name": "ollama",
-  "type": "http_harness",
-  "default": true,
-  "host_env": "OLLAMA_HOST",
-  "default_host": "http://localhost:11434",
-  "endpoint": "/api/chat",
-  "timeout_seconds": 600
-}

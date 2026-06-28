@@ -24,9 +24,15 @@ If any step produces no usable output, the strategy short-circuits with
 | `prompt_step3_card.txt`           | `_COT_CARD` verbatim.                            |
 | `prompt_step5_plantuml_system.txt`| System prompt enforcing parser-compatible syntax.|
 | `prompt_step5_plantuml_user.txt`  | `_COT_PLANT` user template verbatim.              |
-| `strategy.py`                     | 5-step chain; imports `Candidates.ollama.harness`. |
+| `strategy.py`                     | 5-step chain; uses the inlined `_ollama.py` HTTP wrapper. |
 | `config.json`                     | Discovery metadata.                              |
 
 ## Skip folders
 
 None — no example is used in this strategy.
+## Source
+
+Re-uses the prompt verbatim from
+[Calamo, Mecella & Snoeck (2025)](https://github.com/IlKaiser/text2uml)
+— see [`../README.md`](../README.md) for the full citation block.
+

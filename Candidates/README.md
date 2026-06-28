@@ -1,35 +1,31 @@
 # Candidates/
 
 Eleven self-contained prompt strategies organised in three source
-folders:
+folders. Every strategy is fully self-contained — including its own
+copy of the Ollama HTTP wrapper (`_ollama.py`) — so nothing is shared
+across strategy folders.
 
 ```
 Candidates/
-├── ollama/                                  # default LLM harness
-│   ├── harness.py                           # POST /api/chat on $OLLAMA_HOST
-│   └── config.json
-├── opencode/                                # alternative harness
-│   ├── harness.py                           # subprocess to `opencode run`
-│   └── config.json
+├── text2uml-kaiser/                         # 5 strategies (Calamo et al. 2025 + Zenodo 2026)
+│   ├── zero_shot/    {strategy.py, _ollama.py, prompt.txt, config.json, README.md}
+│   ├── one_shot/     {strategy.py, _ollama.py, prompt.txt, examples.json, config.json, README.md}
+│   ├── few_shot/     {strategy.py, _ollama.py, prompt.txt, examples.json, config.json, README.md}
+│   ├── cot/          {strategy.py, _ollama.py, prompt_step{1,2,2b,3,5}_*.txt, config.json, README.md}
+│   └── cot_domain/   {strategy.py, _ollama.py, prompt_step{1,2,3,2b,5}_*.txt, config.json, README.md}
 │
-├── text2uml-kaiser/                         # 5 strategies (Kaiser 2026)
-│   ├── zero_shot/
-│   ├── one_shot/                            # skip AlphaInsurance
-│   ├── few_shot/                            # skip AlphaInsurance + GasStation
-│   ├── cot/                                 # 5-step CoT chain
-│   └── cot_domain/                          # 5-step domain CoT chain
-│
-├── AutomatedDomainModelling_zenodo/         # 5 strategies (Bademoses 2024)
-│   ├── zero_shot/
-│   ├── one_shot_btms/                       # skip BTMS
-│   ├── one_shot_h2s_short/                  # skip H2S-Short + HelpingHands
-│   ├── two_shot/                            # skip BTMS + H2S-Short + HelpingHands
-│   ├── cot/                                 # skip H2S + H2S-Short + HelpingHands
+├── AutomatedDomainModelling_zenodo/         # 5 strategies (Chen et al. 2023, MODELS)
+│   ├── zero_shot/         {strategy.py, _ollama.py, prompt_{system,task}.txt, config.json, README.md}
+│   ├── one_shot_btms/     {strategy.py, _ollama.py, prompt_{system,task}.txt, examples.json, ...}
+│   ├── one_shot_h2s_short/{strategy.py, _ollama.py, prompt_{system,task}.txt, examples.json, ...}
+│   ├── two_shot/          {strategy.py, _ollama.py, prompt_{system,task}.txt, examples.json, ...}
+│   ├── cot/               {strategy.py, _ollama.py, prompt_{system,task}.txt, annotated_example.txt, ...}
 │   ├── _messages.py                         # chat-form → (system, user) helper
 │   └── zenodo_text_format.py                # text-format → PlantUML converter
 │
-├── ai4se_benchmarkPaper/                    # 1 strategy
-│   └── rule_based/                          # spaCy heuristic (no LLM)
+├── ai4se_benchmarkPaper/                    # 1 strategy (rule-based baseline)
+│   └── rule_based/                          # spaCy SVO + verb-lemma heuristic
+│                                              # (re-implementation of Abdelnabi 2020)
 │
 └── registry.py                              # walks the tree, builds spec list
 ```
@@ -38,27 +34,20 @@ Candidates/
 
 1. **Each candidate folder is fully self-contained.** A candidate has
    `strategy.py` + prompt files (`prompt*.txt` / `examples.json` /
-   `annotated_example.txt`) + `config.json` + `README.md`.
-2. **Each strategy imports one harness at the top of `strategy.py`**:
+   `annotated_example.txt`) + `config.json` + `README.md` + its own
+   copy of `_ollama.py` (the LLM HTTP wrapper, byte-identical across
+   all 10 LLM-driven strategies — see `tests/test_ollama_inlined.py`).
+2. **Each strategy imports its own `_ollama`** with a relative import:
    ```python
-   from Candidates.ollama.harness import call as call_llm
+   from ._ollama import call as call_llm
    ```
-   To swap to opencode, change this one line. No other file in the
-   candidate needs to change.
 3. **No global shared code.** The only "shared" modules are:
-   - `ollama/harness.py` and `opencode/harness.py` — the two harnesses
-     themselves (each is its own candidate folder).
-   - `AutomatedDomainModelling_zenodo/zenodo_text_format.py` — the
-     text-to-PlantUML converter shared **within** the zenodo source
-     group only (no other group uses it).
-   - `AutomatedDomainModelling_zenodo/_messages.py` — chat-form →
-     `(system, user)` flattener shared **within** the zenodo source
-     group only.
+   - `AutomatedDomainModelling_zenodo/zenodo_text_format.py` and
+     `AutomatedDomainModelling_zenodo/_messages.py` — shared **within**
+     the zenodo source group only.
 4. **Registry discovery.** `Candidates/registry.py` walks the tree
-   and dynamically imports each `strategy.py`. All source-group folders
-   use underscores so they are normal Python packages importable via
-   dotted notation (e.g. `from Candidates.AutomatedDomainModelling_zenodo
-   .zenodo_text_format import text_to_plantuml`).
+   and dynamically imports each `strategy.py`. All source-group folder
+   names use underscores so they are normal Python packages.
 
 ## Cell matrix
 
@@ -88,11 +77,11 @@ orchestrator filters these records before invoking the LLM.
 | `AutomatedDomainModelling_zenodo/cot` | `H2S`, `H2S-Short`, `HelpingHands` |
 | `ai4se_benchmarkPaper/rule_based` | —                                      |
 
-## Harnesses
+## LLM access (inlined)
 
-* **`ollama/`** (default) — direct HTTP POST to the local Ollama
-  server. Lower latency than opencode. Read its
-  [README](ollama/README.md) for endpoint config.
-* **`opencode/`** (alternative) — shells out to `opencode run` in
-  detached mode. Slower but available without Ollama being installed.
-  Read its [README](opencode/README.md).
+Each LLM-driven strategy folder contains its own `_ollama.py` — a
+byte-identical copy of the Ollama `/api/chat` HTTP wrapper
+(Ollama v0.30.11, MIT). There is no shared harness module: bug fixes
+are propagated by copying the updated `_ollama.py` to all 10 strategy
+folders (the test `tests/test_ollama_inlined.py::test_all_10_inlined_ollama_copies_are_byte_identical`
+enforces this invariant).

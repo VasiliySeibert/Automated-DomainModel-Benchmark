@@ -17,3 +17,9 @@ rationale for the target spec.
 | `annotated_example.txt` | The H2S annotated description.              |
 | `strategy.py`         | Single-call COT strategy; converts to PUML.  |
 | `config.json`         | Discovery metadata.                          |
+
+## Source
+
+Re-uses the prompt verbatim from
+[Chen, Yang, Chen, Hernández López, Mussbacher & Varró (2023)](https://zenodo.org/records/8105098)
+— see [`../README.md`](../README.md) for the full citation block.

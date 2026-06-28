@@ -80,11 +80,11 @@ Eleven strategies in three groups:
 | `text2uml-kaiser`| `few_shot`              | `text2uml-kaiser/src/run.py::_PROMPT_FEW_SHOT` (skips AlphaInsurance + GasStation) |
 | `text2uml-kaiser`| `cot`                   | 5-step kaiser CoT chain (`_COT_*`)                                      |
 | `text2uml-kaiser`| `cot_domain`            | 5-step CoT with explicit noun extraction (`_DOMAIN_*`)                  |
-| `AutomatedDomainModelling-zenodo`| `zero_shot`    | `AutomatedDomainModelling-zenodo/prompts.md` §1                        |
-| `AutomatedDomainModelling-zenodo`| `one_shot_btms`| `…/prompts.md` §2 (skips BTMS)                                           |
-| `AutomatedDomainModelling-zenodo`| `one_shot_h2s_short` | `…/prompts.md` §3 (skips H2S-Short + HelpingHands)               |
-| `AutomatedDomainModelling-zenodo`| `two_shot`     | `…/prompts.md` §4 (skips BTMS + H2S-Short + HelpingHands)               |
-| `AutomatedDomainModelling-zenodo`| `cot`          | `…/prompts.md` §5 (one-shot COT with H2S annotated example)             |
+| `AutomatedDomainModelling_zenodo`| `zero_shot`    | `AutomatedDomainModelling_zenodo (the reconstruction in the local sibling repo) — see Candidates/AutomatedDomainModelling_zenodo/README.md` §1                        |
+| `AutomatedDomainModelling_zenodo`| `one_shot_btms`| `…/prompts.md` §2 (skips BTMS)                                           |
+| `AutomatedDomainModelling_zenodo`| `one_shot_h2s_short` | `…/prompts.md` §3 (skips H2S-Short + HelpingHands)               |
+| `AutomatedDomainModelling_zenodo`| `two_shot`     | `…/prompts.md` §4 (skips BTMS + H2S-Short + HelpingHands)               |
+| `AutomatedDomainModelling_zenodo`| `cot`          | `…/prompts.md` §5 (one-shot COT with H2S annotated example)             |
 | `ai4se_benchmarkPaper` | `rule_based`   | `ai4se_benchmarkPaper/rule-based_candidate.ipynb` (no model)            |
 
 Every LLM strategy is run against every model in
@@ -126,7 +126,7 @@ Automated-DomainModel-Benchmark/
 │   ├── ollama/                          # default LLM harness (HTTP)
 │   ├── opencode/                        # alternative harness (subprocess)
 │   ├── text2uml-kaiser/                 # 5 strategies (Kaiser 2026)
-│   ├── AutomatedDomainModelling-zenodo/ # 5 strategies (Bademoses 2024)
+│   ├── AutomatedDomainModelling_zenodo/ # 5 strategies (Chen et al. 2023 (MODELS) — see Candidates/AutomatedDomainModelling_zenodo/README.md)
 │   ├── ai4se_benchmarkPaper/            # 1 strategy: rule_based
 │   ├── registry.py                      # walks the tree, builds spec list
 │   └── adjustments.md                   # documents prompt changes vs upstream
@@ -176,11 +176,11 @@ folders. Each strategy is fully self-contained: `strategy.py` + `prompt*.txt`
 | `text2uml-kaiser/few_shot`            | `AlphaInsurance`, `GasStation_KUL`, `GasStation_TUW` |
 | `text2uml-kaiser/cot`                 | —                                         |
 | `text2uml-kaiser/cot_domain`          | —                                         |
-| `AutomatedDomainModelling-zenodo/zero_shot`        | —                                |
-| `AutomatedDomainModelling-zenodo/one_shot_btms`    | `BTMS`                       |
-| `AutomatedDomainModelling-zenodo/one_shot_h2s_short` | `H2S-Short`, `HelpingHands` |
-| `AutomatedDomainModelling-zenodo/two_shot`         | `BTMS`, `H2S-Short`, `HelpingHands` |
-| `AutomatedDomainModelling-zenodo/cot`              | `H2S`, `H2S-Short`, `HelpingHands` |
+| `AutomatedDomainModelling_zenodo/zero_shot`        | —                                |
+| `AutomatedDomainModelling_zenodo/one_shot_btms`    | `BTMS`                       |
+| `AutomatedDomainModelling_zenodo/one_shot_h2s_short` | `H2S-Short`, `HelpingHands` |
+| `AutomatedDomainModelling_zenodo/two_shot`         | `BTMS`, `H2S-Short`, `HelpingHands` |
+| `AutomatedDomainModelling_zenodo/cot`              | `H2S`, `H2S-Short`, `HelpingHands` |
 | `ai4se_benchmarkPaper/rule_based`     | —                                         |
 
 LLM strategies use direct Ollama HTTP (`Candidates/ollama/harness.py`).
@@ -191,7 +191,7 @@ unused by default. Each strategy imports its harness at the top of
 The kaiser CoT strategies chain 5 LLM calls; the others are
 single-shot. The zenodo strategies emit a structured text response
 that we post-process into PlantUML via
-`AutomatedDomainModelling-zenodo/zenodo_text_format.py`.
+`AutomatedDomainModelling_zenodo/zenodo_text_format.py`.
 
 All prompt adjustments vs the upstream suites are documented in
 [`Candidates/adjustments.md`](./Candidates/adjustments.md).

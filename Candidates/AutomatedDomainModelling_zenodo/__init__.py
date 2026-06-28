@@ -1,6 +1,6 @@
 """AutomatedDomainModelling_zenodo source group.
 
-Reuses prompt strategies from Bademoses 2024
+Reuses prompt strategies from Chen et al. 2023 (MODELS) — see Candidates/AutomatedDomainModelling_zenodo/README.md
 (`AutomatedDomainModelling_zenodo/prompts.md` and
 `LLM_for_modelling/llm-model-generation-master/prompt_generation.py`).
 

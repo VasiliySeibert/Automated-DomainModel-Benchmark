@@ -2,7 +2,7 @@
 with BTMS as the example.
 
 Faithful re-implementation of `generate_prompts_chatgpt` with
-`shots=["BTMS"]` from `AutomatedDomainModelling-zenodo/prompts.md` §2b:
+`shots=["BTMS"]` from `AutomatedDomainModelling_zenodo (the reconstruction in the local sibling repo) — see Candidates/AutomatedDomainModelling_zenodo/README.md` §2b:
 
     [
         {"role": "system",    "content": "Generate the lists of model classes
@@ -26,7 +26,7 @@ import re
 from pathlib import Path
 from typing import Optional
 
-from Candidates.ollama.harness import call as call_llm
+from ._ollama import call as call_llm
 from Candidates.AutomatedDomainModelling_zenodo._messages import flatten
 from Candidates.AutomatedDomainModelling_zenodo.zenodo_text_format import (
     text_to_plantuml,

@@ -4,8 +4,7 @@ Reuses the system prompt verbatim from `text2uml-kaiser/src/run.py::
 _ZERO_SHOT_SYSTEM` (loaded from `prompt.txt` next to this file) and the
 user template `"Transform into plant uml this specification text: {nlt}"`.
 
-Imports the **ollama** harness by default. To use the opencode harness
-instead, change the import line below.
+Imports the inlined `_ollama.py` HTTP wrapper at the top of the file.
 """
 from __future__ import annotations
 
@@ -13,7 +12,7 @@ import re
 from pathlib import Path
 from typing import Optional
 
-from Candidates.ollama.harness import call as call_llm   # swap with opencode.harness if desired
+from ._ollama import call as call_llm
 from Candidates.registry import CandidateSpec, register
 
 _THIS_DIR = Path(__file__).resolve().parent

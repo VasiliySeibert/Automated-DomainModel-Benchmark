@@ -53,7 +53,7 @@ You said:
 - "The other strategies should use the models from ollama (traditional
   prompting)."
 - "Use two `@explore` agents to explore the prompting strategies."
-- "Rename the zenodo candidate to `AutomatedDomainModelling-zenodo`."
+- "Rename the zenodo candidate to `AutomatedDomainModelling_zenodo`."
 
 What we did:
 
@@ -69,7 +69,7 @@ upstream:
 
 Reported file paths + line numbers for every prompt constant.
 
-**Agent 2 (AutomatedDomainModelling-zenodo):** Confirmed **5 settings**:
+**Agent 2 (AutomatedDomainModelling_zenodo):** Confirmed **5 settings**:
 - `zero_shot` (no examples, text format)
 - `one_shot_btms` (BTMS example, text format)
 - `one_shot_h2s_short` (H2S-Short example, text format)
@@ -100,7 +100,7 @@ Candidates/
 │   ├── few_shot/     {strategy.py, prompt.txt, examples.json, config.json, README.md}
 │   ├── cot/          {strategy.py, prompt_step{1,2,2b,3,5}_*.txt, config.json, README.md}
 │   └── cot_domain/   {strategy.py, prompt_step{1,2,3,2b,5}_*.txt, config.json, README.md}
-├── AutomatedDomainModelling-zenodo/     # 5 strategies (renamed with dashes)
+├── AutomatedDomainModelling_zenodo/     # 5 strategies (renamed with dashes)
 │   ├── zero_shot/         {strategy.py, prompt_{system,task}.txt, config.json, README.md}
 │   ├── one_shot_btms/     {strategy.py, prompt_{system,task}.txt, examples.json, ...}
 │   ├── one_shot_h2s_short/{strategy.py, prompt_{system,task}.txt, examples.json, ...}
@@ -120,11 +120,11 @@ Each candidate is fully self-contained: `strategy.py` + `prompt*.txt` +
 
 - `Candidates/registry.py` uses `importlib.util.spec_from_file_location`
   to load strategy modules dynamically — this is necessary because the
-  folder `AutomatedDomainModelling-zenodo` contains hyphens (not legal
+  folder `AutomatedDomainModelling_zenodo` contains hyphens (not legal
   in Python module names).
 - Each strategy imports one harness at the top of `strategy.py`:
   ```python
-  from Candidates.ollama.harness import call as call_llm
+  from Harnesses.ollama.harness import call as call_llm
   ```
   Switching to opencode is a one-line edit per strategy.
 - The default harness is **ollama** (direct HTTP, 2-3× faster than
@@ -162,10 +162,10 @@ Each candidate is fully self-contained: `strategy.py` + `prompt*.txt` +
 |---------------------------------------------|------------------------------------------------------|
 | `text2uml-kaiser/one_shot`                  | `AlphaInsurance`                                      |
 | `text2uml-kaiser/few_shot`                  | `AlphaInsurance`, `GasStation_KUL`, `GasStation_TUW` |
-| `AutomatedDomainModelling-zenodo/one_shot_btms`   | `BTMS`                                          |
-| `AutomatedDomainModelling-zenodo/one_shot_h2s_short` | `H2S-Short`, `HelpingHands`               |
-| `AutomatedDomainModelling-zenodo/two_shot`   | `BTMS`, `H2S-Short`, `HelpingHands`                   |
-| `AutomatedDomainModelling-zenodo/cot`        | `H2S`, `H2S-Short`, `HelpingHands`                   |
+| `AutomatedDomainModelling_zenodo/one_shot_btms`   | `BTMS`                                          |
+| `AutomatedDomainModelling_zenodo/one_shot_h2s_short` | `H2S-Short`, `HelpingHands`               |
+| `AutomatedDomainModelling_zenodo/two_shot`   | `BTMS`, `H2S-Short`, `HelpingHands`                   |
+| `AutomatedDomainModelling_zenodo/cot`        | `H2S`, `H2S-Short`, `HelpingHands`                   |
 
 ### Bucket tables
 
@@ -247,7 +247,7 @@ Candidates/
 │   ├── few_shot/{strategy.py, prompt.txt, examples.json, config.json, README.md}
 │   ├── cot/{strategy.py, prompt_step{1,2,2b,3,5}_*.txt, config.json, README.md}
 │   └── cot_domain/{strategy.py, prompt_step{1,2,3,2b,5}_*.txt, config.json, README.md}
-├── AutomatedDomainModelling-zenodo/
+├── AutomatedDomainModelling_zenodo/
 │   ├── config.json, README.md
 │   ├── _examples_btms.py
 │   ├── zenodo_text_format.py
@@ -322,7 +322,7 @@ their output so that it matches with the /Data/Parser."
 
 ### What we changed
 
-- **Renamed `AutomatedDomainModelling-zenodo/` →
+- **Renamed `AutomatedDomainModelling_zenodo/` →
   `AutomatedDomainModelling_zenodo/`** (underscores). The hyphenated
   name is not Python-importable; the underscore form lets the helper
   be imported as a normal package
@@ -351,7 +351,7 @@ their output so that it matches with the /Data/Parser."
 
 ### Cleanup
 
-- Deleted `Candidates/AutomatedDomainModelling-zenodo/_examples_btms.py`
+- Deleted `Candidates/AutomatedDomainModelling_zenodo/_examples_btms.py`
   (orphan script — the BTMS data lives in `examples.json`).
 - Removed all `__pycache__/` directories and stale `.pyc` files (git
   already ignores them but they were confusing `discover()`).

@@ -12,7 +12,7 @@ prompt, so it is excluded from the evaluation set.
 |----------------|---------------------------------------------------------------|
 | `prompt.txt`   | Verbatim copy of `_SHOT_BASE` from upstream.                  |
 | `examples.json`| The AlphaInsurance spec + reference UML.                      |
-| `strategy.py`  | Self-contained strategy; imports `Candidates.ollama.harness`. |
+| `strategy.py`  | Self-contained strategy; uses the inlined `_ollama.py` HTTP wrapper. |
 | `config.json`  | Discovery metadata.                                           |
 
 ## How to run
@@ -24,3 +24,9 @@ PYTHONPATH=. python Workflow/run_full.py \
 
 The orchestrator filters out `AlphaInsurance` from the records passed
 to this strategy.
+## Source
+
+Re-uses the prompt verbatim from
+[Calamo, Mecella & Snoeck (2025)](https://github.com/IlKaiser/text2uml)
+— see [`../README.md`](../README.md) for the full citation block.
+

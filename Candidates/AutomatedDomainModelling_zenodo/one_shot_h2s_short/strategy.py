@@ -2,7 +2,7 @@
 one-shot with H2S-Short as the example.
 
 Faithful re-implementation of `generate_prompts_chatgpt` with
-`shots=["H2S-Short"]` from `AutomatedDomainModelling-zenodo/prompts.md` §3b.
+`shots=["H2S-Short"]` from `AutomatedDomainModelling_zenodo (the reconstruction in the local sibling repo) — see Candidates/AutomatedDomainModelling_zenodo/README.md` §3b.
 
 The H2S-Short row in upstream `models.csv` is the *short* description
 ("H2S collects second hand articles ..." without the CoT annotations).
@@ -17,7 +17,7 @@ import re
 from pathlib import Path
 from typing import Optional
 
-from Candidates.ollama.harness import call as call_llm
+from ._ollama import call as call_llm
 from Candidates.AutomatedDomainModelling_zenodo._messages import flatten
 from Candidates.AutomatedDomainModelling_zenodo.zenodo_text_format import (
     text_to_plantuml,

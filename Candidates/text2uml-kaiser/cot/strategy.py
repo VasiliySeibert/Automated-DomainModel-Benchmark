@@ -17,7 +17,7 @@ import re
 from pathlib import Path
 from typing import Optional
 
-from Candidates.ollama.harness import call as call_llm
+from ._ollama import call as call_llm
 from Candidates.registry import CandidateSpec, register
 
 _THIS_DIR = Path(__file__).resolve().parent

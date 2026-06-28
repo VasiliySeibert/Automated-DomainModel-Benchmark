@@ -1,7 +1,7 @@
 """AutomatedDomainModelling_zenodo / zero_shot — chat-form zero-shot.
 
 Faithful re-implementation of `generate_prompts_chatgpt` with `shots=[]`
-from `AutomatedDomainModelling-zenodo/prompts.md` §1b:
+from `AutomatedDomainModelling_zenodo (the reconstruction in the local sibling repo) — see Candidates/AutomatedDomainModelling_zenodo/README.md` §1b:
 
     [
         {"role": "system", "content": "Generate the lists of model classes
@@ -10,8 +10,9 @@ from `AutomatedDomainModelling-zenodo/prompts.md` §1b:
         {"role": "user",   "content": <description>},
     ]
 
-The ollama harness exposes only one `system` slot plus one `user` slot,
-so the upstream 3-turn chat list is flattened via the group-shared
+The inlined `_ollama.py` HTTP wrapper exposes only one `system` slot
+plus one `user` slot, so the upstream 3-turn chat list is flattened
+via the group-shared
 `Candidates.AutomatedDomainModelling_zenodo._messages.flatten` helper:
 the system message becomes the harness `system=` argument; the two user
 turns are concatenated with a `USER:` label between them.
@@ -21,7 +22,7 @@ do), we use it as-is. Otherwise we parse the zenodo text format and
 synthesise a PlantUML block via `zenodo_text_format.text_to_plantuml`.
 
 Uses upstream defaults: `temperature=0.7`, `num_predict=1024`
-(see `AutomatedDomainModelling-zenodo/prompts.md` config.yaml).
+(see `AutomatedDomainModelling_zenodo (the reconstruction in the local sibling repo) — see Candidates/AutomatedDomainModelling_zenodo/README.md` config.yaml).
 """
 from __future__ import annotations
 
@@ -29,7 +30,7 @@ import re
 from pathlib import Path
 from typing import Optional
 
-from Candidates.ollama.harness import call as call_llm
+from ._ollama import call as call_llm
 from Candidates.AutomatedDomainModelling_zenodo._messages import flatten
 from Candidates.AutomatedDomainModelling_zenodo.zenodo_text_format import (
     text_to_plantuml,

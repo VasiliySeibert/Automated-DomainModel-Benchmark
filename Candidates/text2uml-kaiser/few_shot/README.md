@@ -14,3 +14,9 @@ Single-call few-shot prompt with **two** worked examples:
 | `examples.json`| Both worked examples.                                          |
 | `strategy.py`  | Self-contained strategy.                                      |
 | `config.json`  | Discovery metadata.                                           |
+## Source
+
+Re-uses the prompt verbatim from
+[Calamo, Mecella & Snoeck (2025)](https://github.com/IlKaiser/text2uml)
+— see [`../README.md`](../README.md) for the full citation block.
+

@@ -66,7 +66,7 @@ def _print_banner(args) -> None:
 def main(argv: list[str] | None = None) -> int:
     ap = argparse.ArgumentParser(description=__doc__)
     ap.add_argument("--strategies", nargs="*", default=None,
-                    help="Source groups (text2uml-kaiser, AutomatedDomainModelling-zenodo, ai4se_benchmarkPaper)")
+                    help="Source groups (text2uml-kaiser, AutomatedDomainModelling_zenodo, ai4se_benchmarkPaper)")
     ap.add_argument("--models", nargs="*", default=None)
     ap.add_argument("--datasets", nargs="*", default=None)
     ap.add_argument("--limit", type=int, default=None)

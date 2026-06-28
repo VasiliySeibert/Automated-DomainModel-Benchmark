@@ -1,9 +1,20 @@
-"""Rule-based candidate — spaCy SVO + verb-lemma heuristic.
+"""Rule-based candidate — re-implementation of Abdelnabi et al. (2020).
 
-Reused verbatim from `ai4se_benchmarkPaper/benchmark/candidates/
-rule_based/utils.py` (Vasiliy Seibert, 2024). The post-processing step
-adds explicit `class X { }` declarations so the parser does a strict
-parse.
+SpaCy SVO + verb-lemma heuristic. **No LLM** — acts as a non-LLM
+baseline for the benchmark.
+
+Self-authored by Vasiliy Seibert, 2024 (originally in
+`ai4se_benchmarkPaper/benchmark/candidates/rule_based/utils.py`).
+This is a re-implementation of the algorithm described in:
+
+    Abdelnabi, E. A., Maatuk, A. M., Abdelaziz, T. M., & Elakeili, S. M.
+    (2020). Generating UML Class Diagram using NLP Techniques and
+    Heuristic Rules. In 2020 20th Int. Conf. on Sciences and Techniques
+    of Automatic Control and Computer Engineering (STA), pp. 277–282.
+    IEEE. DOI: 10.1109/STA50679.2020.9329301.
+
+The post-processing step adds explicit `class X { }` declarations so
+the parser does a strict parse.
 
 Adapted to the registry's strategy interface:
 * `run(spec, nlt) -> dict` returns the standard {generated_model, failed, error, raw_excerpt}.

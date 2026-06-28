@@ -1,6 +1,6 @@
 """Parse the zenodo text-format LLM response into a PlantUML block.
 
-The `AutomatedDomainModelling-zenodo/prompts.md` suite asks the LLM to
+The `AutomatedDomainModelling_zenodo (the reconstruction in the local sibling repo) — see Candidates/AutomatedDomainModelling_zenodo/README.md` suite asks the LLM to
 emit a structured text response of the form:
 
     Enumeration:

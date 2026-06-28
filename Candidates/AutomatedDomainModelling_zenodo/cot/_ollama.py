@@ -1,26 +1,15 @@
-"""Direct HTTP harness for the Ollama API.
+"""Per-strategy Ollama HTTP wrapper.
 
-The ollama harness is the **default** for every LLM-driven prompt
-strategy. It POSTs to `/api/chat` on a local Ollama server (default
-`http://localhost:11434`, override via `$OLLAMA_HOST`).
+Self-contained: this file is copied into every LLM-driven strategy
+folder so each strategy is fully self-contained (no shared harness
+modules). All strategies POST to `${OLLAMA_HOST:-http://localhost:11434}/api/chat`
+with the documented Ollama chat API schema.
 
-Why this instead of opencode?
-* No shell-out latency — pure HTTP, no subprocess.
-* No "system prompt" CLI flag workaround needed.
-* Direct control over the message structure.
-
-Public API:
-    call(model, system, prompt, *, timeout=600,
-         temperature=None, num_predict=None) -> str
-        POSTs the prompt to the configured Ollama server and returns
-        the assistant message content.
-    is_available() -> bool
-        Cheap health check — returns True if the configured Ollama
-        server is reachable.
+Upstream: Ollama v0.30.11 — https://github.com/ollama/ollama
+(branch `main`, MIT, Copyright (c) Ollama, maintained by Ollama Inc.).
 """
 from __future__ import annotations
 
-import json
 import logging
 import os
 from typing import Optional
@@ -47,7 +36,7 @@ def call(
     temperature: Optional[float] = None,
     num_predict: Optional[int] = None,
 ) -> str:
-    """Call the Ollama chat API and return the assistant message.
+    """Call the Ollama chat API and return the assistant message content.
 
     Args:
         model:       the model tag visible to `ollama list`, e.g. `minimax-m3:cloud`.
@@ -68,7 +57,7 @@ def call(
         requests.ConnectionError: if the Ollama server is not reachable.
         KeyError: if the response payload does not contain `message.content`.
     """
-    messages = []
+    messages: list[dict] = []
     if system:
         messages.append({"role": "system", "content": system})
     messages.append({"role": "user", "content": prompt})
@@ -94,21 +83,4 @@ def call(
     return body["message"]["content"].strip()
 
 
-def is_available() -> bool:
-    """Return True iff the Ollama server responds to `/api/tags`."""
-    try:
-        r = requests.get(f"{host()}/api/tags", timeout=5)
-        return r.status_code == 200
-    except requests.RequestException:
-        return False
-
-
-def list_models() -> list[str]:
-    """Return the list of model tags visible to the local Ollama server."""
-    r = requests.get(f"{host()}/api/tags", timeout=10)
-    r.raise_for_status()
-    body = r.json()
-    return [m["name"] for m in body.get("models", [])]
-
-
-__all__ = ["call", "host", "is_available", "list_models", "DEFAULT_TIMEOUT"]
+__all__ = ["call", "host", "DEFAULT_HOST", "DEFAULT_TIMEOUT"]

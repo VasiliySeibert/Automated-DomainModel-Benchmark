@@ -28,12 +28,12 @@ First public FAIR4RS release of the `automated-domainmodel-benchmark` package.
   `examples.json` / `annotated_example.txt` + `config.json` + `README.md`:
   - `text2uml-kaiser/`: `zero_shot`, `one_shot`, `few_shot`, `cot`,
     `cot_domain` (5-step CoT chain).
-  - `AutomatedDomainModelling-zenodo/`: `zero_shot`, `one_shot_btms`,
+  - `AutomatedDomainModelling_zenodo/`: `zero_shot`, `one_shot_btms`,
     `one_shot_h2s_short`, `two_shot`, `cot`.
   - `ai4se_benchmarkPaper/rule_based/`: spaCy SVO + verb-lemma heuristic.
 - `Candidates/registry.py` — walks the tree, dynamically imports each
   `strategy.py` via `importlib.util.spec_from_file_location` (handles
-  hyphens in folder names like `AutomatedDomainModelling-zenodo`).
+  hyphens in folder names like `AutomatedDomainModelling_zenodo`).
 - `Workflow/config.json` + `Workflow/config_loader.py` — model registry,
   datasets, metric name, score-bucket boundaries.
 - `Workflow/orchestrator.py` + `Workflow/metric_runner.py` driven by
