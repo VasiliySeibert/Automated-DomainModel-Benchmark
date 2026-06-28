@@ -62,3 +62,48 @@ def test_list_models():
         status=200,
     )
     assert list_models() == ["a", "b"]
+
+
+@responses.activate
+def test_call_passes_temperature_when_set():
+    responses.add(
+        responses.POST,
+        "http://localhost:11434/api/chat",
+        json={"message": {"content": "ok"}},
+        status=200,
+    )
+    call(model="m", system="", prompt="hi", temperature=0.7)
+    body = responses.calls[0].request.body
+    import json as _json
+    payload = _json.loads(body)
+    assert payload["options"]["temperature"] == 0.7
+
+
+@responses.activate
+def test_call_passes_num_predict_when_set():
+    responses.add(
+        responses.POST,
+        "http://localhost:11434/api/chat",
+        json={"message": {"content": "ok"}},
+        status=200,
+    )
+    call(model="m", system="", prompt="hi", num_predict=1024)
+    body = responses.calls[0].request.body
+    import json as _json
+    payload = _json.loads(body)
+    assert payload["options"]["num_predict"] == 1024
+
+
+@responses.activate
+def test_call_omits_options_when_unspecified():
+    responses.add(
+        responses.POST,
+        "http://localhost:11434/api/chat",
+        json={"message": {"content": "ok"}},
+        status=200,
+    )
+    call(model="m", system="", prompt="hi")
+    body = responses.calls[0].request.body
+    import json as _json
+    payload = _json.loads(body)
+    assert "options" not in payload

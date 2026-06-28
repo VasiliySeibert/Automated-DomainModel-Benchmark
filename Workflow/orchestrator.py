@@ -199,7 +199,7 @@ def main(argv: list[str] | None = None) -> int:
     ap = argparse.ArgumentParser(description=__doc__)
     ap.add_argument(
         "--strategies", nargs="*", default=None,
-        help="Source groups to run (text2uml-kaiser, AutomatedDomainModelling-zenodo, "
+        help="Source groups to run (text2uml-kaiser, AutomatedDomainModelling_zenodo, "
              "ai4se_benchmarkPaper, or 'all')",
     )
     ap.add_argument(

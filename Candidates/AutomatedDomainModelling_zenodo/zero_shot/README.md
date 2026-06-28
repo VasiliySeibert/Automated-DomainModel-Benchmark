@@ -1,4 +1,4 @@
-# AutomatedDomainModelling-zenodo / zero_shot
+# AutomatedDomainModelling_zenodo / zero_shot
 
 Reuses the zenodo §1 prompt verbatim:
 

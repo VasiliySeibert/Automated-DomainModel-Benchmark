@@ -1,4 +1,4 @@
-# AutomatedDomainModelling-zenodo / two_shot
+# AutomatedDomainModelling_zenodo / two_shot
 
 Single-call two-shot with **BTMS** + **H2S-Short** as the two examples.
 

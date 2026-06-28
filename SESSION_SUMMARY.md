@@ -310,3 +310,70 @@ jupyter lab Workflow/Notebooks/walkthrough.ipynb
 The walkthrough notebook has 6 sections: bucket tables, bucket heatmaps,
 mean per (strategy, model), failure rate, error log, and the canonical
 `_summary.csv` cross-candidate summary.
+
+---
+
+## Phase 4 — Faithful zenodo reproduction + output translation
+
+You said: "I am a bit worried about the naming its too generic. Lets
+have a look at the reference repositories again. Lets make sure that we
+adapt their approach exactly ... then we can think about translating
+their output so that it matches with the /Data/Parser."
+
+### What we changed
+
+- **Renamed `AutomatedDomainModelling-zenodo/` →
+  `AutomatedDomainModelling_zenodo/`** (underscores). The hyphenated
+  name is not Python-importable; the underscore form lets the helper
+  be imported as a normal package
+  (`from Candidates.AutomatedDomainModelling_zenodo.zenodo_text_format
+  import text_to_plantuml`). The original source-repo name is
+  preserved in `Candidates/AutomatedDomainModelling_zenodo/__init__.py`
+  as a comment for provenance.
+- **Added `_messages.py` helper** in the zenodo source group that
+  flattens an upstream chat-form `[{role, content}, …]` list into the
+  `(system, user)` pair the ollama harness accepts, preserving the
+  multi-turn structure with `USER:` / `ASSISTANT:` labels.
+- **Refactored all 5 zenodo strategies** (`zero_shot`, `one_shot_btms`,
+  `one_shot_h2s_short`, `two_shot`, `cot`) to build upstream-style chat
+  message lists via `generate_prompts_chatgpt` /
+  `generate_prompts_chatgpt_COT` patterns, then flatten and send.
+- **Added `temperature` + `num_predict` to the ollama harness** and to
+  `CandidateSpec`. All 5 zenodo strategies pass the upstream
+  `temperature=0.7, num_predict=1024` defaults.
+- **Comprehensive rewrite of `zenodo_text_format.py`**:
+  - Accepts both singular and plural headings (`Class:` / `Classes:`,
+    `Enumeration` / `Enumerations`, etc.).
+  - Accepts `inherit` *and* `isA` for inheritance (the CoT H2S
+    annotated example uses both).
+  - Tolerates markdown code fences and leading prose.
+  - Emits quoted cardinalities (`"1"`, `"*"`, `"0..*"`).
+
+### Cleanup
+
+- Deleted `Candidates/AutomatedDomainModelling-zenodo/_examples_btms.py`
+  (orphan script — the BTMS data lives in `examples.json`).
+- Removed all `__pycache__/` directories and stale `.pyc` files (git
+  already ignores them but they were confusing `discover()`).
+
+### Tests
+
+- Added 12 new tests in `tests/test_zenodo_prompts.py`:
+  - `text_to_plantuml` round-trip for BTMS through `Data.Parser`.
+  - `isA` verb handling.
+  - Plural heading tolerance.
+  - Markdown fence tolerance.
+  - Leading-prose tolerance.
+  - Quoted cardinalities.
+  - Per-spec `temperature` / `num_predict` carry-through.
+  - `_messages.flatten` correctness.
+- Added 3 new tests in `tests/test_ollama_harness.py`:
+  - `temperature` is passed through to Ollama `options`.
+  - `num_predict` is passed through.
+  - Both are omitted when unset (backwards-compatible behaviour).
+
+**56 tests pass** (up from 44 in Phase 3). All zenodo strategies now
+faithfully mirror the upstream `prompt_generation.py` chat-form
+construction, and the text-format converter handles every variant we
+have observed in `models.csv` / `models_cot.csv` plus common LLM
+response quirks.

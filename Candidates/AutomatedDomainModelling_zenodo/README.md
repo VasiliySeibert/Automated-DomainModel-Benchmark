@@ -1,7 +1,7 @@
-# AutomatedDomainModelling-zenodo strategies
+# AutomatedDomainModelling_zenodo strategies
 
 Five strategies from Bademoses 2024
-(`AutomatedDomainModelling-zenodo/prompts.md` +
+(`AutomatedDomainModelling_zenodo/prompts.md` +
 `LLM_for_modelling/llm-model-generation-master/prompt_generation.py`).
 All strategies are **fully self-contained** — each has its own folder
 with `strategy.py`, `prompt*.txt`, `examples.json` / `annotated_example.txt`,

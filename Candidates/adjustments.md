@@ -47,16 +47,18 @@ Candidates/
 ├── opencode/                # harness, NOT a strategy
 ├── text2uml-kaiser/         # SOURCE GROUP
 │   └── <strategy>/strategy.py
-├── AutomatedDomainModelling-zenodo/   # SOURCE GROUP
+├── AutomatedDomainModelling_zenodo/   # SOURCE GROUP
 │   └── <strategy>/strategy.py
 └── ai4se_benchmarkPaper/    # SOURCE GROUP
     └── rule_based/strategy.py
 ```
 
 Each `strategy.py` declares a `SPEC = CandidateSpec(...)` at module
-level and calls `register(SPEC)`. The registry uses
-`importlib.util.spec_from_file_location` to handle folder names with
-hyphens (`AutomatedDomainModelling-zenodo`).
+level and calls `register(SPEC)`. The dynamic import machinery in
+`_import_module` uses `importlib.util.spec_from_file_location` for
+defensive isolation; all source-group folder names use underscores so
+they are importable as normal Python packages (e.g.
+`Candidates.AutomatedDomainModelling_zenodo.zenodo_text_format`).
 
 `SOURCE_DIRS` enumerates the three source groups; strategies outside
 these directories (the two harnesses) are excluded.
@@ -66,7 +68,7 @@ these directories (the two harnesses) are excluded.
 | Source                            | Strategies | × Models | Cells/dataset | × 2 datasets | Records |
 |-----------------------------------|-----------:|---------:|---------------:|-------------:|--------:|
 | `text2uml-kaiser/`                |          5 |        4 |             20 |           40 |      40 |
-| `AutomatedDomainModelling-zenodo/`|       5 |        4 |             20 |           40 |      40 |
+| `AutomatedDomainModelling_zenodo/`|       5 |        4 |             20 |           40 |      40 |
 | `ai4se_benchmarkPaper/rule_based/`|      1 |        1 |              1 |            2 |       2 |
 | **TOTAL**                         |     **11** |          |          **41** |       **82** |  **82** |
 
@@ -106,6 +108,15 @@ prompt_generation.py`. The five-setting inventory (`zero_shot`,
 - 5 entries in `Round 2 Evaluation/second_round.csv` Setting column.
 - 5 × 3 = 15 saved result XLSX files in `experiments_result/`.
 
+**Chat-form fidelity.** The ollama harness exposes only one `system`
+slot plus one `user` slot per call, so the upstream multi-turn chat
+list (built by `generate_prompts_chatgpt` / `generate_prompts_chatgpt_COT`)
+is flattened via the source-group-shared helper
+`AutomatedDomainModelling_zenodo/_messages.py`: the system message
+goes to the harness `system=` argument; the remaining turns are
+concatenated into the user prompt with `USER:` / `ASSISTANT:` role
+labels so the multi-turn structure is preserved.
+
 Verbatim text reuse:
 
 | This repo                                        | Upstream                                          |
@@ -117,12 +128,17 @@ Verbatim text reuse:
 | `two_shot/examples.json`                         | BTMS + H2S-Short rows                             |
 | `cot/annotated_example.txt`                      | `models_cot.csv` H2S row (sentence-by-sentence `->` arrows) |
 
+**Upstream sampling defaults.** All 5 zenodo strategies pass
+`temperature=0.7` and `num_predict=1024` to the ollama harness (from
+upstream `config.yaml` running_params block), set as `CandidateSpec`
+fields so the registry carries them.
+
 ## 7. Zenodo text format → PlantUML conversion
 
 The zenodo prompts ask the LLM to emit a structured text response of
 the form `Enumeration:` / `Class:` / `Relationships:` sections — not
 valid PlantUML. We convert via the source-group-shared helper
-`AutomatedDomainModelling-zenodo/zenodo_text_format.py` (only imported
+`AutomatedDomainModelling_zenodo/zenodo_text_format.py` (only imported
 by the zenodo strategies; no other group uses it). The converter
 parses the text and emits a single `@startuml…@enduml` block in the
 parser-compatible grammar.
@@ -130,6 +146,17 @@ parser-compatible grammar.
 If the LLM ignores the format and emits PlantUML directly, the
 strategy extracts the block with `extract_plantuml_block` and skips
 the conversion.
+
+**Converter tolerance:**
+- `Enumeration` / `Enumerations` / `Class` / `Classes` /
+  `Relationship` / `Relationships` headings (case-insensitive,
+  with or without trailing colon).
+- `inherit` *and* `isA` verbs (the CoT annotated H2S example uses both).
+- Markdown code fences (` ``` … ``` `) wrapping the response.
+- Leading prose before the first heading.
+- Cardinalities are emitted quoted (`Source "1" -- "*" Target`) —
+  the parser accepts both quoted and unquoted, but quoted matches
+  the kaiser step-5 convention.
 
 ## 8. Cardinality quoting
 
@@ -144,10 +171,10 @@ PlantUML accepts both `A "1" -- "*" B` (quoted) and `A 1 -- * B`
 |---------------------------------------------|------------------------------------------------------|
 | `text2uml-kaiser/one_shot`                 | `AlphaInsurance`                                      |
 | `text2uml-kaiser/few_shot`                 | `AlphaInsurance`, `GasStation_KUL`, `GasStation_TUW` |
-| `AutomatedDomainModelling-zenodo/one_shot_btms` | `BTMS`                                           |
-| `AutomatedDomainModelling-zenodo/one_shot_h2s_short` | `H2S-Short`, `HelpingHands`                  |
-| `AutomatedDomainModelling-zenodo/two_shot`  | `BTMS`, `H2S-Short`, `HelpingHands`                   |
-| `AutomatedDomainModelling-zenodo/cot`       | `H2S`, `H2S-Short`, `HelpingHands`                   |
+| `AutomatedDomainModelling_zenodo/one_shot_btms` | `BTMS`                                           |
+| `AutomatedDomainModelling_zenodo/one_shot_h2s_short` | `H2S-Short`, `HelpingHands`                  |
+| `AutomatedDomainModelling_zenodo/two_shot`  | `BTMS`, `H2S-Short`, `HelpingHands`                   |
+| `AutomatedDomainModelling_zenodo/cot`       | `H2S`, `H2S-Short`, `HelpingHands`                   |
 | `rule_based`                                | —                                                    |
 | `text2uml-kaiser/{zero_shot,cot,cot_domain}` | —                                                    |
 | `AutomatedDomainModelling-zenodo/zero_shot` | —                                                    |

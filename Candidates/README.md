@@ -19,13 +19,14 @@ Candidates/
 │   ├── cot/                                 # 5-step CoT chain
 │   └── cot_domain/                          # 5-step domain CoT chain
 │
-├── AutomatedDomainModelling-zenodo/         # 5 strategies (Bademoses 2024)
+├── AutomatedDomainModelling_zenodo/         # 5 strategies (Bademoses 2024)
 │   ├── zero_shot/
 │   ├── one_shot_btms/                       # skip BTMS
 │   ├── one_shot_h2s_short/                  # skip H2S-Short + HelpingHands
 │   ├── two_shot/                            # skip BTMS + H2S-Short + HelpingHands
 │   ├── cot/                                 # skip H2S + H2S-Short + HelpingHands
-│   └── zenodo_text_format.py                # group-shared helper
+│   ├── _messages.py                         # chat-form → (system, user) helper
+│   └── zenodo_text_format.py                # text-format → PlantUML converter
 │
 ├── ai4se_benchmarkPaper/                    # 1 strategy
 │   └── rule_based/                          # spaCy heuristic (no LLM)
@@ -47,20 +48,24 @@ Candidates/
 3. **No global shared code.** The only "shared" modules are:
    - `ollama/harness.py` and `opencode/harness.py` — the two harnesses
      themselves (each is its own candidate folder).
-   - `AutomatedDomainModelling-zenodo/zenodo_text_format.py` — the
+   - `AutomatedDomainModelling_zenodo/zenodo_text_format.py` — the
      text-to-PlantUML converter shared **within** the zenodo source
      group only (no other group uses it).
+   - `AutomatedDomainModelling_zenodo/_messages.py` — chat-form →
+     `(system, user)` flattener shared **within** the zenodo source
+     group only.
 4. **Registry discovery.** `Candidates/registry.py` walks the tree
-   and dynamically imports each `strategy.py`. Folder names with
-   hyphens (`AutomatedDomainModelling-zenodo`) are handled via
-   `importlib.util.spec_from_file_location`.
+   and dynamically imports each `strategy.py`. All source-group folders
+   use underscores so they are normal Python packages importable via
+   dotted notation (e.g. `from Candidates.AutomatedDomainModelling_zenodo
+   .zenodo_text_format import text_to_plantuml`).
 
 ## Cell matrix
 
 | Source                          | Strategies | × Models | Cells/dataset | × 2 datasets | Records |
 |---------------------------------|-----------:|---------:|---------------:|-------------:|--------:|
 | `text2uml-kaiser/`              |          5 |        4 |             20 |           40 |      40 |
-| `AutomatedDomainModelling-zenodo/` |       5 |        4 |             20 |           40 |      40 |
+| `AutomatedDomainModelling_zenodo/` |       5 |        4 |             20 |           40 |      40 |
 | `ai4se_benchmarkPaper/rule_based/` |     1 |        1 |              1 |            2 |       2 |
 | **TOTAL**                       |     **11** |          |          **41** |       **82** |  **82** |
 
@@ -76,11 +81,11 @@ orchestrator filters these records before invoking the LLM.
 | `text2uml-kaiser/few_shot`     | `AlphaInsurance`, `GasStation_KUL`, `GasStation_TUW` |
 | `text2uml-kaiser/cot`          | —                                         |
 | `text2uml-kaiser/cot_domain`   | —                                         |
-| `AutomatedDomainModelling-zenodo/zero_shot` | —                                |
-| `AutomatedDomainModelling-zenodo/one_shot_btms` | `BTMS`                       |
-| `AutomatedDomainModelling-zenodo/one_shot_h2s_short` | `H2S-Short`, `HelpingHands` |
-| `AutomatedDomainModelling-zenodo/two_shot` | `BTMS`, `H2S-Short`, `HelpingHands` |
-| `AutomatedDomainModelling-zenodo/cot` | `H2S`, `H2S-Short`, `HelpingHands` |
+| `AutomatedDomainModelling_zenodo/zero_shot` | —                                |
+| `AutomatedDomainModelling_zenodo/one_shot_btms` | `BTMS`                       |
+| `AutomatedDomainModelling_zenodo/one_shot_h2s_short` | `H2S-Short`, `HelpingHands` |
+| `AutomatedDomainModelling_zenodo/two_shot` | `BTMS`, `H2S-Short`, `HelpingHands` |
+| `AutomatedDomainModelling_zenodo/cot` | `H2S`, `H2S-Short`, `HelpingHands` |
 | `ai4se_benchmarkPaper/rule_based` | —                                      |
 
 ## Harnesses

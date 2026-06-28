@@ -1,4 +1,4 @@
-# AutomatedDomainModelling-zenodo / cot
+# AutomatedDomainModelling_zenodo / cot
 
 One-shot Chain-of-Thought with the **H2S annotated description** as the
 single example (zenodo §5). The annotated description shows

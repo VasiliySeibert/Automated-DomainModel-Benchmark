@@ -10,7 +10,8 @@ Why this instead of opencode?
 * Direct control over the message structure.
 
 Public API:
-    call(model: str, system: str, prompt: str, *, timeout: int = 600) -> str
+    call(model, system, prompt, *, timeout=600,
+         temperature=None, num_predict=None) -> str
         POSTs the prompt to the configured Ollama server and returns
         the assistant message content.
     is_available() -> bool
@@ -43,14 +44,21 @@ def call(
     prompt: str,
     *,
     timeout: int = DEFAULT_TIMEOUT,
+    temperature: Optional[float] = None,
+    num_predict: Optional[int] = None,
 ) -> str:
     """Call the Ollama chat API and return the assistant message.
 
     Args:
-        model:   the model tag visible to `ollama list`, e.g. `minimax-m3:cloud`.
-        system:  the system-prompt string. If empty, no system message is sent.
-        prompt:  the user-prompt string.
-        timeout: hard wall-clock timeout in seconds.
+        model:       the model tag visible to `ollama list`, e.g. `minimax-m3:cloud`.
+        system:      the system-prompt string. If empty, no system message is sent.
+        prompt:      the user-prompt string.
+        timeout:     hard wall-clock timeout in seconds.
+        temperature: optional sampling temperature (e.g. 0.0 for deterministic,
+                     0.7 for the zenodo upstream default). `None` uses the
+                     Ollama server's default for the model.
+        num_predict: optional max-output-tokens cap. `None` uses the Ollama
+                     server default.
 
     Returns:
         The assistant message content as a string.
@@ -65,11 +73,19 @@ def call(
         messages.append({"role": "system", "content": system})
     messages.append({"role": "user", "content": prompt})
 
-    payload = {
+    payload: dict = {
         "model": model,
         "messages": messages,
         "stream": False,
     }
+    options: dict = {}
+    if temperature is not None:
+        options["temperature"] = float(temperature)
+    if num_predict is not None:
+        options["num_predict"] = int(num_predict)
+    if options:
+        payload["options"] = options
+
     url = f"{host()}/api/chat"
     log.info("ollama POST %s model=%s prompt=%d chars", url, model, len(prompt))
     r = requests.post(url, json=payload, timeout=timeout)

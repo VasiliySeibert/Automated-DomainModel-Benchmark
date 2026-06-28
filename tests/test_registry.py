@@ -26,7 +26,7 @@ from Candidates.registry import (
 def test_three_source_groups():
     assert set(SOURCE_DIRS) == {
         "text2uml-kaiser",
-        "AutomatedDomainModelling-zenodo",
+        "AutomatedDomainModelling_zenodo",
         "ai4se_benchmarkPaper",
     }
 
@@ -39,7 +39,7 @@ def test_kaiser_has_five_strategies():
 
 
 def test_zenodo_has_five_strategies():
-    zenodo = [s for s in all_specs() if s.source == "AutomatedDomainModelling-zenodo"]
+    zenodo = [s for s in all_specs() if s.source == "AutomatedDomainModelling_zenodo"]
     assert len(zenodo) == 5
     names = {s.strategy for s in zenodo}
     assert names == {
@@ -67,10 +67,10 @@ def test_kaiser_skip_rules():
 
 
 def test_zenodo_skip_rules():
-    one_btms = get_strategy("AutomatedDomainModelling-zenodo", "one_shot_btms")
+    one_btms = get_strategy("AutomatedDomainModelling_zenodo", "one_shot_btms")
     assert "BTMS" in one_btms.skip_folders
 
-    two_shot = get_strategy("AutomatedDomainModelling-zenodo", "two_shot")
+    two_shot = get_strategy("AutomatedDomainModelling_zenodo", "two_shot")
     assert "BTMS" in two_shot.skip_folders
     assert "H2S-Short" in two_shot.skip_folders
 

@@ -1,5 +1,5 @@
 {
-  "source": "AutomatedDomainModelling-zenodo",
+  "source": "AutomatedDomainModelling_zenodo",
   "strategy": "zero_shot",
   "uses_llm": true,
   "harness_default": "ollama",

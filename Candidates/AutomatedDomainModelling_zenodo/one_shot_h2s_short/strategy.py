@@ -1,8 +1,14 @@
-"""AutomatedDomainModelling-zenodo / one_shot_h2s_short — single-call,
-H2S-Short example.
+"""AutomatedDomainModelling_zenodo / one_shot_h2s_short — chat-form
+one-shot with H2S-Short as the example.
 
-Reuses zenodo §3 prompt format. Skips `H2S` (the variant was "H2S-Short"
-in the original paper but the dataset folder is `HelpingHands`).
+Faithful re-implementation of `generate_prompts_chatgpt` with
+`shots=["H2S-Short"]` from `AutomatedDomainModelling-zenodo/prompts.md` §3b.
+
+The H2S-Short row in upstream `models.csv` is the *short* description
+("H2S collects second hand articles ..." without the CoT annotations).
+In our dataset the corresponding folder is `HelpingHands`.
+
+Upstream defaults: `temperature=0.7`, `num_predict=1024`.
 """
 from __future__ import annotations
 
@@ -12,11 +18,14 @@ from pathlib import Path
 from typing import Optional
 
 from Candidates.ollama.harness import call as call_llm
+from Candidates.AutomatedDomainModelling_zenodo._messages import flatten
+from Candidates.AutomatedDomainModelling_zenodo.zenodo_text_format import (
+    text_to_plantuml,
+)
 from Candidates.registry import CandidateSpec, register
 
 _THIS_DIR = Path(__file__).resolve().parent
 _PROMPT_SYSTEM = _THIS_DIR / "prompt_system.txt"
-_PROMPT_TASK = _THIS_DIR / "prompt_task.txt"
 _EXAMPLES = _THIS_DIR / "examples.json"
 
 _PLANTUML_BLOCK = re.compile(r"@startuml.*?@enduml", re.DOTALL | re.IGNORECASE)
@@ -29,36 +38,38 @@ def _extract_plantuml(text: str) -> Optional[str]:
     return m.group(0).strip() if m else None
 
 
-def _build_user_prompt(examples: list[dict], nlt: str) -> str:
-    """Mimic zenodo §3 one-shot H2S-Short format."""
-    shots: list[str] = []
-    for ex in examples:
-        shots.append(
-            f"Description:\n{ex['nlt']}\n\n{ex['model']}\n\n###\n"
-        )
+def _build_messages(examples: list[dict], nlt: str) -> list[dict]:
+    """Mimic `generate_prompts_chatgpt` with shots=["H2S-Short"] (zenodo §3b)."""
     system = _PROMPT_SYSTEM.read_text(encoding="utf-8")
-    task = _PROMPT_TASK.read_text(encoding="utf-8")
-    return (
-        f"{system}\n\n{task}\n\n"
-        + "".join(shots)
-        + f"Description:\n{nlt}"
-    )
+    msgs: list[dict] = [{"role": "system", "content": system}]
+    for ex in examples:
+        msgs.append({"role": "user",      "content": f"Description: {ex['nlt']}\n"})
+        msgs.append({
+            "role": "assistant",
+            "content": f"{ex['model']} \n\n  Relationships:\n\n",
+        })
+    msgs.append({"role": "user", "content": nlt})
+    return msgs
 
 
 def run(spec: CandidateSpec, nlt: str) -> dict:
     examples = json.loads(_EXAMPLES.read_text(encoding="utf-8"))["examples"]
-    user = _build_user_prompt(examples, nlt)
+    system, user = flatten(_build_messages(examples, nlt))
     try:
-        raw = call_llm(model=spec.model, system="", prompt=user, timeout=spec.timeout)
+        raw = call_llm(
+            model=spec.model,
+            system=system,
+            prompt=user,
+            timeout=spec.timeout,
+            temperature=spec.temperature,
+            num_predict=spec.num_predict,
+        )
         puml = _extract_plantuml(raw)
         if puml:
             return {
                 "generated_model": puml, "failed": False,
                 "error": None, "raw_excerpt": raw[:2000],
             }
-        from Candidates.AutomatedDomainModelling_zenodo.zenodo_text_format import (
-            text_to_plantuml,
-        )
         puml = text_to_plantuml(raw)
         if puml:
             return {
@@ -79,12 +90,17 @@ def run(spec: CandidateSpec, nlt: str) -> dict:
 
 
 SPEC = CandidateSpec(
-    source="AutomatedDomainModelling-zenodo",
+    source="AutomatedDomainModelling_zenodo",
     strategy="one_shot_h2s_short",
     uses_llm=True,
     skip_folders=("H2S-Short", "HelpingHands"),
     timeout=600,
-    description="Single-call one-shot with H2S-Short example.",
+    temperature=0.7,
+    num_predict=1024,
+    description=(
+        "One-shot chat form (zenodo §3b): system + H2S-Short user/assistant "
+        "shot pair + new description."
+    ),
 )
 
 

@@ -6,7 +6,7 @@ from pathlib import Path
 
 ZENODO_DIR = (
     Path(__file__).resolve().parent.parent
-    / "Candidates" / "AutomatedDomainModelling-zenodo"
+    / "Candidates" / "AutomatedDomainModelling_zenodo"
 )
 
 
@@ -50,13 +50,9 @@ def test_cot_has_annotated_example():
 
 def test_text_to_plantuml_converter_basic():
     """Inline test of the source-group-shared converter."""
-    # Use importlib because the folder name has a hyphen.
-    import importlib.util, sys
-    p = ZENODO_DIR / "zenodo_text_format.py"
-    spec = importlib.util.spec_from_file_location("ztf", p)
-    mod = importlib.util.module_from_spec(spec)
-    sys.modules["ztf"] = mod
-    spec.loader.exec_module(mod)
+    from Candidates.AutomatedDomainModelling_zenodo.zenodo_text_format import (
+        text_to_plantuml,
+    )
 
     sample = """
 Enumeration:
@@ -68,7 +64,7 @@ Relationships:
 1 BTMS contain * BusVehicle
 Bus inherit Vehicle
 """
-    out = mod.text_to_plantuml(sample)
+    out = text_to_plantuml(sample)
     assert out is not None
     assert "enum Shift" in out
     assert "Bus --|> Vehicle" in out
@@ -76,10 +72,179 @@ Bus inherit Vehicle
 
 
 def test_text_to_plantuml_returns_none_for_unrelated_text():
-    import importlib.util, sys
-    p = ZENODO_DIR / "zenodo_text_format.py"
-    spec = importlib.util.spec_from_file_location("ztf", p)
-    mod = importlib.util.module_from_spec(spec)
-    sys.modules["ztf"] = mod
-    spec.loader.exec_module(mod)
-    assert mod.text_to_plantuml("just a random paragraph") is None
+    from Candidates.AutomatedDomainModelling_zenodo.zenodo_text_format import (
+        text_to_plantuml,
+    )
+    assert text_to_plantuml("just a random paragraph") is None
+
+
+def test_text_to_plantuml_btms_round_trip():
+    """The BTMS example must produce PlantUML that Data.Parser accepts."""
+    from Candidates.AutomatedDomainModelling_zenodo.zenodo_text_format import (
+        text_to_plantuml,
+    )
+    from Data.Parser.parser import PlantUMLParser
+
+    sample = """
+Enumeration:
+Shift(morning, afternoon, night)
+Classes:
+BTMS()
+BusVehicle(string licencePlate, boolean inRepairShop)
+Route(int number)
+RouteAssignment(Date date)
+Driver(string name, string id, boolean onSickLeave)
+
+Relationships:
+1 BTMS contain * BusVehicle
+1 BTMS contain * Route
+1 BTMS contain * RouteAssignment
+* RouteAssignment associate 1 BusVehicle
+* RouteAssignment associate 1 Route
+"""
+    out = text_to_plantuml(sample)
+    assert out is not None
+    model = PlantUMLParser(strict=False).parse(out)
+    assert model.summary().startswith("ParsedModel: 5 classes, 1 enums, 5 relationships")
+
+
+def test_text_to_plantuml_handles_isA_verb():
+    """`isA` (used in the CoT H2S annotated example) must be converted."""
+    from Candidates.AutomatedDomainModelling_zenodo.zenodo_text_format import (
+        text_to_plantuml,
+    )
+
+    sample = """
+Classes:
+Parent()
+Child()
+Relationships:
+Child isA Parent
+"""
+    out = text_to_plantuml(sample)
+    assert out is not None
+    assert "Child --|> Parent" in out
+
+
+def test_text_to_plantuml_handles_plural_headers():
+    """`Enumerations:` and `Classes:` (plural) must also work."""
+    from Candidates.AutomatedDomainModelling_zenodo.zenodo_text_format import (
+        text_to_plantuml,
+    )
+
+    sample = """
+Enumerations:
+Color(red, green, blue)
+Classes:
+Foo()
+Bar()
+Relationships:
+1 Foo associate * Bar
+"""
+    out = text_to_plantuml(sample)
+    assert out is not None
+    assert "enum Color" in out
+    assert "Foo " in out
+    assert "Bar" in out
+
+
+def test_text_to_plantuml_handles_markdown_fences():
+    """LLMs sometimes wrap their answer in triple-backtick fences."""
+    from Candidates.AutomatedDomainModelling_zenodo.zenodo_text_format import (
+        text_to_plantuml,
+    )
+
+    sample = """```
+Enumeration:
+Status(active, inactive)
+Classes:
+Account(string name)
+Relationships:
+1 Account associate * Account
+```"""
+    out = text_to_plantuml(sample)
+    assert out is not None
+    assert "enum Status" in out
+
+
+def test_text_to_plantuml_handles_leading_prose():
+    """LLMs sometimes preface their answer with prose before the structure."""
+    from Candidates.AutomatedDomainModelling_zenodo.zenodo_text_format import (
+        text_to_plantuml,
+    )
+
+    sample = """Sure, here is the class diagram:
+
+Enumeration:
+Type(a, b)
+Classes:
+Foo()
+Bar()
+Relationships:
+1 Foo associate * Bar
+"""
+    out = text_to_plantuml(sample)
+    assert out is not None
+    assert "enum Type" in out
+    assert "Foo " in out
+
+
+def test_text_to_plantuml_quotes_cardinalities():
+    """All emitted cardinalities must be quoted (parser accepts both, but
+    the kaiser step-5 convention is quoted)."""
+    from Candidates.AutomatedDomainModelling_zenodo.zenodo_text_format import (
+        text_to_plantuml,
+    )
+
+    sample = """
+Classes:
+Foo()
+Bar()
+Relationships:
+1 Foo associate * Bar
+"""
+    out = text_to_plantuml(sample)
+    assert out is not None
+    assert 'Foo "1" -- "*" Bar' in out
+
+
+def test_zenodo_strategies_carry_temperature_and_num_predict():
+    """All 5 zenodo strategies must declare upstream's temperature/num_predict."""
+    from Candidates.registry import all_specs
+
+    zenodo = [s for s in all_specs() if s.source == "AutomatedDomainModelling_zenodo"]
+    assert len(zenodo) == 5
+    for s in zenodo:
+        assert s.temperature == 0.7, f"{s.strategy}: temperature={s.temperature}"
+        assert s.num_predict == 1024, f"{s.strategy}: num_predict={s.num_predict}"
+
+
+def test_messages_flatten_splits_system_from_user():
+    """`_messages.flatten` must return the first message as `system`
+    and concatenate the rest as a single `user` string with role labels."""
+    from Candidates.AutomatedDomainModelling_zenodo._messages import flatten
+
+    msgs = [
+        {"role": "system", "content": "sys"},
+        {"role": "user",   "content": "u1"},
+        {"role": "assistant", "content": "a1"},
+        {"role": "user",   "content": "u2"},
+    ]
+    system, user = flatten(msgs)
+    assert system == "sys"
+    assert "USER:" in user
+    assert "ASSISTANT:" in user
+    assert "u1" in user
+    assert "a1" in user
+    assert "u2" in user
+    # system must appear before the first user label
+    assert user.index("USER:") < user.index("ASSISTANT:")
+    assert user.index("ASSISTANT:") < user.rindex("USER:")
+
+
+def test_messages_flatten_handles_empty_list():
+    from Candidates.AutomatedDomainModelling_zenodo._messages import flatten
+    assert flatten([]) == ("", "")
+    # A list with no system message is treated as user-only and rendered
+    # with role labels (mirrors the multi-turn case).
+    assert flatten([{"role": "user", "content": "x"}]) == ("", "USER:\nx")

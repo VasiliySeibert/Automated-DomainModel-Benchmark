@@ -1,4 +1,4 @@
-# AutomatedDomainModelling-zenodo / one_shot_h2s_short
+# AutomatedDomainModelling_zenodo / one_shot_h2s_short
 
 Single-call one-shot with **H2S-Short** as the example.
 

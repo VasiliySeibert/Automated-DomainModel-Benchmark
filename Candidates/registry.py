@@ -4,10 +4,9 @@ Each prompt strategy lives in its own folder:
 
     Candidates/<source>/<strategy>/strategy.py
 
-This module walks the tree, dynamically imports each `strategy.py` (using
-`importlib.util` to support folder names with hyphens like
-`AutomatedDomainModelling-zenodo`), and collects the `SPEC` /
-`register()` calls that the strategy module performs at import time.
+This module walks the tree, dynamically imports each `strategy.py` and
+collects the `SPEC` / `register()` calls that the strategy module performs
+at import time.
 
 The registry is the single source of truth for the orchestrator:
 
@@ -37,10 +36,11 @@ EXCLUDE_TOP_DIRS = {
 }
 
 # Top-level directories that contain strategy sub-folders (NOT strategies
-# themselves — they are "sources").
+# themselves — they are "sources"). The `AutomatedDomainModelling_zenodo`
+# folder uses underscores so it can be imported as a normal Python package.
 SOURCE_DIRS = {
     "text2uml-kaiser",
-    "AutomatedDomainModelling-zenodo",
+    "AutomatedDomainModelling_zenodo",
     "ai4se_benchmarkPaper",
 }
 
@@ -66,6 +66,9 @@ class CandidateSpec:
     run_fn: Optional[Callable] = None
     model: str = ""
     model_short: str = ""
+    # Optional sampling overrides — leave None to use the harness default.
+    temperature: Optional[float] = None
+    num_predict: Optional[int] = None
 
 
 _REGISTRY: dict[tuple[str, str], CandidateSpec] = {}
@@ -104,7 +107,8 @@ def _walk_strategies() -> list[tuple[Path, str, str]]:
 
 
 def _import_module(name: str, path: Path):
-    """Dynamic import that supports hyphens in module names."""
+    """Dynamic import that handles any module name (including names containing
+characters that are illegal in Python identifiers, e.g. dashes)."""
     spec = importlib.util.spec_from_file_location(name, path)
     if spec is None or spec.loader is None:
         raise ImportError(f"could not load {name} from {path}")
