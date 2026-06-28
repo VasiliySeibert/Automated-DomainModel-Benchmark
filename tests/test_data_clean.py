@@ -22,6 +22,7 @@ from Data import (
     load_kaiser, load_kaiser_clean, load_reference, load_reference_clean,
     load_dataset,
 )
+from Data.Parser import PlantUMLParser
 from Data.clean_datasets import (
     normalise,
     _strip_enum_stereotype, _repair_diamonds, _rewrite_extends,
@@ -147,3 +148,22 @@ def _looks_like_bad_arrow(puml: str, bad: str) -> bool:
     import re as _re
     # Same constraints as the normaliser itself.
     return bool(_re.search(r"(?<![<.\-\d])" + _re.escape(bad) + r"(?!-)", puml))
+
+
+def test_clean_records_parse_with_local_parser_strict():
+    """Data/Parser under strict=True must accept every cleaned record.
+
+    This is the local copy of the parser that the metric wrapper uses for
+    warning capture (Data/Parser/parser.py). Belt-and-braces alongside the
+    metrik-4 oracle in test_clean_records_score_one_against_self.
+    """
+    parser = PlantUMLParser(strict=True)
+    for r in load_kaiser_clean() + load_reference_clean():
+        try:
+            parser.parse(r["puml"])
+        except Exception as exc:
+            first_line = str(exc).splitlines()[0] if str(exc) else ""
+            raise AssertionError(
+                f"{r['id']}: Data/Parser(strict=True) raised "
+                f"{type(exc).__name__}: {first_line}"
+            ) from exc
