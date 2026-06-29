@@ -138,6 +138,13 @@ nothing in the evaluation set is excluded.
 ## How to run
 
 ```bash
-PYTHONPATH=. python Workflow/run_full.py \
-    --strategies ai4se_benchmarkPaper
+# Not yet wired to the new `Candidate` interface.
+# Once migrated, this candidate will ship a `Candidates/ai4se_benchmarkPaper/rule_based/run.py`
+# driver invoked as:
+#
+#   PYTHONPATH=. python Candidates/ai4se_benchmarkPaper/rule_based/run.py \
+#       --dataset kaiser_clean
+#
+# For now the legacy `Workflow/run_full.py` driver has been removed.
+# Track the migration in `Candidates/adjustments.md`.
 ```

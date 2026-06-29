@@ -5,21 +5,36 @@
 The workflow has been re-architected around a `Candidate` interface:
 
 ```
-Candidates/candidate_interface.py   # Protocol + loader + CandidateOutput
-Candidates/dummy_candidate/         # canonical deterministic implementation
-Workflow/generate.py               # step 1: candidate × dataset → raw JSON
-Workflow/score.py                  # step 2: raw JSON → scored JSON
-Workflow/visualise.py              # step 3: scored JSON(s) → bucket tables + heatmaps
-Workflow/run_all.py                # driver: chains the three steps
+Candidates/candidate_interface.py          # Protocol + loader + CandidateOutput
+Candidates/dummy_candidate/                # canonical deterministic implementation
+  ├── candidate.py
+  ├── metric.json
+  └── run.py                                # per-candidate driver (chains the three steps)
+Workflow/Benchmark-Workflow/
+  ├── generate.py                           # step 1: candidate × dataset → raw JSON
+  ├── score.py                              # step 2: raw JSON → scored JSON
+  └── visualise.py                          # step 3: scored JSON(s) → bucket tables + heatmaps
 ```
+
+There is no generic driver at the workflow level. Each candidate
+folder ships its own `run.py` (template:
+`Candidates/dummy_candidate/run.py`) that chains the three step
+scripts. Model iteration for LLM-driven candidates will live in the
+candidate's constructor, not the workflow.
 
 Each step is a standalone Python file. Each step's output is on disk
 (JSON / CSV / PNG), so they can be inspected and re-run independently:
 
 ```bash
-PYTHONPATH=. python Workflow/generate.py  --candidate ... --dataset ... --out ...
-PYTHONPATH=. python Workflow/score.py     --in ...
-PYTHONPATH=. python Workflow/visualise.py --in '.../*_scored.json' --out-dir ...
+PYTHONPATH=. python Workflow/Benchmark-Workflow/generate.py  --candidate ... --dataset ... --out ...
+PYTHONPATH=. python Workflow/Benchmark-Workflow/score.py     --in ...
+PYTHONPATH=. python Workflow/Benchmark-Workflow/visualise.py --in '.../*_scored.json' --out-dir ...
+```
+
+Or end-to-end through the per-candidate driver:
+
+```bash
+PYTHONPATH=. python Candidates/dummy_candidate/run.py --dataset kaiser_clean
 ```
 
 ## What was removed
@@ -28,10 +43,15 @@ The following files were deleted as part of the rewrite:
 
 - `Candidates/registry.py` — folder-walk + `SPEC` / `register()`
   machinery. Replaced by `load_candidate(path)` from the interface.
-- `Workflow/orchestrator.py` — replaced by `Workflow/generate.py`.
-- `Workflow/metric_runner.py` — replaced by `Workflow/score.py` and
-  `Workflow/visualise.py`.
+- `Workflow/orchestrator.py` — replaced by
+  `Workflow/Benchmark-Workflow/generate.py`.
+- `Workflow/metric_runner.py` — replaced by
+  `Workflow/Benchmark-Workflow/score.py` and
+  `Workflow/Benchmark-Workflow/visualise.py`.
 - `Workflow/run_full.py` — replaced by `Workflow/run_all.py`.
+- `Workflow/run_all.py` — replaced by per-candidate drivers at
+  `Candidates/<candidate>/run.py` (the dummy's
+  `Candidates/dummy_candidate/run.py` is the worked example).
 - `tests/test_registry.py`, `tests/test_ollama_inlined.py`,
   `tests/test_kaiser_prompts.py`, `tests/test_zenodo_prompts.py`,
   `tests/test_rule_based.py` — coupled to the deleted registry.
@@ -109,9 +129,9 @@ collected the `SPEC` / `register()` calls. Replaced by
 
 11 strategies × 4 models × 2 datasets = 82 records (plus 2 for
 rule_based). The new architecture is one candidate × one dataset per
-`run_all.py` invocation; model iteration (when introduced for the
-legacy LLM strategies) will be driven by the candidate's constructor,
-not the workflow.
+`Candidates/<candidate>/run.py` invocation; model iteration (when
+introduced for the legacy LLM strategies) will be driven by the
+candidate's constructor, not the workflow.
 
 ### 5. Failure handling (unchanged)
 
@@ -139,7 +159,8 @@ same return-dict shape (`class_score`, `attribute_score`,
 `association_score`, parse warnings, error) so `Metric.summarise()` and
 the workflow steps work uniformly.
 
-Resolution order in `Workflow/run_all.py`:
+Resolution order in the per-candidate driver
+(`Candidates/<candidate>/run.py`, see the dummy for the worked example):
 
 1. `--metric` on the CLI.
 2. `<candidate_folder>/metric.json` with shape
@@ -149,11 +170,12 @@ Resolution order in `Workflow/run_all.py`:
 
 Output conventions:
 
-- `Workflow/score.py` writes the chosen metric into the scored JSON's
-  `metric_name` field.
-- `Workflow/visualise.py` requires `--metric`, validates that every
-  input JSON agrees, and suffixes bucket tables and heatmaps with
-  `_<metric>`. Mixed-metric inputs are rejected with a clear error.
+- `Workflow/Benchmark-Workflow/score.py` writes the chosen metric
+  into the scored JSON's `metric_name` field.
+- `Workflow/Benchmark-Workflow/visualise.py` requires `--metric`,
+  validates that every input JSON agrees, and suffixes bucket tables
+  and heatmaps with `_<metric>`. Mixed-metric inputs are rejected
+  with a clear error.
 - `_summary.csv` and `_summary.json` gain a `metric` column / field.
 
 Available metrics (also exposed as `Metric.METRIC_NAMES`):

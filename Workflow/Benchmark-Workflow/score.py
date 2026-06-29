@@ -1,16 +1,17 @@
 #!/usr/bin/env python3
-"""Workflow/score.py — step 2 of the benchmark pipeline.
+"""Workflow/Benchmark-Workflow/score.py — step 2 of the benchmark pipeline.
 
-Reads the JSON produced by `Workflow/generate.py`, runs metrik-4 on
-every (reference, generated) pair, and writes a `<stem>_scored.json`
-alongside the input. No aggregation — that's `Workflow/visualise.py`.
+Reads the JSON produced by `Workflow/Benchmark-Workflow/generate.py`,
+runs metrik-4 on every (reference, generated) pair, and writes a
+`<stem>_scored.json` alongside the input. No aggregation — that's
+`Workflow/Benchmark-Workflow/visualise.py`.
 
 Usage:
-    PYTHONPATH=. python Workflow/score.py \
-        --in Workflow/Results/dummy-candidate/kaiser.json
+    PYTHONPATH=. python Workflow/Benchmark-Workflow/score.py \
+        --in Workflow/Results/dummy_candidate/kaiser_clean.json
 
-    PYTHONPATH=. python Workflow/score.py \
-        --in 'Workflow/Results/dummy-candidate/kaiser.json' --out my_scored.json
+    PYTHONPATH=. python Workflow/Benchmark-Workflow/score.py \
+        --in 'Workflow/Results/dummy_candidate/kaiser_clean.json' --out my_scored.json
 
 Output JSON schema (additions to the input):
     records[i].scores = {
@@ -77,7 +78,7 @@ def _score_pair(ref: str, gen: str, metric_name: str) -> dict:
 def main(argv: list[str] | None = None) -> int:
     ap = argparse.ArgumentParser(description=__doc__)
     ap.add_argument("--in", dest="in_path", required=True,
-                    help="Input JSON produced by Workflow/generate.py.")
+                    help="Input JSON produced by Workflow/Benchmark-Workflow/generate.py.")
     ap.add_argument("--out", default=None,
                     help="Output JSON path. Default: <stem>_scored.json next to input.")
     ap.add_argument("--metric", default="metrik-4", choices=METRIC_NAMES,

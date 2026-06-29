@@ -4,11 +4,13 @@ Always emits the same hard-coded PlantUML block, regardless of the
 input NLT. No LLM, no external dependencies, no parsing.
 
 Purpose:
-  * Smoke-test the `Workflow/generate.py` → `Workflow/score.py` →
-    `Workflow/visualise.py` pipeline end-to-end without paying LLM
-    latency or requiring Ollama to be running.
+  * Smoke-test the `Workflow/Benchmark-Workflow/generate.py` →
+    `Workflow/Benchmark-Workflow/score.py` →
+    `Workflow/Benchmark-Workflow/visualise.py` pipeline end-to-end
+    without paying LLM latency or requiring Ollama to be running.
+    Drive it with `Candidates/dummy_candidate/run.py`.
   * Provide a known, reproducible output for schema inspection
-    (open `Workflow/Results/dummy-candidate/<dataset>.json` and see
+    (open `Workflow/Results/dummy_candidate/<dataset>.json` and see
     exactly what shape every record has).
   * Sanity-check the metric plumbing: scoring the same PUML against
     every reference yields a deterministic per-record score pattern

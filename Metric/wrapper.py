@@ -11,7 +11,7 @@ The wrapper also provides:
 - `bucketise()` — convert a score to its bucket index
 - `summarise()` — per-element mean / std / median / bucket counts
 
-Bucket rationale (see Workflow/README.md):
+Bucket rationale (see Workflow/Benchmark-Workflow/README.md):
     metrik-4 caps identical-input score at ~0.71 (the projection onto
     the human F1 scale). The bucket `[0.3, 1.0]` captures "anything that
     the metric considers genuinely good" — finer-grained buckets above

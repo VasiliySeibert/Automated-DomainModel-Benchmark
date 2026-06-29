@@ -1,32 +1,46 @@
 #!/usr/bin/env python3
-"""Workflow/run_all.py — chains generate → score → visualise.
+"""Candidates/dummy_candidate/run.py — driver for the dummy candidate.
+
+Hard-codes the dummy `candidate.py` and chains the three pipeline
+steps that live in `Workflow/Benchmark-Workflow/`:
+
+    generate.py   --candidate Candidates/dummy_candidate/candidate.py \\
+                   --dataset <dataset> --out <results-dir>/<dataset>.json
+    score.py      --in <results-dir>/<dataset>.json --metric <metric>
+    visualise.py  --in <results-dir>/<dataset>_scored.json \\
+                   --out-dir <out-dir> --metric <metric>
 
 Usage:
-    PYTHONPATH=. python Workflow/run_all.py \
-        --candidate Candidates/dummy_candidate/candidate.py \
+    PYTHONPATH=. python Candidates/dummy_candidate/run.py \\
         --dataset kaiser_clean
 
-    PYTHONPATH=. python Workflow/run_all.py \
-        --candidate Candidates/dummy_candidate/candidate.py \
-        --dataset reference_clean \
-        --results-dir Workflow/Results/dummy_candidate \
-        --limit 3 \
-        --skip-visualise
+    PYTHONPATH=. python Candidates/dummy_candidate/run.py \\
+        --dataset reference_clean --limit 3
 
-Metric selection (--metric):
+    PYTHONPATH=. python Candidates/dummy_candidate/run.py \\
+        --dataset kaiser_clean --metric metrik-4
+
+    # Re-run only the visualiser
+    PYTHONPATH=. python Candidates/dummy_candidate/run.py \\
+        --dataset kaiser_clean --skip-generate --skip-score
+
+Metric selection:
     Resolution order:
       1. --metric on the CLI.
-      2. `<candidate_folder>/metric.json` (`{"default_metric": "..."}`).
-         Only consulted if --candidate points to a folder or to a file
-         inside a candidate folder.
+      2. Candidates/dummy_candidate/metric.json
+         ({"default_metric": "metrik-1"} — ships with the dummy).
       3. Project default: metrik-4.
 
-Output layout (under --results-dir, default Workflow/Results/<candidate-name>/):
+Output layout (under --results-dir, default Workflow/Results/dummy_candidate/):
     <results-dir>/<dataset>.json         # step 1: raw generate output
     <results-dir>/<dataset>_scored.json  # step 2: scored
-    _summary.csv, _bucket_*.csv, ...     # step 3: aggregations + heatmaps
-                                          # (always written under --out-dir,
-                                          #  default Workflow/Results)
+    <out-dir>/_summary.csv               # step 3: aggregation table
+    <out-dir>/_summary.json              # step 3: aggregation table (json)
+    <out-dir>/_bucket_<dataset>_<element>_<metric>.csv
+    <out-dir>/_errors.csv                # step 3: failure log
+    <out-dir>/heatmap_<dataset>_<element>_<metric>.png
+    # Default: <out-dir> == <results-dir> so every artefact lives
+    # inside Workflow/Results/dummy_candidate/.
 """
 from __future__ import annotations
 
@@ -38,12 +52,18 @@ import sys
 import time
 from pathlib import Path
 
-REPO_ROOT = Path(__file__).resolve().parent.parent
+
+CANDIDATE_ID = "dummy_candidate"
+THIS_DIR = Path(__file__).resolve().parent          # Candidates/dummy_candidate
+REPO_ROOT = THIS_DIR.parent.parent                   # repo root
+WORKFLOW_PKG = REPO_ROOT / "Workflow" / "Benchmark-Workflow"
+
 if str(REPO_ROOT) not in sys.path:
     sys.path.insert(0, str(REPO_ROOT))
 
 # Import domain_model_metrics BEFORE any Workflow/ file loads (avoids the
-# upstream Workflow package shadow issue described in Workflow/README.md).
+# upstream Workflow package shadow issue described in
+# Workflow/Benchmark-Workflow/README.md).
 import domain_model_metrics  # noqa: F401
 
 from Metric import METRIC_NAMES
@@ -53,7 +73,7 @@ logging.basicConfig(
     level=logging.INFO,
     format="%(asctime)s %(levelname)s %(name)s: %(message)s",
 )
-log = logging.getLogger("Workflow.run_all")
+log = logging.getLogger("Candidates.dummy_candidate.run")
 
 
 DEFAULT_METRIC = "metrik-4"
@@ -69,35 +89,7 @@ def _load_step(name: str, path: Path):
     return mod
 
 
-def _candidate_name(candidate_path: Path) -> str:
-    """Derive a filesystem-friendly name for the candidate."""
-    name = candidate_path.resolve().name
-    if name == "candidate.py":
-        name = candidate_path.resolve().parent.name
-    if name.endswith(".py"):
-        name = name[:-3]
-    return name.replace(" ", "_")
-
-
-def _candidate_folder(candidate_path: Path) -> Path | None:
-    """Return the candidate folder if --candidate points into one.
-
-    A folder is detected if --candidate points to a folder, or to a file
-    whose parent contains a `metric.json` or `README.md` (heuristic: any
-    sibling config file at the folder level).
-    """
-    p = candidate_path.resolve()
-    if p.is_dir():
-        return p
-    if p.is_file():
-        parent = p.parent
-        if (parent / "metric.json").exists() or (parent / "README.md").exists():
-            return parent
-    return None
-
-
-def _resolve_metric(cli_metric: str | None,
-                    candidate_path: Path) -> tuple[str, str]:
+def _resolve_metric(cli_metric: str | None) -> tuple[str, str]:
     """Pick the metric.
 
     Returns (metric, source) where source is one of:
@@ -106,63 +98,59 @@ def _resolve_metric(cli_metric: str | None,
     if cli_metric:
         return cli_metric, "cli"
 
-    folder = _candidate_folder(candidate_path)
-    if folder is not None:
-        metric_file = folder / "metric.json"
-        if metric_file.is_file():
-            try:
-                cfg = json.loads(metric_file.read_text(encoding="utf-8"))
-            except Exception as exc:
-                log.warning("could not read %s: %s", metric_file, exc)
-            else:
-                m = cfg.get("default_metric")
-                if m:
-                    if m not in METRIC_NAMES:
-                        raise SystemExit(
-                            f"{metric_file} declares default_metric={m!r} "
-                            f"which is not in {METRIC_NAMES}"
-                        )
-                    return m, "candidate_metric.json"
+    metric_file = THIS_DIR / "metric.json"
+    if metric_file.is_file():
+        try:
+            cfg = json.loads(metric_file.read_text(encoding="utf-8"))
+        except Exception as exc:
+            log.warning("could not read %s: %s", metric_file, exc)
+        else:
+            m = cfg.get("default_metric")
+            if m:
+                if m not in METRIC_NAMES:
+                    raise SystemExit(
+                        f"{metric_file} declares default_metric={m!r} "
+                        f"which is not in {METRIC_NAMES}"
+                    )
+                return m, "candidate_metric.json"
 
     return DEFAULT_METRIC, "project_default"
 
 
 def main(argv: list[str] | None = None) -> int:
     ap = argparse.ArgumentParser(description=__doc__)
-    ap.add_argument("--candidate", required=True,
-                    help="Path to candidate.py OR to a folder containing it.")
     ap.add_argument("--dataset", required=True,
                     choices=["kaiser_clean", "reference_clean",
                              "data-source-1", "data-source-2"],
                     help="Dataset name (or data-source-N alias).")
     ap.add_argument("--results-dir", default=None,
-                    help="Directory for per-cell JSONs. "
-                         "Default: Workflow/Results/<candidate-name>/")
+                    help="Directory for the JSONs and aggregator outputs. "
+                         "Default: Workflow/Results/dummy_candidate/")
     ap.add_argument("--out-dir", default=None,
-                    help="Directory for cross-candidate aggregations. "
-                         "Default: parent of --results-dir.")
+                    help="Directory for visualiser outputs "
+                         "(_summary.csv, _bucket_*.csv, _errors.csv, "
+                         "heatmap_*.png). Default: same as --results-dir.")
     ap.add_argument("--limit", type=int, default=None,
                     help="Run only the first N records.")
     ap.add_argument("--metric", default=None, choices=METRIC_NAMES,
                     help="Metric to score with. Default: read from "
-                         "<candidate>/metric.json, else metrik-4.")
+                         "Candidates/dummy_candidate/metric.json, else metrik-4.")
     ap.add_argument("--skip-generate", action="store_true")
     ap.add_argument("--skip-score", action="store_true")
     ap.add_argument("--skip-visualise", action="store_true")
     args = ap.parse_args(argv)
 
-    candidate_path = Path(args.candidate).resolve()
-    cand_name = _candidate_name(candidate_path)
+    candidate_path = THIS_DIR / "candidate.py"
 
-    metric, metric_source = _resolve_metric(args.metric, candidate_path)
+    metric, metric_source = _resolve_metric(args.metric)
 
     results_dir = (
         Path(args.results_dir).resolve() if args.results_dir
-        else REPO_ROOT / "Workflow" / "Results" / cand_name
+        else REPO_ROOT / "Workflow" / "Results" / CANDIDATE_ID
     )
     out_dir = (
         Path(args.out_dir).resolve() if args.out_dir
-        else results_dir.parent
+        else results_dir
     )
     results_dir.mkdir(parents=True, exist_ok=True)
     out_dir.mkdir(parents=True, exist_ok=True)
@@ -171,7 +159,7 @@ def main(argv: list[str] | None = None) -> int:
     scored_json = results_dir / f"{args.dataset}_scored.json"
 
     print("=" * 72)
-    print("Automated DomainModel Benchmark — run_all")
+    print(f"Automated DomainModel Benchmark — driver for {CANDIDATE_ID}")
     print("=" * 72)
     print(f"  Candidate    : {candidate_path}")
     print(f"  Dataset      : {args.dataset}")
@@ -186,9 +174,9 @@ def main(argv: list[str] | None = None) -> int:
           f"{'visualise' if not args.skip_visualise else '(skip)visualise'}")
     print("=" * 72)
 
-    generate = _load_step("_wf_generate", REPO_ROOT / "Workflow" / "generate.py")
-    score    = _load_step("_wf_score",    REPO_ROOT / "Workflow" / "score.py")
-    visualise= _load_step("_wf_visualise",REPO_ROOT / "Workflow" / "visualise.py")
+    generate = _load_step("_wf_generate", WORKFLOW_PKG / "generate.py")
+    score    = _load_step("_wf_score",    WORKFLOW_PKG / "score.py")
+    visualise= _load_step("_wf_visualise",WORKFLOW_PKG / "visualise.py")
 
     t_total = time.time()
 
@@ -231,7 +219,7 @@ def main(argv: list[str] | None = None) -> int:
         if rc != 0:
             return rc
 
-    print(f"\n[run_all] DONE in {time.time()-t_total:.1f}s")
+    print(f"\n[run] DONE in {time.time()-t_total:.1f}s")
     return 0
 
 

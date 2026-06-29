@@ -1,7 +1,12 @@
-"""Workflow configuration loader.
+"""Workflow/Benchmark-Workflow configuration loader.
 
-Reads `Workflow/config.json` and exposes typed accessors for the
-model registry, dataset list, metric name, and score bucket boundaries.
+Reads `Workflow/Benchmark-Workflow/config.json` (paired with this
+file) and exposes typed accessors for the model registry, dataset
+list, metric name, and score bucket boundaries.
+
+This loader is legacy — the active pipeline (`generate.py`,
+`score.py`, `visualise.py`) no longer consults `config.json`.
+It is preserved for future model iteration.
 """
 from __future__ import annotations
 

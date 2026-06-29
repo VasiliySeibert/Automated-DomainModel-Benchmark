@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
-"""Workflow/visualise.py — step 3 of the benchmark pipeline.
+"""Workflow/Benchmark-Workflow/visualise.py — step 3 of the benchmark pipeline.
 
-Reads scored JSONs (produced by `Workflow/score.py`), aggregates
-them, and writes:
+Reads scored JSONs (produced by `Workflow/Benchmark-Workflow/score.py`),
+aggregates them, and writes:
 
     <out-dir>/_summary.csv                        (long format)
     <out-dir>/_summary.json
@@ -11,21 +11,21 @@ them, and writes:
     <out-dir>/heatmap_<dataset>_<element>_<metric>.png   (per dataset × element)
 
 Usage:
-    PYTHONPATH=. python Workflow/visualise.py \\
+    PYTHONPATH=. python Workflow/Benchmark-Workflow/visualise.py \\
         --in 'Workflow/Results/*/*_scored.json' \\
         --out-dir Workflow/Results \\
         --metric metrik-1
 
     # Multiple inputs supported as repeatable flags or glob:
-    PYTHONPATH=. python Workflow/visualise.py \\
-        --in Workflow/Results/dummy_candidate/kaiser_scored.json \\
-        --in Workflow/Results/dummy_candidate/reference_scored.json \\
+    PYTHONPATH=. python Workflow/Benchmark-Workflow/visualise.py \\
+        --in Workflow/Results/dummy_candidate/kaiser_clean_scored.json \\
+        --in Workflow/Results/dummy_candidate/reference_clean_scored.json \\
         --out-dir Workflow/Results \\
         --metric metrik-1
 
 Note: --metric is REQUIRED. Every input must be a scored JSON produced
-by `Workflow/score.py --metric <name>` with the same metric. Mixing
-metrics in one --out-dir is rejected.
+by `Workflow/Benchmark-Workflow/score.py --metric <name>` with the same
+metric. Mixing metrics in one --out-dir is rejected.
 """
 from __future__ import annotations
 
@@ -101,7 +101,7 @@ def _validate_metrics(scored_files: list[Path], requested: str) -> None:
         details = "\n".join(f"  {f} -> {m}" for f, m in mismatched)
         raise SystemExit(
             f"--metric={requested} but inputs use different metrics:\n{details}\n"
-            f"Re-run Workflow/score.py with --metric={requested} for each input."
+            f"Re-run Workflow/Benchmark-Workflow/score.py with --metric={requested} for each input."
         )
 
 

@@ -1,11 +1,11 @@
 #!/usr/bin/env python3
-"""Workflow/generate.py — step 1 of the benchmark pipeline.
+"""Workflow/Benchmark-Workflow/generate.py — step 1 of the benchmark pipeline.
 
 Invokes a Candidate against every record in one dataset and writes
 the raw `(nlt, generated, reference)` triples to a JSON file.
 
 Usage:
-    PYTHONPATH=. python Workflow/generate.py \
+    PYTHONPATH=. python Workflow/Benchmark-Workflow/generate.py \
         --candidate Candidates/dummy_candidate/candidate.py \
         --dataset kaiser_clean \
         --out Workflow/Results/dummy_candidate/kaiser_clean.json
@@ -35,7 +35,7 @@ Output JSON schema:
       ]
     }
 
-No metric scoring happens here. `Workflow/score.py` reads this file.
+No metric scoring happens here. `Workflow/Benchmark-Workflow/score.py` reads this file.
 
 Available datasets:
     kaiser_clean       (45 records, Data/data-source-1/)

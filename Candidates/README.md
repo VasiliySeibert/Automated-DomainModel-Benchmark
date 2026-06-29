@@ -41,17 +41,22 @@ candidate-specific knowledge lives in the workflow.
 a deterministic constant-output candidate that ignores the input NLT
 and always returns the same hard-coded PlantUML block. Use it to
 smoke-test the
-[`Workflow`](../Workflow/) pipeline without LLM latency.
+[`Workflow/Benchmark-Workflow/`](../Workflow/Benchmark-Workflow/) pipeline without LLM latency.
 
 ```bash
-PYTHONPATH=. python Workflow/run_all.py \
-    --candidate Candidates/dummy_candidate/candidate.py \
+PYTHONPATH=. python Candidates/dummy_candidate/run.py \
     --dataset kaiser_clean
 ```
 
+The driver chains the three step scripts
+(`generate.py` → `score.py` → `visualise.py`) that live in
+`Workflow/Benchmark-Workflow/`. Each candidate ships its own driver
+inside its own folder — there is no generic driver.
+
 ## Migrating your own strategy
 
-To wire your own candidate:
+To wire your own candidate, create a folder with `candidate.py` and
+a small `run.py` driver:
 
 ```python
 # Candidates/my_candidate/candidate.py
@@ -73,13 +78,16 @@ candidate = MyCandidate()
 ```
 
 ```bash
-PYTHONPATH=. python Workflow/run_all.py \
-    --candidate Candidates/my_candidate/candidate.py \
-    --dataset kaiser
+PYTHONPATH=. python Candidates/my_candidate/run.py \
+    --dataset kaiser_clean
 ```
 
-The workflow takes care of dataset iteration, scoring, aggregation,
-and visualisation.
+The pipeline scripts in `Workflow/Benchmark-Workflow/` take care of
+dataset iteration, scoring, aggregation, and visualisation. The
+`run.py` driver is a thin wrapper that calls them in order with the
+right argv. Use
+[`Candidates/dummy_candidate/run.py`](dummy_candidate/run.py) as the
+template.
 
 ## Legacy strategies
 

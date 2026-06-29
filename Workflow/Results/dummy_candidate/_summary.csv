@@ -1,0 +1,7 @@
+metric,candidate,dataset,element,n,n_failed,mean,std,median,mad,bucket_0_0.1,bucket_0.1_0.2,bucket_0.2_0.3,bucket_0.3_1.0
+metrik-1,/Users/vasiliy/Documents/GitHub/Automated-DomainModel-Benchmark/Candidates/dummy_candidate/candidate.py,kaiser_clean,class_score,3,0,0.037037037037037056,0.052378280087892436,0.0,0.049382716049382734,2,1,0,0
+metrik-1,/Users/vasiliy/Documents/GitHub/Automated-DomainModel-Benchmark/Candidates/dummy_candidate/candidate.py,kaiser_clean,attribute_score,3,0,0.9259259259259259,0.10475656017578482,1.0,0.09876543209876543,0,0,0,3
+metrik-1,/Users/vasiliy/Documents/GitHub/Automated-DomainModel-Benchmark/Candidates/dummy_candidate/candidate.py,kaiser_clean,association_score,3,0,0.07564102564102564,0.061243953397416354,0.07692307692307687,0.050427350427350415,2,1,0,0
+metrik-1,/Users/vasiliy/Documents/GitHub/Automated-DomainModel-Benchmark/Candidates/dummy_candidate/candidate.py,reference_clean,class_score,3,0,0.06527777777777777,0.05446853208646548,0.0625,0.04537037037037036,2,1,0,0
+metrik-1,/Users/vasiliy/Documents/GitHub/Automated-DomainModel-Benchmark/Candidates/dummy_candidate/candidate.py,reference_clean,attribute_score,3,0,0.8960863697705803,0.07349661972572256,0.8461538461538461,0.06927575348627983,0,0,0,3
+metrik-1,/Users/vasiliy/Documents/GitHub/Automated-DomainModel-Benchmark/Candidates/dummy_candidate/candidate.py,reference_clean,association_score,3,0,0.0,0.0,0.0,0.0,3,0,0,0

@@ -17,13 +17,22 @@ for `Book` / `Page`) and the user's natural-language specification.
 
 ## How to run
 
-```bash
-PYTHONPATH=. python Workflow/run_full.py \
-    --strategies text2uml-kaiser --models glm minimax
-```
+> **Not yet wired to the new `Candidate` interface.** This strategy's
+> `run()` lives in `strategy.py` but has not been wrapped in a
+> module-level `candidate` instance yet, and there is no `run.py`
+> driver. Once migrated, the invocation pattern will be:
+>
+> ```bash
+> PYTHONPATH=. python Candidates/text2uml-kaiser/zero_shot/run.py \
+>     --dataset kaiser_clean
+> ```
+>
+> For now the legacy `Workflow/run_full.py` driver referenced in
+> earlier revisions has been removed. Track the migration in
+> `Candidates/adjustments.md`.
 
-The strategy uses its inlined `_ollama.py` HTTP wrapper — see
-[`_ollama.py`](_ollama.py) for the Ollama `/api/chat` schema.
+The strategy's LLM access uses its inlined `_ollama.py` HTTP wrapper
+— see [`_ollama.py`](_ollama.py) for the Ollama `/api/chat` schema.
 
 ## Source
 
