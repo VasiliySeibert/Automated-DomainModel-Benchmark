@@ -16,7 +16,7 @@
       "elapsed_seconds": 0.0,
       "scores": {
         "class_score": 0.0,
-        "attribute_score": 1.0,
+        "attribute_score": 0.0,
         "association_score": 0.0,
         "parse_warning_ref": [],
         "parse_warning_gen": [],
@@ -124,7 +124,7 @@
       "elapsed_seconds": 0.0,
       "scores": {
         "class_score": 0.0,
-        "attribute_score": 1.0,
+        "attribute_score": 0.0,
         "association_score": 0.0,
         "parse_warning_ref": [],
         "parse_warning_gen": [],
@@ -142,7 +142,7 @@
       "elapsed_seconds": 0.0,
       "scores": {
         "class_score": 0.0,
-        "attribute_score": 1.0,
+        "attribute_score": 0.0,
         "association_score": 0.0,
         "parse_warning_ref": [],
         "parse_warning_gen": [],
@@ -172,13 +172,13 @@
       "failed": 0
     },
     "attribute_score": {
-      "mean": 0.375,
-      "std": 0.4841229182759271,
+      "mean": 0.0,
+      "std": 0.0,
       "median": 0.0,
-      "mad": 0.46875,
+      "mad": 0.0,
       "n": 8,
       "buckets": [
-        5,
+        8,
         0,
         0,
         0,
@@ -187,7 +187,7 @@
         0,
         0,
         0,
-        3
+        0
       ],
       "failed": 0
     },
@@ -212,5 +212,5 @@
       "failed": 0
     }
   },
-  "metric_name": "metrik-2"
+  "metric_name": "metrik-4"
 }

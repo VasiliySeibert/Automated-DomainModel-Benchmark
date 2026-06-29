@@ -574,7 +574,7 @@
       "elapsed_seconds": 0.0,
       "scores": {
         "class_score": 0.0,
-        "attribute_score": 1.0,
+        "attribute_score": 0.0,
         "association_score": 0.0,
         "parse_warning_ref": [],
         "parse_warning_gen": [],
@@ -682,7 +682,7 @@
       "elapsed_seconds": 0.0,
       "scores": {
         "class_score": 0.0,
-        "attribute_score": 1.0,
+        "attribute_score": 0.0,
         "association_score": 0.0,
         "parse_warning_ref": [],
         "parse_warning_gen": [],
@@ -838,13 +838,13 @@
       "failed": 0
     },
     "attribute_score": {
-      "mean": 0.044444444444444446,
-      "std": 0.20608041101101565,
+      "mean": 0.0,
+      "std": 0.0,
       "median": 0.0,
-      "mad": 0.08493827160493828,
+      "mad": 0.0,
       "n": 45,
       "buckets": [
-        43,
+        45,
         0,
         0,
         0,
@@ -853,7 +853,7 @@
         0,
         0,
         0,
-        2
+        0
       ],
       "failed": 0
     },
@@ -878,5 +878,5 @@
       "failed": 0
     }
   },
-  "metric_name": "metrik-2"
+  "metric_name": "metrik-4"
 }

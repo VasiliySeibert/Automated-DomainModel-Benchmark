@@ -34,25 +34,6 @@ from Candidates.candidate_interface import CandidateOutput
 
 _PUML = (
     "@startuml\n"
-    "class Book {\n"
-    "  String identifier\n"
-    "  String title\n"
-    "  Integer year\n"
-    "  Boolean available\n"
-    "}\n"
-    "class Author {\n"
-    "  String identifier\n"
-    "  String name\n"
-    "  Date birthDate\n"
-    "}\n"
-    "class Library {\n"
-    "  String identifier\n"
-    "  String name\n"
-    "  String address\n"
-    "  Integer capacity\n"
-    "}\n"
-    'Book "*" -- "1" Author : writtenBy\n'
-    'Library "1" o-- "*" Book : holds\n'
     "@enduml"
 )
 

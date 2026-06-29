@@ -1,6 +1,6 @@
 [
   {
-    "metric": "metrik-2",
+    "metric": "metrik-3",
     "candidate": "/Users/vasiliy/Documents/GitHub/Automated-DomainModel-Benchmark/Candidates/dummy_candidate/candidate.py",
     "dataset": "reference_clean",
     "element": "class_score",
@@ -22,7 +22,7 @@
     "bucket_0_9_1_0]": 0
   },
   {
-    "metric": "metrik-2",
+    "metric": "metrik-3",
     "candidate": "/Users/vasiliy/Documents/GitHub/Automated-DomainModel-Benchmark/Candidates/dummy_candidate/candidate.py",
     "dataset": "reference_clean",
     "element": "attribute_score",
@@ -44,7 +44,7 @@
     "bucket_0_9_1_0]": 3
   },
   {
-    "metric": "metrik-2",
+    "metric": "metrik-3",
     "candidate": "/Users/vasiliy/Documents/GitHub/Automated-DomainModel-Benchmark/Candidates/dummy_candidate/candidate.py",
     "dataset": "reference_clean",
     "element": "association_score",
