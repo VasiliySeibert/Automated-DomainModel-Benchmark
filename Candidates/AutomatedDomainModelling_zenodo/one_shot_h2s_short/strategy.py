@@ -22,7 +22,6 @@ from Candidates.AutomatedDomainModelling_zenodo._messages import flatten
 from Candidates.AutomatedDomainModelling_zenodo.zenodo_text_format import (
     text_to_plantuml,
 )
-from Candidates.registry import CandidateSpec, register
 
 _THIS_DIR = Path(__file__).resolve().parent
 _PROMPT_SYSTEM = _THIS_DIR / "prompt_system.txt"
@@ -89,20 +88,4 @@ def run(spec: CandidateSpec, nlt: str) -> dict:
         }
 
 
-SPEC = CandidateSpec(
-    source="AutomatedDomainModelling_zenodo",
-    strategy="one_shot_h2s_short",
-    uses_llm=True,
-    skip_folders=("H2S-Short", "HelpingHands"),
-    timeout=600,
-    temperature=0.7,
-    num_predict=1024,
-    description=(
-        "One-shot chat form (zenodo §3b): system + H2S-Short user/assistant "
-        "shot pair + new description."
-    ),
-)
-
-
-register(SPEC)
-__all__ = ["SPEC", "run"]
+__all__ = ["run"]

@@ -1,219 +1,160 @@
 # Prompt & Logic Adjustments vs. Source Repositories
 
-Each prompt strategy in this benchmark reuses the **verbatim text** from one
-of three pre-existing prompt suites:
+## Architecture rewrite (current)
 
-1. **`text2uml-kaiser/src/run.py`** (Kaiser 2026) — zero-shot, one-shot,
-   few-shot, CoT, CoT-domain prompts.
-2. **`AutomatedDomainModelling_zenodo (the reconstruction in the local sibling repo) — see Candidates/AutomatedDomainModelling_zenodo/README.md`** (Chen et al. 2023 (MODELS) — see Candidates/AutomatedDomainModelling_zenodo/README.md) +
-   `LLM_for_modelling/llm-model-generation-master/prompt_generation.py` —
-   zero-shot (text format), one-shot BTMS, one-shot H2S-Short, two-shot,
-   CoT (H2S annotated).
-3. **`ai4se_benchmarkPaper/benchmark/candidates/rule_based/utils.py`** —
-   spaCy-based SVO + verb-lemma heuristic.
+The workflow has been re-architected around a `Candidate` interface:
 
-## 1. Fully self-contained candidates
-
-Per the user's explicit requirement, **every candidate folder contains
-everything it needs** — `strategy.py`, `prompt*.txt`, `examples.json`,
-`config.json`, `README.md`, plus an inlined `_ollama.py` (byte-identical
-copy of the Ollama `/api/chat` HTTP wrapper) for every LLM-driven
-strategy. There is no shared harness module anywhere in the repo.
-
-Each LLM-driven strategy imports its own inlined wrapper with a relative
-import at the top of `strategy.py`:
-```python
-from ._ollama import call as call_llm
 ```
-No cross-folder imports are required for LLM access.
+Candidates/candidate_interface.py   # Protocol + loader + CandidateOutput
+Candidates/dummy_candidate/         # canonical deterministic implementation
+Workflow/generate.py               # step 1: candidate × dataset → raw JSON
+Workflow/score.py                  # step 2: raw JSON → scored JSON
+Workflow/visualise.py              # step 3: scored JSON(s) → bucket tables + heatmaps
+Workflow/run_all.py                # driver: chains the three steps
+```
 
-## 2. LLM access (inlined)
+Each step is a standalone Python file. Each step's output is on disk
+(JSON / CSV / PNG), so they can be inspected and re-run independently:
+
+```bash
+PYTHONPATH=. python Workflow/generate.py  --candidate ... --dataset ... --out ...
+PYTHONPATH=. python Workflow/score.py     --in ...
+PYTHONPATH=. python Workflow/visualise.py --in '.../*_scored.json' --out-dir ...
+```
+
+## What was removed
+
+The following files were deleted as part of the rewrite:
+
+- `Candidates/registry.py` — folder-walk + `SPEC` / `register()`
+  machinery. Replaced by `load_candidate(path)` from the interface.
+- `Workflow/orchestrator.py` — replaced by `Workflow/generate.py`.
+- `Workflow/metric_runner.py` — replaced by `Workflow/score.py` and
+  `Workflow/visualise.py`.
+- `Workflow/run_full.py` — replaced by `Workflow/run_all.py`.
+- `tests/test_registry.py`, `tests/test_ollama_inlined.py`,
+  `tests/test_kaiser_prompts.py`, `tests/test_zenodo_prompts.py`,
+  `tests/test_rule_based.py` — coupled to the deleted registry.
+  Replaced by `tests/test_candidate_interface.py` and the
+  `tests/test_workflow_*.py` suite.
+
+The 11 legacy strategies under `text2uml-kaiser/`,
+`AutomatedDomainModelling_zenodo/`, and `ai4se_benchmarkPaper/rule_based/`
+have had their module-level `SPEC = CandidateSpec(...)` and
+`register(SPEC)` lines removed. Their `run()` functions are untouched
+and will be migrated to the new interface in a follow-up step.
+
+## Migration of legacy strategies — TODO
+
+Each legacy strategy needs:
+
+1. A class wrapping its `run(spec, nlt) -> dict` function (or
+   refactor `run` to take only `nlt` and pull sampling params from
+   constructor arguments).
+2. A module-level `candidate = MyClass(...)` instance.
+3. A `candidate.py` filename (or a `__init__.py` shim that re-exports
+   `candidate`).
+
+Example shape:
+
+```python
+# Candidates/text2uml-kaiser/zero_shot/candidate.py
+from .strategy import _run_impl
+from Candidates.candidate_interface import CandidateOutput
+
+
+class ZeroShotCandidate:
+    def __init__(self, model: str, temperature: float = 0.7):
+        self.model = model
+        self.temperature = temperature
+
+    def __call__(self, nlt: str) -> CandidateOutput:
+        result = _run_impl(self.model, self.temperature, nlt)
+        return CandidateOutput.from_dict(result)
+
+
+candidate = ZeroShotCandidate(model="<default>")
+```
+
+The current dummy candidate is the canonical reference for the
+expected shape.
+
+---
+
+## Original adjustment history (kept for traceability)
+
+### 1. Fully self-contained candidates (pre-rewrite)
+
+Per an earlier explicit requirement, every candidate folder was fully
+self-contained — `strategy.py` + prompt files + `config.json` +
+`README.md` + an inlined `_ollama.py` (byte-identical copy of the
+Ollama `/api/chat` HTTP wrapper) for every LLM-driven strategy.
+
+### 2. LLM access (inlined, pre-rewrite)
 
 The LLM HTTP wrapper was previously a shared `Candidates/ollama/harness.py`
 module and later a top-level `Harnesses/ollama/harness.py` module,
 before finally being inlined into each strategy folder as `_ollama.py`
-in Phase 5.
-In Phase 5 the harness was inlined into every LLM-driven strategy
-folder as `_ollama.py`, eliminating the shared module entirely. This
-honours the "every candidate is fully self-contained" rule (Phase 3)
-and removes the conceptual indirection of having an LLM-access layer
-that lives outside `Candidates/`.
+in Phase 5. The 10 inlined copies were guaranteed byte-identical by
+`tests/test_ollama_inlined.py::test_all_10_inlined_ollama_copies_are_byte_identical`
+(now deleted as part of the rewrite).
 
-| Inlined helper | Endpoint | Per-strategy file |
-|---|---|---|
-| `_ollama.py` (byte-identical × 10) | `POST $OLLAMA_HOST/api/chat` (default `http://localhost:11434`) | `Candidates/text2uml-kaiser/{*,}/_ollama.py`, `Candidates/AutomatedDomainModelling_zenodo/{*,}/_ollama.py` |
+### 3. Discovery via `Candidates/registry.py` (pre-rewrite, deleted)
 
-The 10 inlined copies are guaranteed byte-identical by
-`tests/test_ollama_inlined.py::test_all_10_inlined_ollama_copies_are_byte_identical`.
+The registry walked the tree, dynamic-imported each `strategy.py`,
+collected the `SPEC` / `register()` calls. Replaced by
+`load_candidate(path)` in `Candidates/candidate_interface.py`.
 
-## 3. Discovery via `Candidates/registry.py`
+### 4. Cell matrix (pre-rewrite)
 
-The registry walks the tree:
+11 strategies × 4 models × 2 datasets = 82 records (plus 2 for
+rule_based). The new architecture is one candidate × one dataset per
+`run_all.py` invocation; model iteration (when introduced for the
+legacy LLM strategies) will be driven by the candidate's constructor,
+not the workflow.
 
-```
-Candidates/
-├── text2uml-kaiser/         # SOURCE GROUP
-│   └── <strategy>/strategy.py
-├── AutomatedDomainModelling_zenodo/   # SOURCE GROUP
-│   └── <strategy>/strategy.py
-└── ai4se_benchmarkPaper/    # SOURCE GROUP
-    └── rule_based/strategy.py
-```
+### 5. Failure handling (unchanged)
 
-Each `strategy.py` declares a `SPEC = CandidateSpec(...)` at module
-level and calls `register(SPEC)`. The dynamic import machinery in
-`_import_module` uses `importlib.util.spec_from_file_location` for
-defensive isolation; all source-group folder names use underscores so
-they are importable as normal Python packages (e.g.
-`Candidates.AutomatedDomainModelling_zenodo.zenodo_text_format`).
+`generate.py` catches every exception from the candidate and records
+it as `{failed: True, error: "...", generated: ""}`. Failed records
+appear in `_errors.csv` with a 200-char `raw_excerpt`.
 
-`SOURCE_DIRS` enumerates the three source groups; strategies outside
-these directories (the two harnesses) are excluded.
+### 6. Bucket boundaries (unchanged)
 
-## 4. Cell matrix
+`Workflow/Results/_bucket_<dataset>_<element>.csv` (one per dataset ×
+element). Score buckets: `[0, 0.1) / [0.1, 0.2) / [0.2, 0.3) / [0.3, 1.0]`.
 
-| Source                            | Strategies | × Models | Cells/dataset | × 2 datasets | Records |
-|-----------------------------------|-----------:|---------:|---------------:|-------------:|--------:|
-| `text2uml-kaiser/`                |          5 |        4 |             20 |           40 |      40 |
-| `AutomatedDomainModelling_zenodo/`|       5 |        4 |             20 |           40 |      40 |
-| `ai4se_benchmarkPaper/rule_based/`|      1 |        1 |              1 |            2 |       2 |
-| **TOTAL**                         |     **11** |          |          **41** |       **82** |  **82** |
+### 7. FAIR4RS / metric dependency (unchanged)
 
-## 5. Kaiser strategies — verified inventory
+The metric package (`domain-model-metrics`) is a separate pip-installable
+artefact with its own Zenodo DOI
+(`https://doi.org/10.5281/zenodo.20942597`). Citation remains required
+when publishing benchmark results.
 
-Re-audited against `text2uml-kaiser/src/run.py` via two `@explore` agents.
-The five-strategy inventory (`zero_shot`, `one_shot`, `few_shot`, `cot`,
-`cot_domain`) is **complete** — no other strategies are defined in the
-upstream `_CHAIN_BUILDERS` registry (lines 884-890), the
-`techniques:` block of `config.yaml` (lines 14-31), or any other file in
-the upstream repo.
+### 8. Metric selection (`--metric` flag)
 
-Verbatim text reuse:
+The workflow accepts a `--metric` argument selecting which of the five
+metriks (`metrik-1` … `metrik-5`) to score with. All five share the
+same return-dict shape (`class_score`, `attribute_score`,
+`association_score`, parse warnings, error) so `Metric.summarise()` and
+the workflow steps work uniformly.
 
-| This repo                                        | Upstream                                          |
-|--------------------------------------------------|---------------------------------------------------|
-| `text2uml-kaiser/zero_shot/prompt.txt`           | `_ZERO_SHOT_SYSTEM` (run.py:51-86)                |
-| `text2uml-kaiser/one_shot/prompt.txt`            | `_SHOT_BASE` (run.py:94-129)                      |
-| `text2uml-kaiser/one_shot/examples.json`         | `_INSURANCE_SPEC` + `_INSURANCE_UML` (run.py:131-202)|
-| `text2uml-kaiser/few_shot/examples.json`         | + `_GASSTATION_SPEC` + `_GASSTATION_UML` (run.py:204-269) |
-| `text2uml-kaiser/cot/prompt_step{1,2,2b,3,5}_*.txt` | `_COT_CLASS` / `_COT_ASSOC` / `_COT_ATTR` / `_COT_CARD` / `_COT_PLANT` (run.py:336-550) |
-| `text2uml-kaiser/cot_domain/prompt_step{1,2,3,2b,5}_*.txt` | `_DOMAIN_NOUN` / `_DOMAIN_CLASS` / `_DOMAIN_ASSOC` / `_COT_ATTR` (reused) / `_DOMAIN_PLANT` (run.py:553-746) |
+Resolution order in `Workflow/run_all.py`:
 
-Brace fixup: every `{{` → `{` and `}}` → `}` in the upstream prompts
-(LangChain's brace-escape syntax) has been collapsed to single braces
-in the per-strategy prompt files. The LLM sees valid PlantUML.
+1. `--metric` on the CLI.
+2. `<candidate_folder>/metric.json` with shape
+   `{"default_metric": "..."}`. The dummy candidate ships one
+   declaring `metrik-1`.
+3. Project default: `metrik-4`.
 
-## 6. Zenodo strategies — verified inventory
+Output conventions:
 
-Re-audited against `AutomatedDomainModelling_zenodo (the reconstruction in the local sibling repo) — see Candidates/AutomatedDomainModelling_zenodo/README.md` and
-the source code in `LLM_for_modelling/llm-model-generation-master/
-prompt_generation.py`. The five-setting inventory (`zero_shot`,
-`one_shot_btms`, `one_shot_h2s_short`, `two_shot`, `cot`) is
-**complete** — confirmed by:
+- `Workflow/score.py` writes the chosen metric into the scored JSON's
+  `metric_name` field.
+- `Workflow/visualise.py` requires `--metric`, validates that every
+  input JSON agrees, and suffixes bucket tables and heatmaps with
+  `_<metric>`. Mixed-metric inputs are rejected with a clear error.
+- `_summary.csv` and `_summary.json` gain a `metric` column / field.
 
-- 5 entries in `Round 1 Evaluation/first_round.csv` Setting column.
-- 5 entries in `Round 2 Evaluation/second_round.csv` Setting column.
-- 5 × 3 = 15 saved result XLSX files in `experiments_result/`.
-
-**Chat-form fidelity.** The inlined `_ollama` HTTP wrapper exposes
-only one `system` slot plus one `user` slot per call, so the upstream
-multi-turn chat list (built by `generate_prompts_chatgpt` /
-`generate_prompts_chatgpt_COT`) is flattened via the source-group-shared
-helper
-`AutomatedDomainModelling_zenodo/_messages.py`: the system message
-goes to the harness `system=` argument; the remaining turns are
-concatenated into the user prompt with `USER:` / `ASSISTANT:` role
-labels so the multi-turn structure is preserved.
-
-Verbatim text reuse:
-
-| This repo                                        | Upstream                                          |
-|--------------------------------------------------|---------------------------------------------------|
-| `*/prompt_system.txt`                            | `PROBLEM_STATEMENT` (prompt_generation.py:1)     |
-| `*/prompt_task.txt`                              | `TASK_DESCRIPTION` (prompt_generation.py:3-21)    |
-| `one_shot_btms/examples.json`                    | `models.csv` BTMS row                             |
-| `one_shot_h2s_short/examples.json`               | `models.csv` H2S-Short row                        |
-| `two_shot/examples.json`                         | BTMS + H2S-Short rows                             |
-| `cot/annotated_example.txt`                      | `models_cot.csv` H2S row (sentence-by-sentence `->` arrows) |
-
-**Upstream sampling defaults.** All 5 zenodo strategies pass
-`temperature=0.7` and `num_predict=1024` to the inlined `_ollama`
-wrapper (from
-upstream `config.yaml` running_params block), set as `CandidateSpec`
-fields so the registry carries them.
-
-## 7. Zenodo text format → PlantUML conversion
-
-The zenodo prompts ask the LLM to emit a structured text response of
-the form `Enumeration:` / `Class:` / `Relationships:` sections — not
-valid PlantUML. We convert via the source-group-shared helper
-`AutomatedDomainModelling_zenodo/zenodo_text_format.py` (only imported
-by the zenodo strategies; no other group uses it). The converter
-parses the text and emits a single `@startuml…@enduml` block in the
-parser-compatible grammar.
-
-If the LLM ignores the format and emits PlantUML directly, the
-strategy extracts the block with `extract_plantuml_block` and skips
-the conversion.
-
-**Converter tolerance:**
-- `Enumeration` / `Enumerations` / `Class` / `Classes` /
-  `Relationship` / `Relationships` headings (case-insensitive,
-  with or without trailing colon).
-- `inherit` *and* `isA` verbs (the CoT annotated H2S example uses both).
-- Markdown code fences (` ``` … ``` `) wrapping the response.
-- Leading prose before the first heading.
-- Cardinalities are emitted quoted (`Source "1" -- "*" Target`) —
-  the parser accepts both quoted and unquoted, but quoted matches
-  the kaiser step-5 convention.
-
-## 8. Cardinality quoting
-
-PlantUML accepts both `A "1" -- "*" B` (quoted) and `A 1 -- * B`
-(unquoted). The parser handles both, but the LLM occasionally emits
-`n-m` (hyphen) which is invalid. The execute prompt restricts to
-`"1"`, `"*"`, `"0..*"`, `"1..*"`, `"0..1"`, `"n..m"` (hyphen forbidden).
-
-## 9. Skip rules
-
-| Strategy                                    | Skipped folders                                       |
-|---------------------------------------------|------------------------------------------------------|
-| `text2uml-kaiser/one_shot`                 | `AlphaInsurance`                                      |
-| `text2uml-kaiser/few_shot`                 | `AlphaInsurance`, `GasStation_KUL`, `GasStation_TUW` |
-| `AutomatedDomainModelling_zenodo/one_shot_btms` | `BTMS`                                           |
-| `AutomatedDomainModelling_zenodo/one_shot_h2s_short` | `H2S-Short`, `HelpingHands`                  |
-| `AutomatedDomainModelling_zenodo/two_shot`  | `BTMS`, `H2S-Short`, `HelpingHands`                   |
-| `AutomatedDomainModelling_zenodo/cot`       | `H2S`, `H2S-Short`, `HelpingHands`                   |
-| `rule_based`                                | —                                                    |
-| `text2uml-kaiser/{zero_shot,cot,cot_domain}` | —                                                    |
-| `AutomatedDomainModelling_zenodo/zero_shot` | —                                                    |
-
-## 10. Failure handling
-
-**No retries.** `Strategy.run()` returns `StrategyResult(error=...)`
-on any failure. The orchestrator catches all exceptions, records
-`failed=True` + `error`, and proceeds. Failed records appear in
-`_errors.csv` with `{source, strategy, model, dataset, id, error,
-raw_excerpt}` (200-char excerpt of the LLM's raw output for debugging).
-
-## 11. Bucket boundaries for the result tables
-
-`Workflow/Results/_bucket_<dataset>_<element>.csv` (one per dataset
-× element = 6 files). Score buckets:
-`[0, 0.1) / [0.1, 0.2) / [0.2, 0.3) / [0.3, 1.0]`.
-
-The `[0.3, 1.0]` bucket captures "anything metrik-4 considers
-substantive" — this aligns with the 0.71 cap observed for identical
-inputs in the kaiser/reference corpora. The three low buckets resolve
-the spread within the "mediocre" range.
-
-## 12. Authentication / runtime assumptions
-
-- `ollama list` shows `minimax-m3:cloud`, `kimi-k2.6:cloud` are
-  pre-pulled. The other two (`glm-5.1`, `nemotron-3-super`) are NOT
-  pre-pulled — `ollama run` will fetch them on first use. The
-  `--smoke` mode only invokes `rule_based` to avoid the cold-start
-  penalty.
-- Each LLM call takes ~30-60s on cloud Ollama. The full run
-  (8 strategies × 4 models × 2 datasets × ~26 records average) is
-  estimated at **30-90 minutes**.
+Available metrics (also exposed as `Metric.METRIC_NAMES`):
+`metrik-1`, `metrik-2`, `metrik-3`, `metrik-4`, `metrik-5`.

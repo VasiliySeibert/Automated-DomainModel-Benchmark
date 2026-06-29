@@ -18,7 +18,6 @@ from pathlib import Path
 from typing import Optional
 
 from ._ollama import call as call_llm
-from Candidates.registry import CandidateSpec, register
 
 _THIS_DIR = Path(__file__).resolve().parent
 _PROMPTS = {
@@ -133,15 +132,4 @@ def run(spec: CandidateSpec, nlt: str) -> dict:
         }
 
 
-SPEC = CandidateSpec(
-    source="text2uml-kaiser",
-    strategy="cot",
-    uses_llm=True,
-    skip_folders=(),
-    timeout=600,
-    description="5-step Chain-of-Thought: class list → associations+inheritance → attributes → cardinalities → PlantUML.",
-)
-
-
-register(SPEC)
-__all__ = ["SPEC", "run"]
+__all__ = ["run"]

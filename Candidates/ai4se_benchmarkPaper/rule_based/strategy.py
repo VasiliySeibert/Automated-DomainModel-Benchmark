@@ -29,8 +29,6 @@ import sys
 from pathlib import Path
 from typing import Optional
 
-from Candidates.registry import CandidateSpec, register
-
 log = logging.getLogger(__name__)
 
 _THIS_DIR = Path(__file__).resolve().parent
@@ -109,15 +107,4 @@ def run(spec: CandidateSpec, nlt: str) -> dict:
         }
 
 
-SPEC = CandidateSpec(
-    source="ai4se_benchmarkPaper",
-    strategy="rule_based",
-    uses_llm=False,
-    skip_folders=(),
-    timeout=0,
-    description="spaCy SVO + verb-lemma heuristic. No LLM.",
-)
-
-
-register(SPEC)
-__all__ = ["SPEC", "run"]
+__all__ = ["run"]

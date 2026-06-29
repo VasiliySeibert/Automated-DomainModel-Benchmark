@@ -13,7 +13,6 @@ from pathlib import Path
 from typing import Optional
 
 from ._ollama import call as call_llm
-from Candidates.registry import CandidateSpec, register
 
 _THIS_DIR = Path(__file__).resolve().parent
 _PROMPT_PATH = _THIS_DIR / "prompt.txt"
@@ -87,15 +86,4 @@ def run(spec: CandidateSpec, nlt: str) -> dict:
         }
 
 
-SPEC = CandidateSpec(
-    source="text2uml-kaiser",
-    strategy="one_shot",
-    uses_llm=True,
-    skip_folders=("AlphaInsurance",),
-    timeout=600,
-    description="Single-call one-shot with AlphaInsurance example.",
-)
-
-
-register(SPEC)
-__all__ = ["SPEC", "run"]
+__all__ = ["run"]

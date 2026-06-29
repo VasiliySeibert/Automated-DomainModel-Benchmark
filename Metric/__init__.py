@@ -7,9 +7,10 @@ from .wrapper import (
     BUCKETS,
     BUCKET_LABELS,
     METRIC_NAME,
+    METRIC_NAMES,
 )
 
 __all__ = [
     "compute", "score_one_pair", "summarise", "bucketise",
-    "BUCKETS", "BUCKET_LABELS", "METRIC_NAME",
+    "BUCKETS", "BUCKET_LABELS", "METRIC_NAME", "METRIC_NAMES",
 ]

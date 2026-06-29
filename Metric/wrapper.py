@@ -29,6 +29,14 @@ log = logging.getLogger(__name__)
 
 METRIC_NAME = "metrik-4"
 
+# The five metriks exposed by the upstream `domain-model-metrics` package.
+# All five share the same return-dict shape (class_score, attribute_score,
+# association_score, parse_warning_ref/gen, error), so summarise() works
+# uniformly across them.
+METRIC_NAMES: tuple[str, ...] = (
+    "metrik-1", "metrik-2", "metrik-3", "metrik-4", "metrik-5",
+)
+
 # Bucket boundaries — left-closed, right-open except the last.
 BUCKETS: tuple[float, ...] = (0.0, 0.1, 0.2, 0.3, 1.0001)
 BUCKET_LABELS: tuple[str, ...] = (
@@ -146,5 +154,5 @@ def score_one_pair(ref_puml: str, gen_puml: str) -> dict:
 
 __all__ = [
     "compute", "score_one_pair", "summarise", "bucketise",
-    "BUCKETS", "BUCKET_LABELS", "METRIC_NAME",
+    "BUCKETS", "BUCKET_LABELS", "METRIC_NAME", "METRIC_NAMES",
 ]

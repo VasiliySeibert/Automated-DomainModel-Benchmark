@@ -5,6 +5,11 @@ _ZERO_SHOT_SYSTEM` (loaded from `prompt.txt` next to this file) and the
 user template `"Transform into plant uml this specification text: {nlt}"`.
 
 Imports the inlined `_ollama.py` HTTP wrapper at the top of the file.
+
+NOTE: This strategy predates the `Candidate` interface in
+`Candidates/candidate_interface.py`. It is **not yet wired** to the new
+Workflow — the orchestrator currently only knows about the dummy.
+Migration is a follow-up.
 """
 from __future__ import annotations
 
@@ -13,7 +18,6 @@ from pathlib import Path
 from typing import Optional
 
 from ._ollama import call as call_llm
-from Candidates.registry import CandidateSpec, register
 
 _THIS_DIR = Path(__file__).resolve().parent
 _PROMPT_PATH = _THIS_DIR / "prompt.txt"
@@ -72,15 +76,4 @@ def run(spec: CandidateSpec, nlt: str) -> dict:
         }
 
 
-SPEC = CandidateSpec(
-    source="text2uml-kaiser",
-    strategy="zero_shot",
-    uses_llm=True,
-    skip_folders=(),
-    timeout=600,
-    description="Single-call direct generation, no examples.",
-)
-
-
-register(SPEC)
-__all__ = ["SPEC", "run"]
+__all__ = ["run"]
