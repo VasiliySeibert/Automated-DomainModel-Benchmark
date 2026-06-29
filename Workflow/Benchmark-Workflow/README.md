@@ -232,12 +232,14 @@ the offending inputs.
 The bucket table schema:
 
 ```
-candidate,n,n_failed,"[0, 0.1)","[0.1, 0.2)","[0.2, 0.3)","[0.3, 1.0]",mean,median
-/Users/.../dummy_candidate/candidate.py,45,0,44,1,0,0,0.04,0.02
+candidate,n,n_failed,"[0, 0.1)","[0.1, 0.2)",...,"[0.9, 1.0]",mean,median
+/Users/.../dummy_candidate/candidate.py,45,0,37,7,...,0,0.0414,0.0000
 ```
 
-One row per candidate. Columns are bucket counts plus `n`, `n_failed`,
-`mean`, `median`. The same data is shown as a heatmap PNG.
+Ten buckets total — see `Metric/wrapper.py` `BUCKETS` /
+`BUCKET_LABELS` for the canonical list. One row per candidate.
+Columns are bucket counts plus `n`, `n_failed`, `mean`, `median`.
+The same data is shown as a heatmap PNG.
 
 ---
 

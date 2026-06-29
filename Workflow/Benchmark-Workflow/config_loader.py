@@ -2,11 +2,14 @@
 
 Reads `Workflow/Benchmark-Workflow/config.json` (paired with this
 file) and exposes typed accessors for the model registry, dataset
-list, metric name, and score bucket boundaries.
+list, and metric name.
 
 This loader is legacy — the active pipeline (`generate.py`,
 `score.py`, `visualise.py`) no longer consults `config.json`.
 It is preserved for future model iteration.
+
+Score bucket boundaries live in `Metric/wrapper.py` as
+`BUCKETS` / `BUCKET_LABELS` (single source of truth).
 """
 from __future__ import annotations
 
@@ -54,12 +57,8 @@ def metric_name() -> str:
     return load().get("metric", "metrik-4")
 
 
-def score_buckets() -> list[float]:
-    return list(load().get("score_buckets", [0.0, 0.1, 0.2, 0.3, 1.0001]))
-
-
 __all__ = [
     "CONFIG_PATH", "load",
     "models", "model_by_short", "model_ids", "model_shorts",
-    "datasets", "metric_name", "score_buckets",
+    "datasets", "metric_name",
 ]

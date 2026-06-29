@@ -12,12 +12,13 @@ The wrapper also provides:
 - `summarise()` — per-element mean / std / median / bucket counts
 
 Bucket rationale (see Workflow/Benchmark-Workflow/README.md):
-    metrik-4 caps identical-input score at ~0.71 (the projection onto
-    the human F1 scale). The bucket `[0.3, 1.0]` captures "anything that
-    the metric considers genuinely good" — finer-grained buckets above
-    0.3 were uniformly sparse in the kaiser/reference corpora during
-    development. The three low buckets `[0, 0.1) [0.1, 0.2) [0.2, 0.3)`
-    resolve the spread within the "mediocre" range.
+    Ten per-decile buckets `[0, 0.1)` through `[0.9, 1.0]` give
+    finer resolution across the full 0-1 score range, including the
+    typical good-score cluster around ~0.7 (the projection of the
+    identical-input ceiling onto the human F1 scale for several
+    metriks). The earlier four-bucket layout collapsed most of the
+    upper half into a single bucket and was too coarse to
+    discriminate between decent and genuinely good candidates.
 """
 from __future__ import annotations
 
@@ -38,12 +39,13 @@ METRIC_NAMES: tuple[str, ...] = (
 )
 
 # Bucket boundaries — left-closed, right-open except the last.
-BUCKETS: tuple[float, ...] = (0.0, 0.1, 0.2, 0.3, 1.0001)
+BUCKETS: tuple[float, ...] = (
+    0.0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9, 1.0001,
+)
 BUCKET_LABELS: tuple[str, ...] = (
-    "[0, 0.1)",
-    "[0.1, 0.2)",
-    "[0.2, 0.3)",
-    "[0.3, 1.0]",
+    "[0, 0.1)",    "[0.1, 0.2)", "[0.2, 0.3)", "[0.3, 0.4)",
+    "[0.4, 0.5)",  "[0.5, 0.6)", "[0.6, 0.7)", "[0.7, 0.8)",
+    "[0.8, 0.9)",  "[0.9, 1.0]",
 )
 
 
@@ -107,7 +109,11 @@ def compute(ref_puml: str, gen_puml: str, *, metric_name: str = METRIC_NAME) -> 
 
 
 def bucketise(score: float | None) -> int | None:
-    """Return the bucket index (0..3) for `score`, or None if score is None."""
+    """Return the bucket index for `score`, or None if score is None.
+
+    Valid indices are 0 .. len(BUCKETS)-2 inclusive (one bucket per
+    adjacent pair of boundaries).
+    """
     if score is None:
         return None
     for i, upper in enumerate(BUCKETS[1:]):
@@ -126,7 +132,8 @@ def summarise(scores: list[dict]) -> dict:
         if not vals:
             out[element] = {
                 "mean": None, "std": None, "median": None,
-                "mad": None, "n": 0, "buckets": [0, 0, 0, 0],
+                "mad": None, "n": 0,
+                "buckets": [0] * (len(BUCKETS) - 1),
                 "failed": sum(1 for s in scores if s.get("error")),
             }
             continue
@@ -134,7 +141,7 @@ def summarise(scores: list[dict]) -> dict:
         std = st.pstdev(vals) if len(vals) > 1 else 0.0
         med = st.median(vals)
         mad = st.fmean([abs(v - mean) for v in vals]) if vals else 0.0
-        buckets = [0, 0, 0, 0]
+        buckets = [0] * (len(BUCKETS) - 1)
         for v in vals:
             idx = bucketise(v)
             if idx is not None:

@@ -42,7 +42,7 @@ REPO_ROOT = Path(__file__).resolve().parent.parent
 if str(REPO_ROOT) not in sys.path:
     sys.path.insert(0, str(REPO_ROOT))
 
-from Metric import BUCKET_LABELS, METRIC_NAMES
+from Metric import BUCKETS, BUCKET_LABELS, METRIC_NAMES
 
 
 logging.basicConfig(
@@ -69,22 +69,22 @@ def _expand_inputs(patterns: Iterable[str]) -> list[Path]:
 
 def _build_summary_row(payload: dict, element: str) -> dict:
     s = payload["summary"][element]
-    return {
-        "metric":            payload.get("metric_name", ""),
-        "candidate":         payload.get("candidate", ""),
-        "dataset":           payload["dataset"],
-        "element":           element,
-        "n":                 s["n"],
-        "n_failed":          s["failed"],
-        "mean":              s["mean"],
-        "std":               s["std"],
-        "median":            s["median"],
-        "mad":               s["mad"],
-        "bucket_0_0.1":      s["buckets"][0],
-        "bucket_0.1_0.2":    s["buckets"][1],
-        "bucket_0.2_0.3":    s["buckets"][2],
-        "bucket_0.3_1.0":    s["buckets"][3],
+    row = {
+        "metric":    payload.get("metric_name", ""),
+        "candidate": payload.get("candidate", ""),
+        "dataset":   payload["dataset"],
+        "element":   element,
+        "n":         s["n"],
+        "n_failed":  s["failed"],
+        "mean":      s["mean"],
+        "std":       s["std"],
+        "median":    s["median"],
+        "mad":       s["mad"],
     }
+    for i, lbl in enumerate(BUCKET_LABELS):
+        key = f"bucket_{lbl.replace('[', '').replace(')', '').replace(', ', '_').replace('.', '_')}"
+        row[key] = s["buckets"][i]
+    return row
 
 
 def _validate_metrics(scored_files: list[Path], requested: str) -> None:
@@ -115,7 +115,10 @@ def _write_long_summary(scored_files: list[Path], out_dir: Path) -> Path:
     fields = [
         "metric", "candidate", "dataset", "element", "n", "n_failed",
         "mean", "std", "median", "mad",
-        "bucket_0_0.1", "bucket_0.1_0.2", "bucket_0.2_0.3", "bucket_0.3_1.0",
+        *[
+            f"bucket_{lbl.replace('[', '').replace(')', '').replace(', ', '_').replace('.', '_')}"
+            for lbl in BUCKET_LABELS
+        ],
     ]
     with out.open("w", newline="", encoding="utf-8") as fh:
         w = csv.DictWriter(fh, fieldnames=fields)
@@ -206,7 +209,7 @@ def _write_heatmaps(scored_files: list[Path], out_dir: Path,
             continue
         cands = sorted(cand_map.keys())
         data = np.array([cand_map[c] for c in cands], dtype=float)
-        fig, ax = plt.subplots(figsize=(6, max(2, 0.5 * len(cands) + 1)))
+        fig, ax = plt.subplots(figsize=(11, max(2, 0.5 * len(cands) + 1)))
         im = ax.imshow(data, aspect="auto", cmap="viridis")
         ax.set_xticks(range(len(BUCKET_LABELS)))
         ax.set_xticklabels(BUCKET_LABELS, rotation=30, ha="right")

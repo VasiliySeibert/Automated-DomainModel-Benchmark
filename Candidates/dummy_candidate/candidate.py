@@ -3,6 +3,14 @@
 Always emits the same hard-coded PlantUML block, regardless of the
 input NLT. No LLM, no external dependencies, no parsing.
 
+Attribute pool: v2 — 10 distinct attributes across three classes,
+one shared per class (`String identifier`) plus class-specific
+attributes mixing `String` / `Integer` / `Boolean` / `Date` types.
+No duplicate attribute names. Class structure (`Book` / `Author` /
+`Library`) and associations (`writtenBy`, `holds`) are unchanged
+from v1, so any drift in scored numbers is purely attributable
+to the attribute pool change.
+
 Purpose:
   * Smoke-test the `Workflow/Benchmark-Workflow/generate.py` →
     `Workflow/Benchmark-Workflow/score.py` →
@@ -27,14 +35,21 @@ from Candidates.candidate_interface import CandidateOutput
 _PUML = (
     "@startuml\n"
     "class Book {\n"
+    "  String identifier\n"
     "  String title\n"
     "  Integer year\n"
+    "  Boolean available\n"
     "}\n"
     "class Author {\n"
+    "  String identifier\n"
     "  String name\n"
+    "  Date birthDate\n"
     "}\n"
     "class Library {\n"
+    "  String identifier\n"
     "  String name\n"
+    "  String address\n"
+    "  Integer capacity\n"
     "}\n"
     'Book "*" -- "1" Author : writtenBy\n'
     'Library "1" o-- "*" Book : holds\n'

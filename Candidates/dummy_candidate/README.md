@@ -6,7 +6,15 @@ currently only) implementation of the interface defined in
 
 The candidate ignores its input and always returns the same
 hard-coded PlantUML block (a tiny library with `Book`, `Author`,
-`Library` classes and two associations).
+`Library` classes and two associations: `writtenBy` and `holds`).
+
+**Attribute pool version: v2.** The dummy declares 10 distinct
+attributes across the three classes — one shared per class
+(`String identifier`) plus class-specific attributes mixing
+`String` / `Integer` / `Boolean` / `Date` types. No duplicate
+attribute names. Class structure and associations match v1 exactly;
+any drift in scored numbers between runs is purely attributable to
+the attribute pool change.
 
 ```
 Candidates/dummy_candidate/

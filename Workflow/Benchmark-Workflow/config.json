@@ -26,6 +26,5 @@
     }
   ],
   "datasets": ["kaiser", "reference"],
-  "metric": "metrik-4",
-  "score_buckets": [0.0, 0.1, 0.2, 0.3, 1.0001]
+  "metric": "metrik-4"
 }
