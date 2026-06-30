@@ -5,6 +5,16 @@
   "harness_default": "ollama",
   "skip_folders": ["H2S", "H2S-Short", "HelpingHands"],
   "timeout_seconds": 600,
-  "description": "One-shot COT with H2S annotated example (sentence-by-sentence -> arrows).",
-  "prompt_files": ["prompt_system.txt", "prompt_task.txt", "annotated_example.txt"]
+  "description": "Chain-of-Thought with the H2S annotated description as the example. Skips H2S, H2S-Short, and HelpingHands from evaluation. Two-stage: stage 1 (CoT extraction) + stage 2 (translation prompt) + line-by-line validator.",
+  "prompt_files": ["prompt_system.txt", "prompt_task.txt", "prompt_translate.txt"],
+  "examples_file": "annotated_example.txt",
+  "default_model": "qwen2.5-coder:7b",
+  "default_temperature": 0.7,
+  "default_temperature_translate": 0.0,
+  "default_num_predict": 1024,
+  "default_seed": null,
+  "default_top_p": null,
+  "default_top_k": null,
+  "default_repeat_penalty": null,
+  "enable_translation": true
 }

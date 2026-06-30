@@ -5,7 +5,16 @@
   "harness_default": "ollama",
   "skip_folders": ["BTMS", "H2S-Short", "HelpingHands"],
   "timeout_seconds": 600,
-  "description": "Two-shot with BTMS + H2S-Short examples.",
-  "prompt_files": ["prompt_system.txt", "prompt_task.txt"],
-  "examples_file": "examples.json"
+  "description": "Two-shot with BTMS + H2S-Short as the two examples. Skips BTMS, H2S-Short, and HelpingHands from evaluation. Two-stage: stage 1 (extraction) + stage 2 (translation prompt) + line-by-line validator.",
+  "prompt_files": ["prompt_system.txt", "prompt_task.txt", "prompt_translate.txt"],
+  "examples_file": "examples.json",
+  "default_model": "qwen2.5-coder:7b",
+  "default_temperature": 0.7,
+  "default_temperature_translate": 0.0,
+  "default_num_predict": 1024,
+  "default_seed": null,
+  "default_top_p": null,
+  "default_top_k": null,
+  "default_repeat_penalty": null,
+  "enable_translation": true
 }

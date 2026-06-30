@@ -1,0 +1,32 @@
+candidate,dataset,id,error,raw_excerpt
+/Users/vasiliy/Documents/GitHub/Automated-DomainModel-Benchmark/Candidates/AutomatedDomainModelling_zenodo/zero_shot/candidate.py,kaiser_clean,Menso,zenodo_zero_shot_invalid: line 8: enum literal '0' is not a valid identifier | line 9: enum literal '5' is not a valid identifier | line 10: enum literal '10' is not a valid identifier | line 11: enum literal '15' is not a valid identifier | line 12: enum literal '20' is not a valid identifier,"@startuml
+enum TrajectoryStatus {
+    APPROVED
+    SUSPENDED
+    CANCELLED
+}
+enum DiscountLevel {
+    0
+    5
+    10
+    15
+    20
+}
+class TownAuthority {
+    String name
+}
+class Trajectory {
+    Stri"
+/Users/vasiliy/Documents/GitHub/Automated-DomainModel-Benchmark/Candidates/AutomatedDomainModelling_zenodo/zero_shot/candidate.py,kaiser_clean,OnlineTutoringSystem,zenodo_zero_shot_invalid: line 19: enum literal 'ETC' is not a valid identifier,"@startuml
+enum ExpertiseLevel {
+    PRIMARY_SCHOOL_LEVEL
+    HIGH_SCHOOL_LEVEL
+    UNIVERSITY_LEVEL
+}
+enum PaymentMethod {
+    CREDIT_CARD
+    WIRE_TRANSFER
+}
+enum CancellationType {
+    STUDENT
+    T"

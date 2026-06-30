@@ -1,0 +1,126 @@
+{
+  "candidate": "/Users/vasiliy/Documents/GitHub/Automated-DomainModel-Benchmark/Candidates/AutomatedDomainModelling_zenodo/one_shot_btms/candidate.py",
+  "dataset": "kaiser_clean",
+  "n_records": 3,
+  "n_failed": 0,
+  "elapsed_seconds": 16.86,
+  "records": [
+    {
+      "id": "AirTravel",
+      "nlt": "The name, type, year of manufacture, and date of the next inspection are stored for aircraft. An aircraft performs several flights, the flight number and date of which are stored. \nSeveral passengers take part in a flight, and their names and passport numbers are stored. A passenger can take part in several flights. The (personalized) ticket for each flight is stored in the form of the ticket number and price. In addition, it is stored whether an upgrade is desired. \nPassenger aircraft are special aircraft used exclusively for the transport of passengers. The number of seats on these aircraft is also stored. \nA passenger aircraft can have several seat categories. The designation of each category is stored, whether or not it offers an entertainment program, and how many seats there are in this category. Each ticket is for a specific seat category.\nEach aircraft can be part of an airline, whose name is stored. \nAn airline employs several flight attendants and pilots. The name, date of employment, and whether the flight attendant is a chief steward or stewardess are stored for flight attendants. The name, date of employment, and license are stored for pilots.\nSeveral flight attendants work on a flight. One pilot flies the aircraft as the captain and one or two other pilots act as co-pilots.\nThe name, address, and number of runways are stored for airports. Each aircraft can have a home airport. Each flight has a departure airport and a destination airport.",
+      "reference": "@startuml\n\nclass Airline {\n String Name\n}\n\nclass Employee {\n String Nmae\n Date StartDate\n}\n\nclass Airport {\n String Name\n String Address\n Int RunwayCount\n}\n\nclass FlightAttendant {\n Boolean Purser\n}\n\nclass Airplane {\n String Name\n String Type\n Date ConstructionYear\n Date NextInspection\n}\n\nclass Flight {\n String FlightNumber\n}\n\nclass Pilot {\n String License\n}\n\nclass PassengerPlane {\n Int Seats\n}\n\nclass FlightExecution {\n Date Date\n}\n\nclass SeatCategory {\n String Description\n Boolean Enterainment\n Int SeatCount\n}\n\nclass Passenger {\n String Name\n String PassportNumber\n}\n\nclass Ticket {\n String TicketId\n Float Price\n Boolean Upgrade\n}\n\n\n\nAirline \"0..1\"-\"0..*\" Employee\nAirline \"0..1\"o--\"0..*\" Airplane\nAirplane \"0..*\"-\"0..1\" Airport\nAirplane \"0..1\"-\"0..*\" FlightExecution\nAirport \"0..1\"--\"0..*\" Flight : Source\nAirport \"0..1\"--\"0..*\" Flight : Destination\nFlight \"0..1\"--\"0..*\" FlightExecution\nFlightExecution \"0..*\"--\"0..*\" FlightAttendant\nFlightExecution \"0..*\"-\"0..1\" Pilot : Captain\nFlightExecution \"0..*\"-\"0..2\" Pilot : Co-pilot\nFlightExecution \"0..*\"--\"0..*\" Passenger\nEmployee <|-- FlightAttendant\nEmployee <|-- Pilot\nAirplane <|-- PassengerPlane\nPassengerPlane \"0..1\"*--\"0..*\" SeatCategory\nSeatCategory \"0..1\"--\"0..*\" Ticket\nFlightExecution .. Ticket\nFlightExecution .. Passenger\n\n@enduml",
+      "generated": "@startuml\n\nenum Role {\n  captain\n  coPilot\n}\n\nclass Aircraft {\n  string name\n  string type\n  int year\n  Date nextInspection\n}\n\nclass PassengerAircraft {\n  int numberOfSeats\n}\n\nclass Flight {\n  string flightNumber\n  Date date\n}\n\nclass Airline {\n  string name\n}\n\nclass Airport {\n  string name\n  string address\n  int numberOfRunways\n}\n\nclass SeatCategory {\n  string designation\n  boolean entertainmentProgram\n  int numberOfSeats\n}\n\nclass Passenger {\n  string name\n  string passportNumber\n}\n\nclass Ticket {\n  string ticketNumber\n  float price\n  boolean upgradeDesired\n}\n\nclass FlightAttendant {\n  string name\n  Date dateOfEmployment\n  boolean isChiefSteward\n}\n\nclass Pilot {\n  string name\n  Date dateOfEmployment\n  string license\n}\n\nAirline \"1\" -- \"*\" Aircraft : contain\nAirport \"1\" -- \"*\" Aircraft : contain\nAircraft \"1\" -- \"*\" Flight : perform\nPassengerAircraft \"1\" -- \"*\" SeatCategory : have\nFlight \"1\" -- \"*\" SeatCategory : have\nFlight \"1\" -- \"1\" Airport : departFrom\nFlight \"1\" -- \"1\" Airport : arriveAt\nFlight \"1\" -- \"*\" FlightAttendant : workBy\nFlight \"1\" -- \"1\" Pilot : flyBy\nFlight \"1\" -- \"*\" Pilot : coPilotedBy\nFlight \"1\" -- \"*\" Passenger : board\nPassenger \"1\" -- \"*\" Ticket : hold\nTicket \"1\" -- \"1\" SeatCategory : belongTo\nPassengerAircraft \"\" --|> \"\" Aircraft\n\n@enduml\n",
+      "failed": false,
+      "error": null,
+      "raw_excerpt": "@startuml\nenum Role {\n  captain\n  coPilot\n}\n\nclass Aircraft {\n  string name\n  string type\n  int year\n  Date nextInspection\n}\n\nclass PassengerAircraft {\n  int numberOfSeats\n}\n\nclass Flight {\n  string flightNumber\n  Date date\n}\n\nclass Airline {\n  string name\n}\n\nclass Airport {\n  string name\n  string address\n  int numberOfRunways\n}\n\nclass SeatCategory {\n  string designation\n  boolean entertainmentProgram\n  int numberOfSeats\n}\n\nclass Passenger {\n  string name\n  string passportNumber\n}\n\nclass Ticket {\n  string ticketNumber\n  float price\n  boolean upgradeDesired\n}\n\nclass FlightAttendant {\n  string name\n  Date dateOfEmployment\n  boolean isChiefSteward\n}\n\nclass Pilot {\n  string name\n  Date dateOfEmployment\n  string license\n}\n\nAirline \"1\" -- \"*\" Aircraft : contain\nAirport \"1\" -- \"*\" Aircraft : contain\nAircraft \"1\" -- \"*\" Flight : perform\nPassengerAircraft \"1\" -- \"*\" SeatCategory : have\nFlight \"1\" -- \"*\" SeatCategory : have\nFlight \"1\" -- \"1\" Airport : departFrom\nFlight \"1\" -- \"1\" Airport : arriveAt\nFlight \"1\" -- \"*\" FlightAttendant : workBy\nFlight \"1\" -- \"1\" Pilot : flyBy\nFlight \"1\" -- \"*\" Pilot : coPilotedBy\nFlight \"1\" -- \"*\" Passenger : board\nPassenger \"1\" -- \"*\" Ticket : hold\nTicket \"1\" -- \"1\" SeatCategory : belongTo\nPassengerAircraft --|> Aircraft\n@enduml",
+      "elapsed_seconds": 7.55,
+      "scores": {
+        "class_score": 0.8152876877095218,
+        "attribute_score": 0.868615565247475,
+        "association_score": 0.6908559734542978,
+        "parse_warning_ref": [],
+        "parse_warning_gen": [],
+        "error": null
+      }
+    },
+    {
+      "id": "AlphaInsurance",
+      "nlt": "Alpha Insurance is an insurance company that provides its clients with various types of insurance policies. \nAs soon as a customer addresses Alpha Insurance, a broker is assigned to follow the customer’s file. The broker is registered in the system, so that when a customer calls, based on the contract, the help desk can immediately trace who is the customer's first account manager. After the broker is assigned to the customer, the latter indicates which type(s) of insurance policy they would like to sign for, so the broker could, depending on the case, either assess the customer’s profile on the spot or send the customer’s file for analysis to the head office. After the customer’s profile has been assessed and the customer has been deemed trustworthy , a preliminary contract/offer on an insurance product is made to the customer either in person or by email. (Such offers can also be extended to already existing customers.) If the customer agrees to the offer, the contract is signed by both parties. After the signing of the contract, the client enjoys the coverage and is invoiced (monthly or yearly – depending on the choice made in the contract) according to the price of the insurance product they bought.\nIn case the insured event happens, a customer should send a claim for compensation. Then the company opens one or several claim cases (e.g. in case of an accident, often material damage & physical damage are handled separately). Once the case file is complete, it is sent for assessment by different estimators based on their area of expertise. According to the reports issued by the estimators, it is decided whether the claim case is approved. In case of approval the compensation decision is registered that stipulates which costs are eligible for (partial) refund.  For the supplied documents, the sum of compensation is calculated and the compensation is paid to the customer’s account.  The estimators’ reports must be stored in the database for at least one year after the payment of compensation for legal purposes.",
+      "reference": "@startuml\n\nclass Customer {\n    String Name\n    String email\n}\nclass InsurancePolicy {\n    String Type\n    Double MonthlyPrice\n    Double YearlyPrice\n}\nclass Contract {\n    String Status\n    String InvoiceFrequency\n}\nclass Invoice {}\n\nclass Broker{\n    String Name\n}\nclass Claim {\n    Double CompensationTotal\n    Double calculateCompenstationSum()\n}\nclass ClaimCase {\n    String Status\n    String CompensationDecision\n}\nclass Report {}\nclass Estimator {\n    String AreaOfExpertise\n}\nclass CompensationPayment {\n    Date PaymentDate\n}\n\nCustomer \"1\"--\"0..*\" Contract\nContract \"1\" -- \"0..*\" Invoice\nInsurancePolicy \"1\" -- \"0..*\" Contract\nContract \"1\" -- \"0..*\" ClaimCase\nCustomer \"1\" -- \"0..*\" Claim\nClaim \"1\" -- \"0..*\" ClaimCase\nClaimCase \"1\" -- \"0..*\" CompensationPayment\nEstimator \"0..*\" - \"0..*\" ClaimCase\nClaimCase .. Report\nClaimCase .. Estimator\nCustomer \"0..*\" - \"0..1\" Broker\n\n\n@enduml",
+      "generated": "@startuml\n\nenum PaymentFrequency {\n  monthly\n  yearly\n}\n\nclass Broker {\n  string name\n}\n\nclass Customer { }\n\nclass InsuranceProduct {\n  string name\n  float price\n}\n\nclass Contract {\n  PaymentFrequency paymentFrequency\n}\n\nclass Claim { }\n\nclass ClaimCase {\n  boolean approved\n}\n\nclass Estimator {\n  string name\n  string areaOfExpertise\n}\n\nclass CompensationDecision { }\n\nclass CompensationPayment {\n  float sum\n  Date paymentDate\n}\n\nclass EstimatorReport {\n  string content\n  Date issueDate\n}\n\nBroker \"1\" -- \"*\" Customer : handles\nCustomer \"1\" -- \"*\" Contract : signs\nInsuranceProduct \"1\" -- \"*\" Contract : is offered in\nContract \"1\" -- \"1\" InsuranceProduct : covers\nCustomer \"1\" -- \"*\" Claim : submits\nClaim \"1\" -- \"*\" ClaimCase : contains\nClaimCase \"1\" -- \"*\" Estimator : assessed by\nEstimator \"1\" -- \"*\" EstimatorReport : issues\nEstimatorReport \"1\" -- \"*\" ClaimCase : assesses\nClaimCase \"1\" -- \"0..1\" CompensationDecision : results in\nCompensationDecision \"1\" -- \"*\" CompensationPayment : leads to\n\n@enduml\n",
+      "failed": false,
+      "error": null,
+      "raw_excerpt": "@startuml\nenum PaymentFrequency {\n  monthly\n  yearly\n}\n\nclass Broker {\n  string name\n}\n\nclass Customer {\n}\n\nclass InsuranceProduct {\n  string name\n  float price\n}\n\nclass Contract {\n  PaymentFrequency paymentFrequency\n}\n\nclass Claim {\n}\n\nclass ClaimCase {\n  boolean approved\n}\n\nclass Estimator {\n  string name\n  string areaOfExpertise\n}\n\nclass CompensationDecision {\n}\n\nclass CompensationPayment {\n  float sum\n  Date paymentDate\n}\n\nclass EstimatorReport {\n  string content\n  Date issueDate\n}\n\nBroker \"1\" -- \"*\" Customer : handles\nCustomer \"1\" -- \"*\" Contract : signs\nInsuranceProduct \"1\" -- \"*\" Contract : is offered in\nContract \"1\" -- \"1\" InsuranceProduct : covers\nCustomer \"1\" -- \"*\" Claim : submits\nClaim \"1\" -- \"*\" ClaimCase : contains\nClaimCase \"1\" -- \"*\" Estimator : assessed by\nEstimator \"1\" -- \"*\" EstimatorReport : issues\nEstimatorReport \"1\" -- \"*\" ClaimCase : assesses\nClaimCase \"1\" -- \"0..1\" CompensationDecision : results in\nCompensationDecision \"1\" -- \"*\" CompensationPayment : leads to\n@enduml",
+      "elapsed_seconds": 5.395,
+      "scores": {
+        "class_score": 0.7384911835902225,
+        "attribute_score": 0.784987404449568,
+        "association_score": 0.630000001585083,
+        "parse_warning_ref": [],
+        "parse_warning_gen": [],
+        "error": null
+      }
+    },
+    {
+      "id": "BankAccount",
+      "nlt": "The following description of a bank is given. Create a suitable class diagram from the given informal description.\nA bank manages any number of customers. The first name and last name of type String are stored for each customer. A bank consists of any number of branches. A customer has at least one and at most five accounts. Each account has an owner who is a customer of the bank. There are two basic types of accounts: Current accounts and savings accounts. Each account has an account number of type int and a current account balance of type double. Current accounts also have an overdraft limit of type double.",
+      "reference": "@startuml\n    class Bank\n\n    class Branch\n\n    class Customer {\n        String firstName\n        String lastName\n    }\n\n    class Account {\n        int accountNumber\n        double balance\n    }\n\n    class SavingsAccount\n\n    class CheckingAccount {\n        double overdraftLimit\n    }\n\n    Bank \"1\" o-- \"*\" Branch\n    Bank \"*\" -- \"*\" Customer\n    Customer \"1\" --> \"1..5\" Account\n    Account <|-- SavingsAccount\n    Account <|-- CheckingAccount\n@enduml",
+      "generated": "@startuml\n\nenum AccountType {\n  CURRENT\n  SAVINGS\n}\n\nclass Bank { }\n\nclass Branch { }\n\nclass Customer {\n  String firstName\n  String lastName\n}\n\nclass Account {\n  int accountNumber\n  double balance\n}\n\nclass CurrentAccount {\n  double overdraftLimit\n}\n\nclass SavingsAccount { }\n\nBank \"1\" -- \"0..*\" Branch : contains\nBank \"1\" -- \"0..*\" Customer : contains\nCustomer \"1\" -- \"1..5\" Account : has\nAccount \"1\" -- \"1\" Customer : has\n\n@enduml\n",
+      "failed": false,
+      "error": null,
+      "raw_excerpt": "@startuml\nenum AccountType {\n  CURRENT\n  SAVINGS\n}\nclass Bank {\n}\nclass Branch {\n}\nclass Customer {\n  String firstName\n  String lastName\n}\nclass Account {\n  int accountNumber\n  double balance\n}\nclass CurrentAccount {\n  double overdraftLimit\n}\nclass SavingsAccount {\n}\nBank \"1\" -- \"0..*\" Branch : contains\nBank \"1\" -- \"0..*\" Customer : contains\nCustomer \"1\" -- \"1..5\" Account : has\nAccount \"1\" -- \"1\" Customer : has\n@enduml",
+      "elapsed_seconds": 3.913,
+      "scores": {
+        "class_score": 0.7891182714925633,
+        "attribute_score": 0.917788006894138,
+        "association_score": 0.488888888888889,
+        "parse_warning_ref": [],
+        "parse_warning_gen": [],
+        "error": null
+      }
+    }
+  ],
+  "summary": {
+    "class_score": {
+      "mean": 0.7809657142641026,
+      "std": 0.031877619142159745,
+      "median": 0.7891182714925633,
+      "mad": 0.02831635378258668,
+      "n": 3,
+      "buckets": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        2,
+        1,
+        0
+      ],
+      "failed": 0
+    },
+    "attribute_score": {
+      "mean": 0.8571303255303936,
+      "std": 0.05482051350196867,
+      "median": 0.868615565247475,
+      "mad": 0.048095280720550436,
+      "n": 3,
+      "buckets": [
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        1,
+        1,
+        1
+      ],
+      "failed": 0
+    },
+    "association_score": {
+      "mean": 0.60324828797609,
+      "std": 0.08459478489728131,
+      "median": 0.630000001585083,
+      "mad": 0.07623959939146728,
+      "n": 3,
+      "buckets": [
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        2,
+        0,
+        0,
+        0
+      ],
+      "failed": 0
+    }
+  },
+  "metric_name": "metrik-4"
+}

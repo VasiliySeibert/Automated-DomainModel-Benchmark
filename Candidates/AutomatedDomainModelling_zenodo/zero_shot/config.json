@@ -5,6 +5,15 @@
   "harness_default": "ollama",
   "skip_folders": [],
   "timeout_seconds": 600,
-  "description": "Zero-shot prompt from zenodo §1. Emits zenodo text format; auto-converted to PlantUML via bundled helper.",
-  "prompt_files": ["prompt_system.txt", "prompt_task.txt"]
+  "description": "Two-stage zero-shot: stage 1 extracts the domain model in the zenodo DSL, stage 2 translates to canonical PlantUML, then a line-by-line validator repairs mechanical issues and fails the rest. The translate step can be disabled with --no-translate on run.py for A/B comparison.",
+  "prompt_files": ["prompt_system.txt", "prompt_task.txt", "prompt_translate.txt"],
+  "default_model": "qwen2.5-coder:7b",
+  "default_temperature": 0.7,
+  "default_temperature_translate": 0.0,
+  "default_num_predict": 1024,
+  "default_seed": null,
+  "default_top_p": null,
+  "default_top_k": null,
+  "default_repeat_penalty": null,
+  "enable_translation": true
 }

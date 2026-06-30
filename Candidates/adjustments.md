@@ -58,11 +58,16 @@ The following files were deleted as part of the rewrite:
   Replaced by `tests/test_candidate_interface.py` and the
   `tests/test_workflow_*.py` suite.
 
-The 11 legacy strategies under `text2uml-kaiser/`,
-`AutomatedDomainModelling_zenodo/`, and `ai4se_benchmarkPaper/rule_based/`
-have had their module-level `SPEC = CandidateSpec(...)` and
-`register(SPEC)` lines removed. Their `run()` functions are untouched
-and will be migrated to the new interface in a follow-up step.
+The 5 legacy strategies under `text2uml-kaiser/`
+(`zero_shot`, `one_shot`, `few_shot`, `cot`, `cot_domain`) and
+`ai4se_benchmarkPaper/rule_based/` (now just `rule_based/` — see the
+migrated block below) had their module-level `SPEC = CandidateSpec(...)`
+and `register(SPEC)` lines removed. Of these, `rule_based` and the
+4 `AutomatedDomainModelling_zenodo/` one-shot / two-shot / cot
+strategies have been migrated to the new `Candidate` interface
+(see the migrated blocks below). The 5 `text2uml-kaiser/` strategies
+remain on the legacy `run(spec, nlt) -> dict` adapter and will be
+migrated in a follow-up step.
 
 ### rule_based — migrated
 
@@ -81,45 +86,130 @@ the new `Candidate` interface:
   end-to-end on `--limit 3` against `kaiser_clean`. Skipped when
   spaCy / `en_core_web_sm` are unavailable.
 
-The other 11 LLM strategies under `text2uml-kaiser/` and
-`AutomatedDomainModelling_zenodo/` remain on the legacy
-`run(spec, nlt) -> dict` adapter; they will be migrated in a
-follow-up step using the same shape.
+### zenodo_zero_shot — migrated (two-stage with validator)
 
-## Migration of legacy strategies — TODO
+The LLM-driven `Candidates/AutomatedDomainModelling_zenodo/zero_shot/`
+candidate is the first of the 11 legacy LLM strategies to be migrated.
+It is also the architectural reference for the other 10 because it
+implements the full two-stage pipeline:
 
-Each legacy strategy needs:
+- `strategy.py` deleted; its logic inlined into `candidate.py` as
+  `TwoStageZeroShotCandidate`.
+- New `candidate.py` exposes the module-level `candidate` callable.
+  Constructor takes `model`, `temperature`, `temperature_translate`
+  (defaults 0.7 / 0.0), `num_predict`, `seed`, `top_p`, `top_k`,
+  `repeat_penalty`, `timeout`, `enable_translation`.
+- New `metric.json` declares `{"default_metric": "metrik-1"}`.
+- New `run.py` is the per-candidate driver with
+  `CANDIDATE_ID = "zenodo_zero_shot"`. CLI flags: `--model`,
+  `--temperature`, `--temperature-translate`, `--num-predict`,
+  `--seed`, `--top-p`, `--top-k`, `--repeat-penalty`, `--timeout`,
+  `--no-translate`.
+- New `prompt_translate.txt` is the stage 2 LLM prompt. It encodes
+  the metrik-4 grammar rules (markers, class declarations, enums,
+  four quoted cardinalities, four arrow types `--` / `*--` / `o--` /
+  `--|>`, the referenced-class-must-be-declared rule, the
+  `_NON_CLASS_TOKENS` blocklist, the identifier regex, no-markdown,
+  ordering, output-must-stop-after-`@enduml`). Rule 12a was added
+  in a follow-up: "if your response contains reasoning, ... emit
+  only the final @startuml...@enduml block as your answer, with no
+  other text" — specifically to handle CoT and any other strategy
+  that produces multi-paragraph output.
+- New shared `Candidates/AutomatedDomainModelling_zenodo/plantuml_validator.py`
+  is the line-by-line validator. It auto-repairs mechanical issues
+  (add missing class declarations, drop lines with bad endpoints,
+  strip markdown fences) and fails the record on non-mechanical
+  issues (unrecognised lines, invalid identifiers, missing markers,
+  empty diagrams).
+- The local `_ollama.py` was extended in place with five new optional
+  kwargs (`seed`, `top_p`, `top_k`, `repeat_penalty`, `think`). All
+  default to `None` and are omitted from the Ollama `options` block
+  if `None`, so the inlined copies in sibling zenodo strategies
+  remain functionally identical when called with no extra args. The
+  `message.thinking` fallback handles the cloud models that
+  occasionally return verbose reasoning in the `thinking` field
+  instead of `content`.
+- Stage 1 uses the existing zenodo §1b prompt verbatim
+  (`prompt_system.txt` + `prompt_task.txt`); stage 2 uses the new
+  `prompt_translate.txt`. If `--no-translate` is set, the candidate
+  skips stage 2 and validates the intermediate PUML from
+  `zenodo_text_format.text_to_plantuml` directly — this is the A/B
+  mode for measuring the value of stage 2.
 
-1. A class wrapping its `run(spec, nlt) -> dict` function (or
-   refactor `run` to take only `nlt` and pull sampling params from
-   constructor arguments).
-2. A module-level `candidate = MyClass(...)` instance.
-3. A `candidate.py` filename (or a `__init__.py` shim that re-exports
-   `candidate`).
+The 9 other legacy LLM strategies from `AutomatedDomainModelling_zenodo/`
+(one_shot_btms, one_shot_h2s_short, two_shot, cot, plus 4 under
+`text2uml-kaiser/`) remain on the legacy `run(spec, nlt) -> dict`
+adapter and will be migrated in subsequent PRs using this candidate
+as the template.
 
-Example shape:
+### zenodo_one_shot_btms — migrated (one-stage example, two-stage with translation)
 
-```python
-# Candidates/text2uml-kaiser/zero_shot/candidate.py
-from .strategy import _run_impl
-from Candidates.candidate_interface import CandidateOutput
+The first one-shot LLM strategy to be migrated. Mirrors the
+`zenodo_zero_shot — migrated` block in every respect.
 
+- `strategy.py` deleted; new `candidate.py` exposes the module-level
+  `candidate` callable wrapping `OneShotBtmsCandidate`.
+- Stage 1 message construction follows zenodo §2b:
+  `system + user(BTMS nlt) + assistant(BTMS model) + user(target nlt)`.
+  The example is read from `examples.json` at module-init time.
+- `CANDIDATE_ID = "zenodo_one_shot_btms"`. Skip folder: `BTMS`.
+- All 7 sampling flags + `--no-translate` on `run.py`.
+- `prompt_translate.txt` is a copy of the canonical PUML grammar
+  prompt, kept in sync with the other zenodo strategies (per the
+  self-containment decision).
+- 3/3 smoke-test records on `kaiser_clean` with `glm-5.1:cloud`,
+  `temperature=0.0`, `temperature-translate=0.0`. Generate 16.9 s,
+  score 47.9 s, visualise 0.4 s. No failures.
 
-class ZeroShotCandidate:
-    def __init__(self, model: str, temperature: float = 0.7):
-        self.model = model
-        self.temperature = temperature
+### zenodo_one_shot_h2s_short — migrated (one-stage example, two-stage with translation)
 
-    def __call__(self, nlt: str) -> CandidateOutput:
-        result = _run_impl(self.model, self.temperature, nlt)
-        return CandidateOutput.from_dict(result)
+Same shape as `one_shot_btms`, but with the H2S-Short example.
 
+- `OneShotH2sShortCandidate` class. `_build_messages` iterates over
+  the single-entry `examples.json` (the H2S-Short example).
+- `CANDIDATE_ID = "zenodo_one_shot_h2s_short"`. Skip folders:
+  `H2S-Short`, `HelpingHands`.
+- 3/3 smoke-test records on `kaiser_clean`. Generate 19.6 s,
+  score 57.2 s, visualise 0.4 s. No failures.
 
-candidate = ZeroShotCandidate(model="<default>")
-```
+### zenodo_two_shot — migrated (two-stage example, two-stage with translation)
 
-The current dummy candidate is the canonical reference for the
-expected shape.
+Same shape as the one-shots, but `_build_messages` iterates over
+**both** examples in `examples.json` (BTMS first, H2S-Short second —
+order matters).
+
+- `TwoShotCandidate` class. Shot order is enforced by the order
+  in `examples.json`; the candidate does not sort.
+- `CANDIDATE_ID = "zenodo_two_shot"`. Skip folders: `BTMS`,
+  `H2S-Short`, `HelpingHands`.
+- The two-shot prompt is roughly 2× the size of the one-shot
+  prompt. With `num_predict=1024` and the cloud models' thinking
+  mode off, the response budget is adequate; smoke test
+  produced 0 failures on 3 records.
+- 3/3 smoke-test records on `kaiser_clean`. Generate 18.8 s,
+  score 53.8 s, visualise 0.4 s. No failures.
+
+### zenodo_cot — migrated (no assistant turn, two-stage with translation)
+
+The most distinctive of the four: stage 1 has **no assistant turn**
+(zenodo §5). The annotated H2S description is a single user
+message, the target NLT is a second user message, and the model
+is expected to produce the rationale itself.
+
+- `CotCandidate` class. The annotated H2S description is read from
+  `annotated_example.txt` (a single string, not a JSON list of
+  `{nlt, model}` pairs).
+- `CANDIDATE_ID = "zenodo_cot"`. Skip folders: `H2S`, `H2S-Short`,
+  `HelpingHands`.
+- CoT is the most verbose of the four strategies. The new rule 12a
+  in `prompt_translate.txt` ("if your response contains reasoning,
+  emit only the final @startuml...@enduml block as your answer,
+  with no other text") specifically targets this. Without 12a the
+  stage 2 prompt was receiving analysis prose instead of PUML and
+  failing to find an `@startuml` block; with 12a the model produces
+  clean output.
+- 3/3 smoke-test records on `kaiser_clean`. Generate 27.4 s,
+  score 44.0 s, visualise 0.4 s. No failures.
 
 ---
 
