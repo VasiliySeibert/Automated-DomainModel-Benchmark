@@ -83,6 +83,21 @@ conjuncts) without explicit "to-be" removal. Concretely:
     `prep "of" + pobj`; direction reversed on `maybe` or auxiliary
     `can`
 - **Cardinality inference:** plural `NNS/NNPS` → `"1..*"`, else `"1"`.
+- **Parser-compliance sanitiser:** two layers of defence against
+  emitting PUML that the strict metrik-4 parser (and metrik-1..3, 5,
+  all of which run their parser in `strict=True` mode) would reject:
+  1. `heuristic.py::c_rule_extract_classes` filters NOUN/PROPN tokens
+     whose text is not a valid PlantUML identifier (`[A-Za-z_][A-Za-z0-9_]*`)
+     or is in a sentence-adverb blocklist (`i.e`, `e.g`, `etc`, `cf`,
+     `vs`, `al`, `viz`, `approx`, `yes`, `no`, `true`, `false`).
+     This stops tokens like `i.e.` (which spaCy tags NOUN inside
+     parentheticals) and stray `-` (tagged NOUN as an apposition) from
+     being promoted to classes and then emitted as malformed
+     relationship endpoints.
+  2. `candidate.py::_normalise` runs `_sanitise_body`, a defensive
+     post-processor that drops any line containing a relationship
+     arrow whose source or target identifier is missing or in the
+     same blocklist. Acts as a safety net for any future regression.
 
 ## Self-author attribution
 
@@ -125,9 +140,11 @@ python -m spacy download en_core_web_sm==3.8.0
 
 | File           | Purpose                                              |
 |----------------|------------------------------------------------------|
-| `strategy.py`  | Thin adapter; wraps `heuristic.generate_uml_from_text` and registers the `SPEC`. |
+| `candidate.py` | Thin wrapper exposing module-level `candidate`; conforms to the `Candidate` Protocol. |
+| `run.py`       | Per-candidate driver; chains `generate.py` → `score.py` → `visualise.py`. |
+| `metric.json`  | `{"default_metric": "metrik-1"}` — read by `run.py`. |
 | `heuristic.py` | Self-contained spaCy pipeline (parse + 5 extractors). |
-| `config.json`  | Discovery metadata consumed by `Candidates.registry`. |
+| `config.json`  | Legacy discovery metadata from the deleted registry. Not currently read. |
 | `README.md`    | This file. |
 
 ## No skip folders
@@ -135,16 +152,55 @@ python -m spacy download en_core_web_sm==3.8.0
 The rule-based candidate has no LLM call and no few-shot examples, so
 nothing in the evaluation set is excluded.
 
-## How to run
+## Prerequisites
+
+The candidate uses spaCy. Install once before first use:
 
 ```bash
-# Not yet wired to the new `Candidate` interface.
-# Once migrated, this candidate will ship a `Candidates/ai4se_benchmarkPaper/rule_based/run.py`
-# driver invoked as:
-#
-#   PYTHONPATH=. python Candidates/ai4se_benchmarkPaper/rule_based/run.py \
-#       --dataset kaiser_clean
-#
-# For now the legacy `Workflow/run_full.py` driver has been removed.
-# Track the migration in `Candidates/adjustments.md`.
+pip install 'spacy>=3.7,<4.0'
+python -m spacy download en_core_web_sm==3.8.0
 ```
+
+If spaCy is not installed, every record is recorded as `failed=True`
+in the generated JSON and surfaces in `_errors.csv`; the pipeline does
+not crash.
+
+## How to run
+
+End-to-end through the per-candidate driver:
+
+```bash
+PYTHONPATH=. python Candidates/rule_based/run.py \
+    --dataset kaiser_clean
+```
+
+Useful flags:
+
+```bash
+# First 3 records only
+PYTHONPATH=. python Candidates/rule_based/run.py \
+    --dataset reference_clean --limit 3
+
+# Override the default metric (rule_based/metric.json ships metrik-1)
+PYTHONPATH=. python Candidates/rule_based/run.py \
+    --dataset kaiser_clean --metric metrik-4
+
+# Re-run only the visualiser (skip generate + score)
+PYTHONPATH=. python Candidates/rule_based/run.py \
+    --dataset kaiser_clean --skip-generate --skip-score
+```
+
+Under the hood the driver invokes the three workflow steps:
+
+```bash
+PYTHONPATH=. python Workflow/Benchmark-Workflow/generate.py  --candidate Candidates/rule_based/candidate.py --dataset ... --out ...
+PYTHONPATH=. python Workflow/Benchmark-Workflow/score.py     --in ...
+PYTHONPATH=. python Workflow/Benchmark-Workflow/visualise.py --in ..._scored.json --out-dir ... --metric ...
+```
+
+Outputs land in `Workflow/Results/rule_based/` by default:
+`<dataset>.json`, `<dataset>_scored.json`, `_summary.csv`,
+`_summary.json`, `_bucket_<dataset>_<element>_<metric>.csv`,
+`_errors.csv`, and `heatmap_<dataset>_<element>_<metric>.png`.
+
+See `Candidates/adjustments.md` for the migration history.

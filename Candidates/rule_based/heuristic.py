@@ -56,11 +56,32 @@ def clean_text(text):
 ##################################
 
 #Extract common nouns (NN) and proper nouns (NNP) and map them to classes
+# Tokens that survive `clean_text` but should never be promoted to a
+# candidate class — sentence adverbs, parenthetical markers, and any
+# other non-identifier token that spaCy tags as NOUN/PROPN.
+# Mirrors the strict PlantUML identifier regex used by the metrik parser
+# (`parser.py::IDENTIFIER = r"[A-Za-z_][A-Za-z0-9_]*"`).
+_NON_CLASS_TOKENS = {
+    "i.e", "e.g", "etc", "cf", "vs", "al", "viz", "approx",
+    "yes", "no", "true", "false",
+}
+_VALID_IDENTIFIER = re.compile(r"^[A-Za-z_][A-Za-z0-9_]*$")
+
+
+def _is_valid_class(text: str) -> bool:
+    if not text:
+        return False
+    if text.lower() in _NON_CLASS_TOKENS:
+        return False
+    return bool(_VALID_IDENTIFIER.match(text))
+
+
 def c_rule_extract_classes(doc):
-    classes =[] 
+    classes =[]
     for token in doc:
         if token.pos_ in {'NOUN','PROPN'}: # Nouns and Proper noun  'NN', 'NNP'
-            classes.append(token.text)
+            if _is_valid_class(token.text):
+                classes.append(token.text)
     return classes
 
 # Map Subject  and Object  forms to candidate classes based on verb 

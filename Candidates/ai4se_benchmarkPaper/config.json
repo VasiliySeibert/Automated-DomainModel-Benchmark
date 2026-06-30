@@ -1,7 +1,0 @@
-{
-  "source": "ai4se_benchmarkPaper",
-  "harness_default": null,
-  "timeout_seconds": 0,
-  "strategies": ["rule_based"],
-  "prompt_source": "ai4se_benchmarkPaper/benchmark/candidates/rule_based/utils.py"
-}

@@ -64,6 +64,28 @@ have had their module-level `SPEC = CandidateSpec(...)` and
 `register(SPEC)` lines removed. Their `run()` functions are untouched
 and will be migrated to the new interface in a follow-up step.
 
+### rule_based — migrated
+
+The non-LLM `Candidates/rule_based/` candidate has been migrated to
+the new `Candidate` interface:
+
+- `strategy.py` deleted; its normalisation logic (`_normalise`,
+  `_CLASS_LINE`, `_REL_LINE`) inlined into `candidate.py`.
+- New `candidate.py` exposes the module-level `candidate` callable
+  wrapping the `RuleBasedCandidate` class.
+- New `metric.json` declares `{"default_metric": "metrik-1"}`.
+- New `run.py` is the per-candidate driver (template:
+  `Candidates/dummy_candidate/run.py`) with
+  `CANDIDATE_ID = "rule_based"`.
+- `tests/test_rule_based_candidate.py` smoke-tests the driver
+  end-to-end on `--limit 3` against `kaiser_clean`. Skipped when
+  spaCy / `en_core_web_sm` are unavailable.
+
+The other 11 LLM strategies under `text2uml-kaiser/` and
+`AutomatedDomainModelling_zenodo/` remain on the legacy
+`run(spec, nlt) -> dict` adapter; they will be migrated in a
+follow-up step using the same shape.
+
 ## Migration of legacy strategies — TODO
 
 Each legacy strategy needs:
