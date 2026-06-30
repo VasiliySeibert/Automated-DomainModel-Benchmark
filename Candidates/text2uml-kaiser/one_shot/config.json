@@ -5,7 +5,14 @@
   "harness_default": "ollama",
   "skip_folders": ["AlphaInsurance"],
   "timeout_seconds": 600,
-  "description": "Single-call one-shot prompt with AlphaInsurance as the verbatim example. Skips AlphaInsurance from the evaluation set.",
+  "description": "Single-call one-shot prompt with AlphaInsurance as the verbatim example. Skips AlphaInsurance from the evaluation set. Single LLM call + line-by-line validator.",
   "prompt_file": "prompt.txt",
-  "examples_file": "examples.json"
+  "examples_file": "examples.json",
+  "default_model": "qwen2.5-coder:7b",
+  "default_temperature": 0.7,
+  "default_num_predict": 1024,
+  "default_seed": null,
+  "default_top_p": null,
+  "default_top_k": null,
+  "default_repeat_penalty": null
 }

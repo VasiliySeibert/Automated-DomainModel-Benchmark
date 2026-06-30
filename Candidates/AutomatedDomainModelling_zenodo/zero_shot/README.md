@@ -97,26 +97,29 @@ The non-cloud `qwen2.5-coder:7b` model does not have this quirk.
 
 ```bash
 # Full pipeline, kaiser_clean (3 records), default model.
-PYTHONPATH=. python Candidates/AutomatedDomainModelling_zenodo/zero_shot/run.py \
+PYTHONPATH=. python Candidates/AutomatedDomainModelling_zenodo/run-candidate.py --strategy zero_shot \
     --dataset kaiser_clean --limit 3
 
 # Override model + temperature, disable stage 2 translation (A/B mode).
-PYTHONPATH=. python Candidates/AutomatedDomainModelling_zenodo/zero_shot/run.py \
+PYTHONPATH=. python Candidates/AutomatedDomainModelling_zenodo/run-candidate.py --strategy zero_shot \
     --dataset kaiser_clean --limit 3 \
     --model glm-5.1:cloud --temperature 0.7 --no-translate
 
 # Re-run only the visualiser (skip generate + score).
-PYTHONPATH=. python Candidates/AutomatedDomainModelling_zenodo/zero_shot/run.py \
+PYTHONPATH=. python Candidates/AutomatedDomainModelling_zenodo/run-candidate.py --strategy zero_shot \
     --dataset kaiser_clean --skip-generate --skip-score
 
 # Full kaiser_clean with deterministic settings.
-PYTHONPATH=. python Candidates/AutomatedDomainModelling_zenodo/zero_shot/run.py \
+PYTHONPATH=. python Candidates/AutomatedDomainModelling_zenodo/run-candidate.py --strategy zero_shot \
     --dataset kaiser_clean --temperature 0.0 --temperature-translate 0.0 --seed 42
 ```
 
-## CLI flags (in addition to the standard ones from `dummy_candidate/run.py`)
+## CLI flags
+
+All flags below are accepted by the shared driver `Candidates/AutomatedDomainModelling_zenodo/run-candidate.py`. The same flag set applies to all 5 zenodo strategies; you select the strategy with `--strategy <name>`. See the shared driver's docstring for the full surface.
 
 | Flag                       | Default                          | Effect                                                       |
+|----------------------------|----------------------------------|--------------------------------------------------------------|
 |----------------------------|----------------------------------|--------------------------------------------------------------|
 | `--model TAG`              | `config.json::default_model`     | Ollama model tag (e.g. `qwen2.5-coder:7b`, `minimax-m3:cloud`). |
 | `--temperature FLOAT`      | `0.7`                            | Stage 1 (extraction) temperature.                            |
@@ -131,7 +134,7 @@ PYTHONPATH=. python Candidates/AutomatedDomainModelling_zenodo/zero_shot/run.py 
 
 ## Failure modes
 
-When a record fails, the `error` field in `Workflow/Results/zenodo_zero_shot/_errors.csv` will be one of:
+When a record fails, the `error` field in the auto-named output folder (under `Workflow/Results/`) will be one of:
 
 | `error` string                                        | Cause                                                              |
 |-------------------------------------------------------|--------------------------------------------------------------------|
@@ -144,7 +147,7 @@ Within the validator error string, individual findings are line-numbered and sel
 
 ## Outputs
 
-Default output folder: `Workflow/Results/zenodo_zero_shot/`.
+Default output folder: `Workflow/Results/<CANDIDATE_ID>_<model_sanitized>_<dataset>_<timestamp>/`. Computed by the shared driver `run-candidate.py`; see the shared driver's docstring for the full path shape.
 
 - `<dataset>.json` — raw generate output (records with `nlt`, `reference`, `generated`, `failed`, `error`, `raw_excerpt`, `elapsed_seconds`).
 - `<dataset>_scored.json` — scored (added per-record `scores` and top-level `summary`).
@@ -155,13 +158,11 @@ Default output folder: `Workflow/Results/zenodo_zero_shot/`.
 
 ## Relationship to the other zenodo strategies
 
-This is the first of the five zenodo strategies to be migrated to the
-new `Candidate` interface. The other four (`one_shot_btms`,
-`one_shot_h2s_short`, `two_shot`, `cot`) still ship their verbatim
-prompts and legacy `run(spec, nlt) -> dict` adapters; their
-`strategy.py` files remain in place. The shared
-`Candidates/AutomatedDomainModelling_zenodo/plantuml_validator.py` and
-`_messages.py` modules are designed to be reused by those strategies
-when they are migrated.
+All 5 zenodo strategies (`zenodo_zero_shot`, `zenodo_one_shot_btms`,
+`zenodo_one_shot_h2s_short`, `zenodo_two_shot`, `zenodo_cot`) share
+the same architecture, the same `prompt_translate.txt` file (per
+the self-containment decision), and the same shared driver
+`Candidates/AutomatedDomainModelling_zenodo/run-candidate.py`. They
+differ only in their stage 1 prompt construction and example data.
 
 See `Candidates/adjustments.md` for the full migration history.

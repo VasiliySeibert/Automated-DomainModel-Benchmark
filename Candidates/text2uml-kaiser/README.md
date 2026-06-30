@@ -1,106 +1,123 @@
 # text2uml-kaiser
 
-Five prompt strategies from:
+Five prompt strategies from the
+[Text2UML](https://github.com/IlKaiser/text2uml) project, plus the
+shared `Candidates/AutomatedDomainModelling_zenodo/plantuml_validator.py`
+for line-by-line PUML validation.
 
-> **Calamo, M., Mecella, M., & Snoeck, M.** (2025).
-> *Assessing the Suitability of Large Language Models in Generating UML
-> Class Diagrams as Conceptual Models.*
-> In *International Conference on Business Process Modeling, Development
-> and Support* (pp. 211–226). Springer.
+This folder re-uses the prompts and example data from:
 
-The companion dataset and aggregated results are published as:
-
-> **Calamo, M., Mecella, M., & Snoeck, M.** (2026).
-> *Text2UML results with Golden UML Dataset* (Version v1) [Data set].
-> Zenodo.
-> DOI: [10.5281/zenodo.19599470](https://doi.org/10.5281/zenodo.19599470)
-> (concept DOI: [10.5281/zenodo.19599469](https://doi.org/10.5281/zenodo.19599469)).
-> License: **CC BY 4.0**.
-
-The companion source code is on GitHub:
-
-> **IlKaiser/text2uml** — Calamo, Mecella & Snoeck (2025).
-> GitHub. https://github.com/IlKaiser/text2uml.
-> License: **GPL-3.0**.
-
-## BibTeX
-
-```bibtex
-@inproceedings{calamo2025assessing,
-  author    = {Calamo, Marco and Mecella, Massimo and Snoeck, Monique},
-  title     = {Assessing the Suitability of Large Language Models
-               in Generating {UML} Class Diagrams as Conceptual Models},
-  booktitle = {International Conference on Business Process Modeling,
-               Development and Support},
-  pages     = {211--226},
-  year      = {2025},
-  publisher = {Springer}
-}
-
-@dataset{calamo_2026_19599470,
-  author    = {Calamo, Marco and Mecella, Massimo and Snoeck, Monique},
-  title     = {Text2UML results with Golden UML Dataset},
-  month     = apr,
-  year      = {2026},
-  publisher = {Zenodo},
-  version   = {v1},
-  doi       = {10.5281/zenodo.19599470},
-  url       = {https://doi.org/10.5281/zenodo.19599470}
-}
-```
-
-## Version pin
-
-| Component | Pin | Source |
-|---|---|---|
-| Dataset (Zenodo v1) | DOI `10.5281/zenodo.19599470`, 2026-04-15 | https://zenodo.org/records/19599470 |
-| Code (`IlKaiser/text2uml`) | commit `c50aa8a9b652e0d02232170bfe397ea6e380307e` on `main`, 2026-06-26 | https://github.com/IlKaiser/text2uml/tree/c50aa8a9b652e0d02232170bfe397ea6e380307e |
-
-> Note: the git commit above post-dates the v1 Zenodo deposit; for exact
-> replication of the published results, use the parent commit on `main`
-> from 2026-04-15 or earlier.
+> **Calamo, J., Mecella, G., & Snoeck, M.** (2025).
+> *Text2UML — a tool for the automated generation of UML class diagrams from natural language text.*
 
 ## Strategies
 
-| Strategy | Upstream builder | Skip folders |
+| Strategy | Upstream config | Skip folders |
 |---|---|---|
-| `zero_shot` | `_ZERO_SHOT_SYSTEM` + `Transform into plant uml …` user prompt | — |
-| `one_shot` | `_SHOT_BASE` + AlphaInsurance example | `AlphaInsurance` |
-| `few_shot` | `_SHOT_BASE` + AlphaInsurance + GasStation examples | `AlphaInsurance`, `GasStation_KUL`, `GasStation_TUW` |
-| `cot` | 5-step chain: class list → associations+inheritance → attributes → cardinalities → PlantUML | — |
-| `cot_domain` | 5-step domain-aware chain: nouns → classes → associations → attributes → PlantUML | — |
+| `zero_shot` | Direct generation, no examples. | — |
+| `one_shot` | One example (AlphaInsurance) in the prompt. | `AlphaInsurance` |
+| `few_shot` | Two examples (AlphaInsurance + GasStation). | `AlphaInsurance`, `GasStation_KUL`, `GasStation_TUW` |
+| `cot` | 5-step Chain-of-Thought (class list → associations → attributes → cardinalities → PlantUML). | — |
+| `cot_domain` | Domain-aware 5-step CoT (noun list → class list → associations → attributes → PlantUML). | — |
 
-## Verbatim re-use vs. adaptations
+All 5 strategies are LLM-driven and use the same inlined Ollama HTTP
+wrapper. They are run through the shared driver
+`Candidates/AutomatedDomainModelling_zenodo/run-candidate.py` with
+`--strategy kaiser_*`.
 
-| This repo | Upstream (`text2uml-kaiser/src/run.py`) | Match |
-|---|---|---|
-| `zero_shot/prompt.txt` | `_ZERO_SHOT_SYSTEM` (line 51) | **exact** |
-| `one_shot/prompt.txt`, `few_shot/prompt.txt` | `_SHOT_BASE` (line 94) | **exact** |
-| `one_shot/examples.json[*].nlt`, `few_shot/examples.json[*].nlt` | `_INSURANCE_SPEC` (line 131), `_GASSTATION_SPEC` (line 204) | **exact** |
-| `few_shot/examples.json[GasStation].model` | `_GASSTATION_UML` (line 232) | **exact** |
-| `one_shot/examples.json[0].model` | `_INSURANCE_UML` (line 155) | trimmed (drops `Double calculateCompenstationSum()` method and `(ClaimCase,Estimator) .. Report` association-class line) |
-| `cot/prompt_step{1,2,3}_*.txt`, `cot_domain/prompt_step{1,2,3}_*.txt` | `_COT_*` / `_DOMAIN_*` | cosmetic only (`{text}` → `{nlt}` placeholder rename, `{{...}}` → `{...}` brace-collapse) |
-| `cot/prompt_step5_plantuml_system.txt`, `cot_domain/prompt_step5_plantuml_system.txt` | `_COT_PLANT` / `_DOMAIN_PLANT` | **rewritten** — stricter syntax (parser-compatible) |
+## Differences from the zenodo strategies
 
-## Harness
+- **Direct PUML output** (no DSL). The kaiser prompts ask the LLM to
+  emit `@startuml...@enduml` directly. There is no stage 1 → stage 2
+  translation step. The single LLM call is followed by the
+  line-by-line validator.
+- **The validator is the key improvement over the legacy `strategy.py`.**
+  Today's kaiser pipeline returns whatever PUML block the regex finds,
+  which often uses syntax the strict metrik-4 parser doesn't accept
+  (e.g. `class Book{ ... }` instead of `class Book { ... }`). The
+  validator auto-repairs the common issues and surfaces the rest in
+  `_errors.csv`.
+- **No 2-stage architecture.** The `enable_translation` and
+  `temperature-translate` flags are accepted by the candidate
+  classes for uniformity with the zenodo candidates but are no-ops
+  for the kaiser strategies.
 
-All strategies use their own inlined `_ollama.py` HTTP wrapper — see
-[`zero_shot/_ollama.py`](zero_shot/_ollama.py) for the canonical copy.
-The other 4 strategies' `_ollama.py` are byte-identical copies
-(enforced by `tests/test_ollama_inlined.py`).
+## Running the benchmark
 
-To swap to a different LLM backend, replace `_ollama.py` in the
-strategy folder with a module exposing `call(model, system, prompt, *, timeout, temperature=None, num_predict=None) -> str`.
+All 5 kaiser strategies are run through the shared kaiser driver
+`Candidates/text2uml-kaiser/run-candidate.py` with
+`--strategy kaiser_*`:
 
-## Cell count
+```bash
+# Smoke test: zero-shot, 3 records, default model.
+PYTHONPATH=. OLLAMA_MODEL=glm-5.1:cloud python \
+    Candidates/text2uml-kaiser/run-candidate.py \
+    --strategy kaiser_zero_shot \
+    --dataset kaiser_clean --limit 3
 
-5 strategies × 4 models × 2 datasets = **40 cells** (with skip rules
-applied: 36 cells on kaiser, 4 cells on reference).
+# Full kaiser_clean, deterministic.
+PYTHONPATH=. OLLAMA_MODEL=glm-5.1:cloud python \
+    Candidates/text2uml-kaiser/run-candidate.py \
+    --strategy kaiser_cot --dataset kaiser_clean \
+    --temperature 0.0 --seed 42
+```
+
+The kaiser driver is self-contained: it does not share code with
+the zenodo group driver at `Candidates/AutomatedDomainModelling_zenodo/`.
+The two groups have different prompt families, different stage
+architectures (kaiser is single-stage, zenodo is two-stage), and
+different CLI surface (kaiser has no `--no-translate` or
+`--temperature-translate` flags because it has no stage 2).
+
+### Available strategies
+
+| `--strategy` value | Skip folders |
+|---|---|
+| `kaiser_zero_shot` | — |
+| `kaiser_one_shot` | `AlphaInsurance` |
+| `kaiser_few_shot` | `AlphaInsurance`, `GasStation_KUL`, `GasStation_TUW` |
+| `kaiser_cot` | — |
+| `kaiser_cot_domain` | — |
+
+### Output folder shape
+
+When `--results-dir` is not set, the driver writes to an
+auto-named folder under `Workflow/Results/`:
+
+```
+Workflow/Results/<CANDIDATE_ID>_<model_sanitized>_<dataset>_<timestamp>/
+```
+
+Identical to the zenodo strategies.
+
+### Visualising across runs
+
+```bash
+PYTHONPATH=. python Workflow/Benchmark-Workflow/visualise.py \
+    --in 'Workflow/Results/kaiser_*/*_scored.json' \
+    --out-dir Workflow/Results/_aggregate/kaiser \
+    --metric metrik-4
+```
+
+## LLM sampling defaults
+
+All 5 kaiser strategies pass `temperature=0.7` and `num_predict=1024`
+to the Ollama harness. These are configurable via the shared
+driver's CLI flags (`--temperature`, `--num-predict`, etc.) and via
+each strategy's `config.json`.
 
 ## Dependencies
 
 | Dependency | Version | License | Purpose |
 |---|---|---|---|
 | Ollama | v0.30.11 | MIT | Local LLM serving |
-| LangChain (upstream only) | 0.3.27 | MIT | Prompt template machinery (upstream; not used here) |
-| spaCy (upstream `text/` only) | 3.8.x | MIT | Linguistic complexity metrics (upstream; not used here) |
+| `plantuml_validator` | (shared) | (project) | Line-by-line PUML validation |
+
+## Related upstream code
+
+The kaiser upstream uses different prompt constants for each step
+(`_ZERO_SHOT_SYSTEM`, `_ONE_SHOT`, `_FEW_SHOT`, `_COT_*`,
+`_DOMAIN_*`). We re-use the prompt text verbatim from
+[`text2uml/src/run.py`](https://github.com/IlKaiser/text2uml).
+
+See `Candidates/adjustments.md` for the full migration history.

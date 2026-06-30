@@ -5,7 +5,14 @@
   "harness_default": "ollama",
   "skip_folders": [],
   "timeout_seconds": 600,
-  "description": "Single-call direct generation, no examples. Verbatim reuse of _ZERO_SHOT_SYSTEM from text2uml-kaiser/src/run.py.",
+  "description": "Single-call direct generation, no examples. Verbatim reuse of _ZERO_SHOT_SYSTEM from text2uml-kaiser/src/run.py. Two-stage: LLM call (single-shot) + line-by-line validator.",
   "prompt_file": "prompt.txt",
-  "user_template": "Transform into plant uml this specification text: {nlt}"
+  "user_template": "Transform into plant uml this specification text: {nlt}",
+  "default_model": "qwen2.5-coder:7b",
+  "default_temperature": 0.7,
+  "default_num_predict": 1024,
+  "default_seed": null,
+  "default_top_p": null,
+  "default_top_k": null,
+  "default_repeat_penalty": null
 }

@@ -211,6 +211,153 @@ is expected to produce the rationale itself.
 - 3/3 smoke-test records on `kaiser_clean`. Generate 27.4 s,
   score 44.0 s, visualise 0.4 s. No failures.
 
+### Shared driver (`run-candidate.py`) — consolidates the 5 zenodo `run.py` files
+
+The 5 per-strategy `run.py` files (one for each migrated zenodo
+strategy) were collapsed into a single shared driver at
+`Candidates/AutomatedDomainModelling_zenodo/run-candidate.py`.
+The 5 per-strategy files are deleted; the driver is invoked with
+`--strategy <name>` to select which strategy to run.
+
+Trade-off: the per-strategy folders are no longer fully self-contained
+for running the benchmark (they no longer ship a `run.py` of their
+own). They are still self-contained for everything else (candidate,
+config, prompts, examples, _ollama). The 5-way duplication of ~300
+lines of driver code is removed.
+
+The output folder is auto-named:
+`Workflow/Results/<CANDIDATE_ID>_<model_sanitized>_<dataset>_<timestamp>/`,
+where `<model_sanitized>` replaces filesystem-unsafe characters (e.g.
+`glm-5.1:cloud` → `glm-5.1_cloud`) and `<timestamp>` is
+`YYYY-MM-DDTHH-MM-SSZ` UTC. The `--name SUFFIX` flag appends
+`_<SUFFIX>` to the folder basename for ad-hoc disambiguation.
+`--results-dir PATH` bypasses the auto-named default entirely.
+
+`Candidates/rule_based/run.py` and `Candidates/dummy_candidate/run.py`
+are intentionally **not** consolidated into the shared driver —
+they have no LLM sampling flags and the auto-named path doesn't
+apply to them in the same way. They keep their own self-contained
+`run.py` files.
+
+### kaiser_zero_shot — migrated (single-call direct generation, with validator)
+
+The first of the 5 kaiser strategies. The LLM is asked to produce a
+PlantUML class diagram directly from the spec, with no examples and
+no intermediate DSL. The LLM's raw output is run through
+`plantuml_validator.validate` before being returned.
+
+- `strategy.py` deleted; new `candidate.py` exposes the module-level
+  `candidate` callable wrapping `KaiserZeroShotCandidate`.
+- `_ollama.py` extended with the 5 new kwargs (`seed`, `top_p`,
+  `top_k`, `repeat_penalty`, `think`).
+- `metric.json` declares `{"default_metric": "metrik-1"}`.
+- `config.json` extended with the 7 sampling defaults.
+- `prompt.txt` is unchanged (verbatim from kaiser upstream).
+- Strategy ID: `kaiser_zero_shot`. Skip folders: none.
+- 3/3 smoke-test records on `kaiser_clean` with `glm-5.1:cloud`,
+  `temperature=0.0`. Generate 25.3 s, score 30.3 s, visualise 0.4 s.
+  No failures. Class score mean 0.69, attribute 0.66, association
+  0.76 (metrik-4).
+
+The validator is the key improvement over the legacy `strategy.py`:
+the kaiser prompt often produces PUML with syntax the strict metrik-4
+parser doesn't accept (e.g. `class Book{ ... }` instead of
+`class Book { ... }`). The validator auto-repairs these.
+
+### kaiser_one_shot — migrated (single-call one-shot with AlphaInsurance example)
+
+Same as `kaiser_zero_shot` but with the AlphaInsurance example
+appended to the user prompt in the `##############` block format.
+
+- `KaiserOneShotCandidate` class. Skip folder: `AlphaInsurance`.
+- 3/3 smoke-test records on `kaiser_clean` with `glm-5.1:cloud`,
+  `temperature=0.0`. Generate 12.8 s, score 42.3 s, visualise 0.4 s.
+  No failures.
+
+### kaiser_few_shot — migrated (single-call few-shot, two examples)
+
+Same as `kaiser_one_shot` but with two examples (AlphaInsurance +
+GasStation). Iterates over the entries in `examples.json`.
+
+- `KaiserFewShotCandidate` class. Skip folders: `AlphaInsurance`,
+  `GasStation_KUL`, `GasStation_TUW`.
+- 3/3 smoke-test records on `kaiser_clean` with `glm-5.1:cloud`,
+  `temperature=0.0`. Generate 11.4 s, score 42.4 s, visualise 0.4 s.
+  No failures.
+
+### kaiser_cot — migrated (5-step Chain-of-Thought, with validator)
+
+The 5-step CoT chain. Each step is its own LLM call. The final
+PlantUML is validated line-by-line before being returned.
+
+- `KaiserCotCandidate` class. Reads `prompt_step1_class.txt`
+  through `prompt_step5_plantuml_*.txt` at `__init__` time. Failure
+  modes preserved from the legacy `strategy.py`:
+  `cot_step1_no_classes`, `cot_step5_no_plantuml`.
+- Skip folders: none.
+- 3/3 smoke-test records on `kaiser_clean` with `glm-5.1:cloud`,
+  `temperature=0.0`. Generate 28.9 s, score 41.9 s, visualise 0.4 s.
+  No failures. CoT is the most fragile of the 5 kaiser strategies
+  (5 LLM calls per record); a 3/3 success is a good sign but
+  full-dataset runs may surface step failures.
+
+### kaiser_cot_domain — migrated (domain-aware 5-step CoT, with validator)
+
+The domain-aware CoT chain. Like `cot`, but with an explicit
+noun-extraction step before class selection.
+
+- `KaiserCotDomainCandidate` class. Reads
+  `prompt_step1_noun.txt` through `prompt_step5_plantuml_*.txt`.
+  Failure modes preserved: `cot_domain_step2_no_classes`,
+  `cot_domain_step5_no_plantuml`.
+- Skip folders: none.
+- 3/3 smoke-test records on `kaiser_clean` with `glm-5.1:cloud`,
+  `temperature=0.0`. Generate 33.4 s, score 42.9 s, visualise 0.4 s.
+  No failures.
+
+### Shared driver extension — 5 kaiser strategies added to the lookup table
+
+The 5 kaiser candidates were added to the zenodo driver's
+`_STRATEGIES` table with an explicit `parent_dir` key pointing at
+`Candidates/text2uml-kaiser/`. The driver resolved
+`strategy_dir = strategy["parent_dir"] / strategy["candidate_path"]`
+for kaiser entries and fell back to `THIS_DIR` for the zenodo
+entries.
+
+The driver then accepted 10 `--strategy` values: the 5 zenodo ones
+and the 5 kaiser ones. A regression check on `zenodo_zero_shot`
+confirmed the extension did not affect the existing zenodo
+strategies.
+
+This was a temporary intermediate state, superseded by the next
+block.
+
+### Shared driver (`run-candidate.py`) for the kaiser group — reverts the previous block
+
+The cross-group `parent_dir` workaround was reverted. The zenodo
+driver is back to its pre-kaiser shape (5 zenodo entries, no
+`parent_dir` lookup), and the kaiser group has its own self-contained
+driver at `Candidates/text2uml-kaiser/run-candidate.py` mirroring the
+zenodo one.
+
+Rationale: the `parent_dir` mechanism broke the per-group
+self-containment convention. With separate drivers, each group owns
+its own entry point and the lookup table in each driver is local.
+The two drivers are otherwise structurally identical: same flags,
+same auto-named output folder, same step chaining, same metric and
+model resolution. The kaiser driver has a smaller CLI surface (no
+`--no-translate` or `--temperature-translate` flags because kaiser
+has no stage 2) but the same overall shape.
+
+The driver file in the kaiser group is `run-candidate.py` (with a
+hyphen). Like the zenodo one, it can't be `import`-ed as a Python
+module because of the hyphen; it's invokable only as
+`python run-candidate.py ...`. The per-strategy `README.md` files
+in the kaiser group are updated to point at the new driver.
+
+A 1-line regression check on `zenodo_zero_shot` confirmed the revert
+does not affect the existing zenodo strategies.
+
 ---
 
 ## Original adjustment history (kept for traceability)

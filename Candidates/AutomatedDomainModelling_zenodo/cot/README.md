@@ -116,24 +116,29 @@ tells stage 2 to discard any reasoning text and emit only the final
 
 ```bash
 # Full pipeline, kaiser_clean (3 records), default model.
-PYTHONPATH=. python Candidates/AutomatedDomainModelling_zenodo/cot/run.py \
+PYTHONPATH=. python Candidates/AutomatedDomainModelling_zenodo/run-candidate.py --strategy cot \
     --dataset kaiser_clean --limit 3
 
 # Override model + temperature, disable stage 2 translation (A/B mode).
-PYTHONPATH=. python Candidates/AutomatedDomainModelling_zenodo/cot/run.py \
+PYTHONPATH=. python Candidates/AutomatedDomainModelling_zenodo/run-candidate.py --strategy cot \
     --dataset kaiser_clean --limit 3 \
     --model glm-5.1:cloud --temperature 0.7 --no-translate
 
 # Re-run only the visualiser (skip generate + score).
-PYTHONPATH=. python Candidates/AutomatedDomainModelling_zenodo/cot/run.py \
+PYTHONPATH=. python Candidates/AutomatedDomainModelling_zenodo/run-candidate.py --strategy cot \
     --dataset kaiser_clean --skip-generate --skip-score
 
 # Full kaiser_clean with deterministic settings.
-PYTHONPATH=. python Candidates/AutomatedDomainModelling_zenodo/cot/run.py \
+PYTHONPATH=. python Candidates/AutomatedDomainModelling_zenodo/run-candidate.py --strategy cot \
     --dataset kaiser_clean --temperature 0.0 --temperature-translate 0.0 --seed 42
 ```
 
-## CLI flags (in addition to the standard ones)
+## CLI flags
+
+All flags below are accepted by the shared driver `Candidates/AutomatedDomainModelling_zenodo/run-candidate.py`. The same flag set applies to all 5 zenodo strategies; you select the strategy with `--strategy <name>`. See the shared driver's docstring for the full surface.
+
+| Flag                       | Default                          | Effect                                                       |
+|----------------------------|----------------------------------|--------------------------------------------------------------|
 
 | Flag                       | Default                          | Effect                                                       |
 |----------------------------|----------------------------------|--------------------------------------------------------------|
@@ -150,7 +155,7 @@ PYTHONPATH=. python Candidates/AutomatedDomainModelling_zenodo/cot/run.py \
 
 ## Failure modes
 
-When a record fails, the `error` field in `Workflow/Results/zenodo_cot/_errors.csv` will be one of:
+When a record fails, the `error` field in the auto-named output folder (under `Workflow/Results/`) will be one of:
 
 | `error` string                                        | Cause                                                              |
 |-------------------------------------------------------|--------------------------------------------------------------------|
@@ -161,7 +166,7 @@ When a record fails, the `error` field in `Workflow/Results/zenodo_cot/_errors.c
 
 ## Outputs
 
-Default output folder: `Workflow/Results/zenodo_cot/`.
+Default output folder: `Workflow/Results/<CANDIDATE_ID>_<model_sanitized>_<dataset>_<timestamp>/`. Computed by the shared driver `run-candidate.py`; see the shared driver's docstring for the full path shape.
 
 - `<dataset>.json` — raw generate output.
 - `<dataset>_scored.json` — scored.
@@ -172,9 +177,11 @@ Default output folder: `Workflow/Results/zenodo_cot/`.
 
 ## Relationship to the other zenodo strategies
 
-This is the last of the four zenodo strategies to be migrated. The
-shared `Candidates/AutomatedDomainModelling_zenodo/plantuml_validator.py`
-and `_messages.py` modules are reused. The `prompt_translate.txt` file
-is a per-strategy copy of the same canonical PUML grammar prompt.
+All 5 zenodo strategies (`zenodo_zero_shot`, `zenodo_one_shot_btms`,
+`zenodo_one_shot_h2s_short`, `zenodo_two_shot`, `zenodo_cot`) share
+the same architecture, the same `prompt_translate.txt` file (per
+the self-containment decision), and the same shared driver
+`Candidates/AutomatedDomainModelling_zenodo/run-candidate.py`. They
+differ only in their stage 1 prompt construction and example data.
 
 See `Candidates/adjustments.md` for the full migration history.

@@ -119,6 +119,85 @@ All 5 zenodo strategies pass `temperature=0.7` and `num_predict=1024`
 to the Ollama harness (matches upstream `config.yaml`'s
 `running_params` block).
 
+## Running the benchmark
+
+All 5 zenodo strategies are run through a single shared driver:
+`run-candidate.py`. Select the strategy with `--strategy` and supply
+the dataset, metric, and LLM sampling parameters as flags:
+
+```bash
+# Smoke test: zero-shot, 3 records, default model.
+PYTHONPATH=. python Candidates/AutomatedDomainModelling_zenodo/run-candidate.py \
+    --strategy zenodo_zero_shot \
+    --dataset kaiser_clean --limit 3
+
+# Full kaiser_clean, deterministic settings, default model.
+PYTHONPATH=. python Candidates/AutomatedDomainModelling_zenodo/run-candidate.py \
+    --strategy zenodo_zero_shot --dataset kaiser_clean \
+    --temperature 0.0 --temperature-translate 0.0 --seed 42
+
+# Different strategy, override model, A/B mode (--no-translate).
+PYTHONPATH=. python Candidates/AutomatedDomainModelling_zenodo/run-candidate.py \
+    --strategy zenodo_one_shot_btms --dataset kaiser_clean \
+    --model glm-5.1:cloud --temperature 0.7 --no-translate
+
+# Re-run only the visualiser (skip generate + score).
+PYTHONPATH=. python Candidates/AutomatedDomainModelling_zenodo/run-candidate.py \
+    --strategy zenodo_two_shot --dataset kaiser_clean \
+    --skip-generate --skip-score
+```
+
+### Available strategies
+
+| `--strategy` value | Source zenodo section | Skip folders |
+|---|---|---|
+| `zenodo_zero_shot` | §1b (`generate_prompts_chatgpt`, `shots: []`) | — |
+| `zenodo_one_shot_btms` | §2b (`shots: ["BTMS"]`) | `BTMS` |
+| `zenodo_one_shot_h2s_short` | §3b (`shots: ["H2S-Short"]`) | `H2S-Short`, `HelpingHands` |
+| `zenodo_two_shot` | §4b (`shots: ["BTMS", "H2S-Short"]`) | `BTMS`, `H2S-Short`, `HelpingHands` |
+| `zenodo_cot` | §5 (`generate_prompts_chatgpt_COT`, no assistant turn) | `H2S`, `H2S-Short`, `HelpingHands` |
+
+### Output folder shape
+
+When `--results-dir` is not set, the driver writes to an
+auto-named folder under `Workflow/Results/`:
+
+```
+Workflow/Results/<CANDIDATE_ID>_<model_sanitized>_<dataset>_<timestamp>/
+```
+
+where:
+
+- `<CANDIDATE_ID>` is the `--strategy` value (e.g. `zenodo_zero_shot`).
+- `<model_sanitized>` is the Ollama model tag with filesystem-unsafe
+  characters replaced (e.g. `glm-5.1:cloud` → `glm-5.1_cloud`).
+- `<dataset>` is the `--dataset` value (e.g. `kaiser_clean`).
+- `<timestamp>` is `YYYY-MM-DDTHH-MM-SSZ` UTC at the time of invocation.
+
+Two invocations within the same second produce the same folder
+name, so the second overwrites the first. To preserve both, either
+wait a second, pass `--name SUFFIX` to disambiguate, or pass
+`--results-dir PATH` to bypass the auto-named default.
+
+Use `--name SUFFIX` for ad-hoc disambiguation (e.g.
+`--name seed42` produces
+`…_kaiser_clean_2026-06-30T19-53-18Z_seed42/`).
+
+### Visualising across runs
+
+The visualiser at `Workflow/Benchmark-Workflow/visualise.py` globs
+scored JSONs. To aggregate every run of a particular strategy:
+
+```bash
+PYTHONPATH=. python Workflow/Benchmark-Workflow/visualise.py \
+    --in 'Workflow/Results/zenodo_zero_shot_*/*_scored.json' \
+    --out-dir Workflow/Results/_aggregate/zenodo_zero_shot \
+    --metric metrik-4
+```
+
+The glob `zenodo_zero_shot_*` matches every auto-named folder for
+that strategy regardless of model, dataset, or timestamp.
+
 ## Dependencies
 
 | Dependency | Version | License | Purpose |

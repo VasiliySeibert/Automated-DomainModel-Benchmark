@@ -5,7 +5,7 @@
   "harness_default": "ollama",
   "skip_folders": [],
   "timeout_seconds": 600,
-  "description": "5-step Chain-of-Thought. Class list → associations+inheritance → attributes → cardinalities → PlantUML. Each step is its own LLM call.",
+  "description": "5-step Chain-of-Thought. Class list → associations+inheritance → attributes → cardinalities → PlantUML. Each step is its own LLM call. The final PUML is validated line-by-line before returning.",
   "prompt_files": [
     "prompt_step1_class.txt",
     "prompt_step2_assoc.txt",
@@ -13,5 +13,12 @@
     "prompt_step3_card.txt",
     "prompt_step5_plantuml_system.txt",
     "prompt_step5_plantuml_user.txt"
-  ]
+  ],
+  "default_model": "qwen2.5-coder:7b",
+  "default_temperature": 0.7,
+  "default_num_predict": 1024,
+  "default_seed": null,
+  "default_top_p": null,
+  "default_top_k": null,
+  "default_repeat_penalty": null
 }
