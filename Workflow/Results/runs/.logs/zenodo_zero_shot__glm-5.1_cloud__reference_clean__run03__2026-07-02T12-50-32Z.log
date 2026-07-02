@@ -1,0 +1,81 @@
+=== command ===
+/Users/vasiliy/.pyenv/versions/3.12.3/bin/python /Users/vasiliy/Documents/GitHub/Automated-DomainModel-Benchmark/Candidates/AutomatedDomainModelling_zenodo/zero_shot/run.py --dataset reference_clean --metric metrik-4 --run-index 3 --out-dir /Users/vasiliy/Documents/GitHub/Automated-DomainModel-Benchmark/Workflow/Results/runs --results-dir /Users/vasiliy/Documents/GitHub/Automated-DomainModel-Benchmark/Workflow/Results/cache/pid11700_t4460367888 --model glm-5.1:cloud
+
+=== env (subset) ===
+PYTHONPATH=/Users/vasiliy/Documents/GitHub/Automated-DomainModel-Benchmark
+
+=== exit code ===
+0
+
+=== stdout ===
+========================================================================
+Automated DomainModel Benchmark — driver for zenodo_zero_shot
+========================================================================
+  Candidate    : /Users/vasiliy/Documents/GitHub/Automated-DomainModel-Benchmark/Candidates/AutomatedDomainModelling_zenodo/zero_shot/candidate.py
+  Dataset      : reference_clean
+  Metric       : metrik-4  (source: cli)
+  Model        : glm-5.1:cloud  (source: cli)
+  Temperature  : 0.7  (source: config.json::default_temperature)
+  Temp translate: 0.0  (source: config.json::default_temperature_translate)
+  Num predict  : 1024  (source: config.json::default_num_predict)
+  Seed         : None  (source: project_default)
+  Top-p        : None  (source: project_default)
+  Top-k        : None  (source: project_default)
+  Repeat penalty: None  (source: project_default)
+  Timeout      : 1800  (source: config.json::timeout_seconds)
+  Translation  : True  (source: config.json::enable_translation)
+  Think        : False  (source: cli)
+  Run index    : 3
+  Results dir  : /Users/vasiliy/Documents/GitHub/Automated-DomainModel-Benchmark/Workflow/Results/cache/pid11700_t4460367888
+  Output dir   : /Users/vasiliy/Documents/GitHub/Automated-DomainModel-Benchmark/Workflow/Results/runs
+  Steps        : generate score collect
+========================================================================
+
+[generate]  done in 51.7s (rc=0) → /Users/vasiliy/Documents/GitHub/Automated-DomainModel-Benchmark/Workflow/Results/cache/pid11700_t4460367888/reference_clean.json
+
+[score]     done in 404.6s (rc=0) → /Users/vasiliy/Documents/GitHub/Automated-DomainModel-Benchmark/Workflow/Results/cache/pid11700_t4460367888/reference_clean_scored.json
+
+[collect]   done → /Users/vasiliy/Documents/GitHub/Automated-DomainModel-Benchmark/Workflow/Results/runs/zenodo_zero_shot_glm-5.1_cloud_2026-07-02T12-58-09Z.json
+
+[collect]   done in 0.0s (rc=0) → /Users/vasiliy/Documents/GitHub/Automated-DomainModel-Benchmark/Workflow/Results/runs
+
+[run] DONE in 456.3s
+
+
+=== stderr ===
+2026-07-02 14:50:33,078 INFO Candidates.zenodo_zero_shot.run: re-instantiated candidate with resolved parameters
+2026-07-02 14:50:33,080 INFO Workflow.generate: loaded candidate from /Users/vasiliy/Documents/GitHub/Automated-DomainModel-Benchmark/Candidates/AutomatedDomainModelling_zenodo/zero_shot/candidate.py
+2026-07-02 14:50:33,080 INFO Candidates.candidate_interface: reconfigured candidate TwoStageZeroShotCandidate with ['enable_translation', 'model', 'num_predict', 'temperature', 'temperature_translate', 'think']
+2026-07-02 14:50:33,081 INFO Workflow.generate: dataset reference_clean: 8 records
+2026-07-02 14:50:33,081 INFO _ollama: ollama POST http://localhost:11434/api/chat model=glm-5.1:cloud prompt=3995 chars
+2026-07-02 14:50:37,416 INFO _ollama: ollama POST http://localhost:11434/api/chat model=glm-5.1:cloud prompt=1018 chars
+2026-07-02 14:50:41,626 INFO Workflow.generate:   [1/8] LabTracker                      8.54s  failed=False
+2026-07-02 14:50:41,626 INFO _ollama: ollama POST http://localhost:11434/api/chat model=glm-5.1:cloud prompt=3526 chars
+2026-07-02 14:50:44,906 INFO _ollama: ollama POST http://localhost:11434/api/chat model=glm-5.1:cloud prompt=669 chars
+2026-07-02 14:50:47,873 INFO Workflow.generate:   [2/8] CelO                            6.25s  failed=False
+2026-07-02 14:50:47,873 INFO _ollama: ollama POST http://localhost:11434/api/chat model=glm-5.1:cloud prompt=2176 chars
+2026-07-02 14:50:50,639 INFO _ollama: ollama POST http://localhost:11434/api/chat model=glm-5.1:cloud prompt=1108 chars
+2026-07-02 14:50:54,221 INFO Workflow.generate:   [3/8] TSS                             6.35s  failed=False
+2026-07-02 14:50:54,221 INFO _ollama: ollama POST http://localhost:11434/api/chat model=glm-5.1:cloud prompt=2649 chars
+2026-07-02 14:50:57,090 INFO _ollama: ollama POST http://localhost:11434/api/chat model=glm-5.1:cloud prompt=1017 chars
+2026-07-02 14:51:00,775 INFO Workflow.generate:   [4/8] SHAS                            6.55s  failed=False
+2026-07-02 14:51:00,775 INFO _ollama: ollama POST http://localhost:11434/api/chat model=glm-5.1:cloud prompt=2411 chars
+2026-07-02 14:51:03,232 INFO _ollama: ollama POST http://localhost:11434/api/chat model=glm-5.1:cloud prompt=837 chars
+2026-07-02 14:51:05,998 INFO Workflow.generate:   [5/8] OTS                             5.22s  failed=False
+2026-07-02 14:51:05,998 INFO _ollama: ollama POST http://localhost:11434/api/chat model=glm-5.1:cloud prompt=4214 chars
+2026-07-02 14:51:08,662 INFO _ollama: ollama POST http://localhost:11434/api/chat model=glm-5.1:cloud prompt=919 chars
+2026-07-02 14:51:12,244 INFO Workflow.generate:   [6/8] Block                           6.25s  failed=False
+2026-07-02 14:51:12,244 INFO _ollama: ollama POST http://localhost:11434/api/chat model=glm-5.1:cloud prompt=2909 chars
+2026-07-02 14:51:15,419 INFO _ollama: ollama POST http://localhost:11434/api/chat model=glm-5.1:cloud prompt=800 chars
+2026-07-02 14:51:18,183 INFO Workflow.generate:   [7/8] TileO                           5.94s  failed=False
+2026-07-02 14:51:18,183 INFO _ollama: ollama POST http://localhost:11434/api/chat model=glm-5.1:cloud prompt=3624 chars
+2026-07-02 14:51:21,052 INFO _ollama: ollama POST http://localhost:11434/api/chat model=glm-5.1:cloud prompt=1239 chars
+2026-07-02 14:51:24,737 INFO Workflow.generate:   [8/8] HBMS                            6.55s  failed=False
+2026-07-02 14:51:24,738 INFO Workflow.generate: wrote /Users/vasiliy/Documents/GitHub/Automated-DomainModel-Benchmark/Workflow/Results/cache/pid11700_t4460367888/reference_clean.json (8 records, 0 failed, 51.7s)
+2026-07-02 14:51:24,738 INFO Workflow.score: scoring /Users/vasiliy/Documents/GitHub/Automated-DomainModel-Benchmark/Workflow/Results/cache/pid11700_t4460367888/reference_clean.json → /Users/vasiliy/Documents/GitHub/Automated-DomainModel-Benchmark/Workflow/Results/cache/pid11700_t4460367888/reference_clean_scored.json (metric=metrik-4)
+2026-07-02 14:58:09,314 INFO Workflow.score:   scored 8/8
+2026-07-02 14:58:09,321 INFO Workflow.score: wrote /Users/vasiliy/Documents/GitHub/Automated-DomainModel-Benchmark/Workflow/Results/cache/pid11700_t4460367888/reference_clean_scored.json (n=8, failed=0)
+2026-07-02 14:58:09,322 INFO Workflow.collect: collecting /Users/vasiliy/Documents/GitHub/Automated-DomainModel-Benchmark/Workflow/Results/cache/pid11700_t4460367888/reference_clean_scored.json → /Users/vasiliy/Documents/GitHub/Automated-DomainModel-Benchmark/Workflow/Results/runs
+2026-07-02 14:58:09,337 INFO Workflow.collect: wrote /Users/vasiliy/Documents/GitHub/Automated-DomainModel-Benchmark/Workflow/Results/runs/zenodo_zero_shot_glm-5.1_cloud_2026-07-02T12-58-09Z.json (n=8, failed_gen=0, failed_score=0)
+2026-07-02 14:58:09,337 INFO Candidates.zenodo_zero_shot.run: cleared cache: /Users/vasiliy/Documents/GitHub/Automated-DomainModel-Benchmark/Workflow/Results/cache/pid11700_t4460367888
+

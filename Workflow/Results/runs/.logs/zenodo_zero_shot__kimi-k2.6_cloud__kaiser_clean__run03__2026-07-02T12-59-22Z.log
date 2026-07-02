@@ -1,0 +1,196 @@
+=== command ===
+/Users/vasiliy/.pyenv/versions/3.12.3/bin/python /Users/vasiliy/Documents/GitHub/Automated-DomainModel-Benchmark/Candidates/AutomatedDomainModelling_zenodo/zero_shot/run.py --dataset kaiser_clean --metric metrik-4 --run-index 3 --out-dir /Users/vasiliy/Documents/GitHub/Automated-DomainModel-Benchmark/Workflow/Results/runs --results-dir /Users/vasiliy/Documents/GitHub/Automated-DomainModel-Benchmark/Workflow/Results/cache/pid11700_t4460368032 --model kimi-k2.6:cloud
+
+=== env (subset) ===
+PYTHONPATH=/Users/vasiliy/Documents/GitHub/Automated-DomainModel-Benchmark
+
+=== exit code ===
+0
+
+=== stdout ===
+========================================================================
+Automated DomainModel Benchmark — driver for zenodo_zero_shot
+========================================================================
+  Candidate    : /Users/vasiliy/Documents/GitHub/Automated-DomainModel-Benchmark/Candidates/AutomatedDomainModelling_zenodo/zero_shot/candidate.py
+  Dataset      : kaiser_clean
+  Metric       : metrik-4  (source: cli)
+  Model        : kimi-k2.6:cloud  (source: cli)
+  Temperature  : 0.7  (source: config.json::default_temperature)
+  Temp translate: 0.0  (source: config.json::default_temperature_translate)
+  Num predict  : 1024  (source: config.json::default_num_predict)
+  Seed         : None  (source: project_default)
+  Top-p        : None  (source: project_default)
+  Top-k        : None  (source: project_default)
+  Repeat penalty: None  (source: project_default)
+  Timeout      : 1800  (source: config.json::timeout_seconds)
+  Translation  : True  (source: config.json::enable_translation)
+  Think        : False  (source: cli)
+  Run index    : 3
+  Results dir  : /Users/vasiliy/Documents/GitHub/Automated-DomainModel-Benchmark/Workflow/Results/cache/pid11700_t4460368032
+  Output dir   : /Users/vasiliy/Documents/GitHub/Automated-DomainModel-Benchmark/Workflow/Results/runs
+  Steps        : generate score collect
+========================================================================
+
+[generate]  done in 654.6s (rc=0) → /Users/vasiliy/Documents/GitHub/Automated-DomainModel-Benchmark/Workflow/Results/cache/pid11700_t4460368032/kaiser_clean.json
+
+[score]     done in 1541.1s (rc=0) → /Users/vasiliy/Documents/GitHub/Automated-DomainModel-Benchmark/Workflow/Results/cache/pid11700_t4460368032/kaiser_clean_scored.json
+
+[collect]   done → /Users/vasiliy/Documents/GitHub/Automated-DomainModel-Benchmark/Workflow/Results/runs/zenodo_zero_shot_kimi-k2.6_cloud_2026-07-02T13-35-58Z.json
+
+[collect]   done in 0.0s (rc=0) → /Users/vasiliy/Documents/GitHub/Automated-DomainModel-Benchmark/Workflow/Results/runs
+
+[run] DONE in 2195.7s
+
+
+=== stderr ===
+2026-07-02 14:59:22,556 INFO Candidates.zenodo_zero_shot.run: re-instantiated candidate with resolved parameters
+2026-07-02 14:59:22,557 INFO Workflow.generate: loaded candidate from /Users/vasiliy/Documents/GitHub/Automated-DomainModel-Benchmark/Candidates/AutomatedDomainModelling_zenodo/zero_shot/candidate.py
+2026-07-02 14:59:22,557 INFO Candidates.candidate_interface: reconfigured candidate TwoStageZeroShotCandidate with ['enable_translation', 'model', 'num_predict', 'temperature', 'temperature_translate', 'think']
+2026-07-02 14:59:22,557 INFO Workflow.generate: dataset kaiser_clean: 45 records
+2026-07-02 14:59:22,557 INFO _ollama: ollama POST http://localhost:11434/api/chat model=kimi-k2.6:cloud prompt=2274 chars
+2026-07-02 14:59:27,151 INFO _ollama: ollama POST http://localhost:11434/api/chat model=kimi-k2.6:cloud prompt=1215 chars
+2026-07-02 14:59:34,830 INFO Workflow.generate:   [1/45] AirTravel                       12.27s  failed=False
+2026-07-02 14:59:34,830 INFO _ollama: ollama POST http://localhost:11434/api/chat model=kimi-k2.6:cloud prompt=2844 chars
+2026-07-02 14:59:47,630 INFO _ollama: ollama POST http://localhost:11434/api/chat model=kimi-k2.6:cloud prompt=1693 chars
+2026-07-02 14:59:55,344 INFO Workflow.generate:   [2/45] AlphaInsurance                  20.51s  failed=False
+2026-07-02 14:59:55,344 INFO _ollama: ollama POST http://localhost:11434/api/chat model=kimi-k2.6:cloud prompt=1414 chars
+2026-07-02 14:59:57,561 INFO _ollama: ollama POST http://localhost:11434/api/chat model=kimi-k2.6:cloud prompt=480 chars
+2026-07-02 15:00:00,821 INFO Workflow.generate:   [3/45] BankAccount                     5.48s  failed=False
+2026-07-02 15:00:00,821 INFO _ollama: ollama POST http://localhost:11434/api/chat model=kimi-k2.6:cloud prompt=2165 chars
+2026-07-02 15:00:10,156 INFO _ollama: ollama POST http://localhost:11434/api/chat model=kimi-k2.6:cloud prompt=788 chars
+2026-07-02 15:00:19,182 INFO Workflow.generate:   [4/45] Boeing                          18.36s  failed=True
+2026-07-02 15:00:19,182 INFO _ollama: ollama POST http://localhost:11434/api/chat model=kimi-k2.6:cloud prompt=2783 chars
+2026-07-02 15:00:25,518 INFO _ollama: ollama POST http://localhost:11434/api/chat model=kimi-k2.6:cloud prompt=970 chars
+2026-07-02 15:00:32,276 INFO Workflow.generate:   [5/45] BuildingManagement              13.09s  failed=False
+2026-07-02 15:00:32,276 INFO _ollama: ollama POST http://localhost:11434/api/chat model=kimi-k2.6:cloud prompt=2633 chars
+2026-07-02 15:00:55,583 INFO _ollama: ollama POST http://localhost:11434/api/chat model=kimi-k2.6:cloud prompt=2000 chars
+2026-07-02 15:00:59,720 INFO Workflow.generate:   [6/45] BusTransportationManagementSystem  27.44s  failed=False
+2026-07-02 15:00:59,720 INFO _ollama: ollama POST http://localhost:11434/api/chat model=kimi-k2.6:cloud prompt=1720 chars
+2026-07-02 15:01:10,267 INFO _ollama: ollama POST http://localhost:11434/api/chat model=kimi-k2.6:cloud prompt=1090 chars
+2026-07-02 15:01:19,791 INFO Workflow.generate:   [7/45] CardGameApp                     20.07s  failed=False
+2026-07-02 15:01:19,791 INFO _ollama: ollama POST http://localhost:11434/api/chat model=kimi-k2.6:cloud prompt=3564 chars
+2026-07-02 15:01:31,259 INFO _ollama: ollama POST http://localhost:11434/api/chat model=kimi-k2.6:cloud prompt=1022 chars
+2026-07-02 15:01:43,854 INFO Workflow.generate:   [8/45] CelO                            24.06s  failed=False
+2026-07-02 15:01:43,854 INFO _ollama: ollama POST http://localhost:11434/api/chat model=kimi-k2.6:cloud prompt=2159 chars
+2026-07-02 15:01:48,360 INFO _ollama: ollama POST http://localhost:11434/api/chat model=kimi-k2.6:cloud prompt=985 chars
+2026-07-02 15:01:54,709 INFO Workflow.generate:   [9/45] ClothingCompany                 10.86s  failed=False
+2026-07-02 15:01:54,709 INFO _ollama: ollama POST http://localhost:11434/api/chat model=kimi-k2.6:cloud prompt=1967 chars
+2026-07-02 15:02:00,445 INFO _ollama: ollama POST http://localhost:11434/api/chat model=kimi-k2.6:cloud prompt=950 chars
+2026-07-02 15:02:06,997 INFO Workflow.generate:   [10/45] Cruise                          12.29s  failed=False
+2026-07-02 15:02:06,997 INFO _ollama: ollama POST http://localhost:11434/api/chat model=kimi-k2.6:cloud prompt=4222 chars
+2026-07-02 15:02:12,323 INFO _ollama: ollama POST http://localhost:11434/api/chat model=kimi-k2.6:cloud prompt=1026 chars
+2026-07-02 15:02:18,467 INFO Workflow.generate:   [11/45] DestroyBlockGame                11.47s  failed=False
+2026-07-02 15:02:18,467 INFO _ollama: ollama POST http://localhost:11434/api/chat model=kimi-k2.6:cloud prompt=2836 chars
+2026-07-02 15:02:24,099 INFO _ollama: ollama POST http://localhost:11434/api/chat model=kimi-k2.6:cloud prompt=1137 chars
+2026-07-02 15:02:31,268 INFO Workflow.generate:   [12/45] EUScienceConnect                12.80s  failed=False
+2026-07-02 15:02:31,268 INFO _ollama: ollama POST http://localhost:11434/api/chat model=kimi-k2.6:cloud prompt=1522 chars
+2026-07-02 15:02:34,543 INFO _ollama: ollama POST http://localhost:11434/api/chat model=kimi-k2.6:cloud prompt=616 chars
+2026-07-02 15:02:39,356 INFO Workflow.generate:   [13/45] Ebike                           8.09s  failed=False
+2026-07-02 15:02:39,356 INFO _ollama: ollama POST http://localhost:11434/api/chat model=kimi-k2.6:cloud prompt=2929 chars
+2026-07-02 15:02:57,073 INFO _ollama: ollama POST http://localhost:11434/api/chat model=kimi-k2.6:cloud prompt=2000 chars
+2026-07-02 15:02:59,836 INFO Workflow.generate:   [14/45] Facepage                        20.48s  failed=False
+2026-07-02 15:02:59,836 INFO _ollama: ollama POST http://localhost:11434/api/chat model=kimi-k2.6:cloud prompt=2229 chars
+2026-07-02 15:03:03,420 INFO _ollama: ollama POST http://localhost:11434/api/chat model=kimi-k2.6:cloud prompt=943 chars
+2026-07-02 15:03:07,822 INFO Workflow.generate:   [15/45] FilmSet                         7.99s  failed=False
+2026-07-02 15:03:07,822 INFO _ollama: ollama POST http://localhost:11434/api/chat model=kimi-k2.6:cloud prompt=2429 chars
+2026-07-02 15:03:30,455 INFO _ollama: ollama POST http://localhost:11434/api/chat model=kimi-k2.6:cloud prompt=2000 chars
+2026-07-02 15:03:37,010 INFO Workflow.generate:   [16/45] FitnessCompanyConan             29.19s  failed=False
+2026-07-02 15:03:37,010 INFO _ollama: ollama POST http://localhost:11434/api/chat model=kimi-k2.6:cloud prompt=1752 chars
+2026-07-02 15:03:53,188 INFO _ollama: ollama POST http://localhost:11434/api/chat model=kimi-k2.6:cloud prompt=2000 chars
+2026-07-02 15:03:55,439 INFO Workflow.generate:   [17/45] GameArea                        18.43s  failed=False
+2026-07-02 15:03:55,439 INFO _ollama: ollama POST http://localhost:11434/api/chat model=kimi-k2.6:cloud prompt=3441 chars
+2026-07-02 15:04:01,333 INFO _ollama: ollama POST http://localhost:11434/api/chat model=kimi-k2.6:cloud prompt=2000 chars
+2026-07-02 15:04:09,776 INFO Workflow.generate:   [18/45] GasStation_KUL                  14.34s  failed=False
+2026-07-02 15:04:09,777 INFO _ollama: ollama POST http://localhost:11434/api/chat model=kimi-k2.6:cloud prompt=1718 chars
+2026-07-02 15:04:16,535 INFO _ollama: ollama POST http://localhost:11434/api/chat model=kimi-k2.6:cloud prompt=623 chars
+2026-07-02 15:04:30,563 INFO Workflow.generate:   [19/45] GasStation_TUW                  20.79s  failed=False
+2026-07-02 15:04:30,563 INFO _ollama: ollama POST http://localhost:11434/api/chat model=kimi-k2.6:cloud prompt=3422 chars
+2026-07-02 15:04:42,545 INFO _ollama: ollama POST http://localhost:11434/api/chat model=kimi-k2.6:cloud prompt=2000 chars
+2026-07-02 15:04:54,586 INFO Workflow.generate:   [20/45] HelpingHands                    24.02s  failed=True
+2026-07-02 15:04:54,586 INFO _ollama: ollama POST http://localhost:11434/api/chat model=kimi-k2.6:cloud prompt=4538 chars
+2026-07-02 15:05:16,850 INFO _ollama: ollama POST http://localhost:11434/api/chat model=kimi-k2.6:cloud prompt=2000 chars
+2026-07-02 15:05:24,631 INFO Workflow.generate:   [21/45] HomeForTheElderly               30.05s  failed=False
+2026-07-02 15:05:24,631 INFO _ollama: ollama POST http://localhost:11434/api/chat model=kimi-k2.6:cloud prompt=2901 chars
+2026-07-02 15:05:32,211 INFO _ollama: ollama POST http://localhost:11434/api/chat model=kimi-k2.6:cloud prompt=1231 chars
+2026-07-02 15:05:36,613 INFO Workflow.generate:   [22/45] HospitalHouseMD                 11.98s  failed=False
+2026-07-02 15:05:36,613 INFO _ollama: ollama POST http://localhost:11434/api/chat model=kimi-k2.6:cloud prompt=3589 chars
+2026-07-02 15:05:45,010 INFO _ollama: ollama POST http://localhost:11434/api/chat model=kimi-k2.6:cloud prompt=2000 chars
+2026-07-02 15:05:52,284 INFO Workflow.generate:   [23/45] HotelBookingManagementSystem    15.67s  failed=True
+2026-07-02 15:05:52,284 INFO _ollama: ollama POST http://localhost:11434/api/chat model=kimi-k2.6:cloud prompt=1728 chars
+2026-07-02 15:05:57,199 INFO _ollama: ollama POST http://localhost:11434/api/chat model=kimi-k2.6:cloud prompt=756 chars
+2026-07-02 15:06:01,912 INFO Workflow.generate:   [24/45] House                           9.63s  failed=False
+2026-07-02 15:06:01,912 INFO _ollama: ollama POST http://localhost:11434/api/chat model=kimi-k2.6:cloud prompt=2622 chars
+2026-07-02 15:06:09,697 INFO _ollama: ollama POST http://localhost:11434/api/chat model=kimi-k2.6:cloud prompt=1650 chars
+2026-07-02 15:06:18,299 INFO Workflow.generate:   [25/45] Kinepolis                       16.39s  failed=False
+2026-07-02 15:06:18,299 INFO _ollama: ollama POST http://localhost:11434/api/chat model=kimi-k2.6:cloud prompt=4001 chars
+2026-07-02 15:06:26,280 INFO _ollama: ollama POST http://localhost:11434/api/chat model=kimi-k2.6:cloud prompt=1638 chars
+2026-07-02 15:06:35,401 INFO Workflow.generate:   [26/45] LabTracker                      17.10s  failed=False
+2026-07-02 15:06:35,401 INFO _ollama: ollama POST http://localhost:11434/api/chat model=kimi-k2.6:cloud prompt=2465 chars
+2026-07-02 15:06:48,816 INFO _ollama: ollama POST http://localhost:11434/api/chat model=kimi-k2.6:cloud prompt=2000 chars
+2026-07-02 15:06:53,833 INFO Workflow.generate:   [27/45] Louvre                          18.43s  failed=False
+2026-07-02 15:06:53,833 INFO _ollama: ollama POST http://localhost:11434/api/chat model=kimi-k2.6:cloud prompt=3643 chars
+2026-07-02 15:06:59,670 INFO _ollama: ollama POST http://localhost:11434/api/chat model=kimi-k2.6:cloud prompt=1495 chars
+2026-07-02 15:07:05,340 INFO Workflow.generate:   [28/45] Menso                           11.51s  failed=False
+2026-07-02 15:07:05,340 INFO _ollama: ollama POST http://localhost:11434/api/chat model=kimi-k2.6:cloud prompt=2734 chars
+2026-07-02 15:07:22,813 INFO _ollama: ollama POST http://localhost:11434/api/chat model=kimi-k2.6:cloud prompt=2000 chars
+2026-07-02 15:07:26,670 INFO Workflow.generate:   [29/45] Musicmatic                      21.33s  failed=False
+2026-07-02 15:07:26,671 INFO _ollama: ollama POST http://localhost:11434/api/chat model=kimi-k2.6:cloud prompt=2517 chars
+2026-07-02 15:07:32,951 INFO _ollama: ollama POST http://localhost:11434/api/chat model=kimi-k2.6:cloud prompt=1426 chars
+2026-07-02 15:07:39,216 INFO Workflow.generate:   [30/45] OnlineTutoringSystem            12.55s  failed=False
+2026-07-02 15:07:39,216 INFO _ollama: ollama POST http://localhost:11434/api/chat model=kimi-k2.6:cloud prompt=4245 chars
+2026-07-02 15:07:45,241 INFO _ollama: ollama POST http://localhost:11434/api/chat model=kimi-k2.6:cloud prompt=1218 chars
+2026-07-02 15:07:50,782 INFO Workflow.generate:   [31/45] PizzaDeliveryWithEntertainment  11.57s  failed=True
+2026-07-02 15:07:50,782 INFO _ollama: ollama POST http://localhost:11434/api/chat model=kimi-k2.6:cloud prompt=1820 chars
+2026-07-02 15:07:58,403 INFO _ollama: ollama POST http://localhost:11434/api/chat model=kimi-k2.6:cloud prompt=1960 chars
+2026-07-02 15:08:04,696 INFO Workflow.generate:   [32/45] ProjectManagement               13.91s  failed=False
+2026-07-02 15:08:04,696 INFO _ollama: ollama POST http://localhost:11434/api/chat model=kimi-k2.6:cloud prompt=1757 chars
+2026-07-02 15:08:07,459 INFO _ollama: ollama POST http://localhost:11434/api/chat model=kimi-k2.6:cloud prompt=575 chars
+2026-07-02 15:08:10,941 INFO Workflow.generate:   [33/45] School                          6.25s  failed=False
+2026-07-02 15:08:10,941 INFO _ollama: ollama POST http://localhost:11434/api/chat model=kimi-k2.6:cloud prompt=4115 chars
+2026-07-02 15:08:17,700 INFO _ollama: ollama POST http://localhost:11434/api/chat model=kimi-k2.6:cloud prompt=2000 chars
+2026-07-02 15:08:20,766 INFO Workflow.generate:   [34/45] SellingGoods                    9.82s  failed=False
+2026-07-02 15:08:20,766 INFO _ollama: ollama POST http://localhost:11434/api/chat model=kimi-k2.6:cloud prompt=1326 chars
+2026-07-02 15:08:23,843 INFO _ollama: ollama POST http://localhost:11434/api/chat model=kimi-k2.6:cloud prompt=515 chars
+2026-07-02 15:08:26,916 INFO Workflow.generate:   [35/45] Sightseeing                     6.15s  failed=False
+2026-07-02 15:08:26,916 INFO _ollama: ollama POST http://localhost:11434/api/chat model=kimi-k2.6:cloud prompt=2649 chars
+2026-07-02 15:08:32,450 INFO _ollama: ollama POST http://localhost:11434/api/chat model=kimi-k2.6:cloud prompt=2000 chars
+2026-07-02 15:08:37,466 INFO Workflow.generate:   [36/45] SmartHomeAutomationSystem       10.55s  failed=True
+2026-07-02 15:08:37,466 INFO _ollama: ollama POST http://localhost:11434/api/chat model=kimi-k2.6:cloud prompt=3195 chars
+2026-07-02 15:08:55,488 INFO _ollama: ollama POST http://localhost:11434/api/chat model=kimi-k2.6:cloud prompt=2000 chars
+2026-07-02 15:08:59,275 INFO Workflow.generate:   [37/45] Sober                           21.81s  failed=False
+2026-07-02 15:08:59,275 INFO _ollama: ollama POST http://localhost:11434/api/chat model=kimi-k2.6:cloud prompt=1465 chars
+2026-07-02 15:09:02,040 INFO _ollama: ollama POST http://localhost:11434/api/chat model=kimi-k2.6:cloud prompt=541 chars
+2026-07-02 15:09:04,702 INFO Workflow.generate:   [38/45] StudentAppointment              5.43s  failed=False
+2026-07-02 15:09:04,702 INFO _ollama: ollama POST http://localhost:11434/api/chat model=kimi-k2.6:cloud prompt=2181 chars
+2026-07-02 15:09:09,824 INFO _ollama: ollama POST http://localhost:11434/api/chat model=kimi-k2.6:cloud prompt=1706 chars
+2026-07-02 15:09:20,167 INFO Workflow.generate:   [39/45] TeamSportsScoutingSystem        15.46s  failed=True
+2026-07-02 15:09:20,167 INFO _ollama: ollama POST http://localhost:11434/api/chat model=kimi-k2.6:cloud prompt=2912 chars
+2026-07-02 15:09:26,209 INFO _ollama: ollama POST http://localhost:11434/api/chat model=kimi-k2.6:cloud prompt=1240 chars
+2026-07-02 15:09:31,887 INFO Workflow.generate:   [40/45] TileOGame                       11.72s  failed=False
+2026-07-02 15:09:31,887 INFO _ollama: ollama POST http://localhost:11434/api/chat model=kimi-k2.6:cloud prompt=2797 chars
+2026-07-02 15:09:34,296 INFO _ollama: ollama POST http://localhost:11434/api/chat model=kimi-k2.6:cloud prompt=1046 chars
+2026-07-02 15:09:38,599 INFO Workflow.generate:   [41/45] TransportCompany                6.71s  failed=False
+2026-07-02 15:09:38,599 INFO _ollama: ollama POST http://localhost:11434/api/chat model=kimi-k2.6:cloud prompt=2212 chars
+2026-07-02 15:09:49,965 INFO _ollama: ollama POST http://localhost:11434/api/chat model=kimi-k2.6:cloud prompt=2000 chars
+2026-07-02 15:09:53,343 INFO Workflow.generate:   [42/45] TreatmentPlans                  14.74s  failed=False
+2026-07-02 15:09:53,343 INFO _ollama: ollama POST http://localhost:11434/api/chat model=kimi-k2.6:cloud prompt=1551 chars
+2026-07-02 15:09:55,289 INFO _ollama: ollama POST http://localhost:11434/api/chat model=kimi-k2.6:cloud prompt=546 chars
+2026-07-02 15:09:58,435 INFO Workflow.generate:   [43/45] TruckLogistics                  5.09s  failed=False
+2026-07-02 15:09:58,435 INFO _ollama: ollama POST http://localhost:11434/api/chat model=kimi-k2.6:cloud prompt=1609 chars
+2026-07-02 15:10:04,591 INFO _ollama: ollama POST http://localhost:11434/api/chat model=kimi-k2.6:cloud prompt=1621 chars
+2026-07-02 15:10:09,419 INFO Workflow.generate:   [44/45] University                      10.98s  failed=False
+2026-07-02 15:10:09,419 INFO _ollama: ollama POST http://localhost:11434/api/chat model=kimi-k2.6:cloud prompt=3348 chars
+2026-07-02 15:10:12,594 INFO _ollama: ollama POST http://localhost:11434/api/chat model=kimi-k2.6:cloud prompt=884 chars
+2026-07-02 15:10:17,203 INFO Workflow.generate:   [45/45] eHome2020                       7.78s  failed=False
+2026-07-02 15:10:17,205 INFO Workflow.generate: wrote /Users/vasiliy/Documents/GitHub/Automated-DomainModel-Benchmark/Workflow/Results/cache/pid11700_t4460368032/kaiser_clean.json (45 records, 6 failed, 654.6s)
+2026-07-02 15:10:17,205 INFO Workflow.score: scoring /Users/vasiliy/Documents/GitHub/Automated-DomainModel-Benchmark/Workflow/Results/cache/pid11700_t4460368032/kaiser_clean.json → /Users/vasiliy/Documents/GitHub/Automated-DomainModel-Benchmark/Workflow/Results/cache/pid11700_t4460368032/kaiser_clean_scored.json (metric=metrik-4)
+2026-07-02 15:15:50,173 INFO Workflow.score:   scored 10/45
+2026-07-02 15:21:46,427 INFO Workflow.score:   scored 20/45
+2026-07-02 15:28:02,009 INFO Workflow.score:   scored 30/45
+2026-07-02 15:34:25,652 INFO Workflow.score:   scored 40/45
+2026-07-02 15:35:58,251 INFO Workflow.score:   scored 45/45
+2026-07-02 15:35:58,257 INFO Workflow.score: wrote /Users/vasiliy/Documents/GitHub/Automated-DomainModel-Benchmark/Workflow/Results/cache/pid11700_t4460368032/kaiser_clean_scored.json (n=45, failed=3)
+2026-07-02 15:35:58,258 INFO Workflow.collect: collecting /Users/vasiliy/Documents/GitHub/Automated-DomainModel-Benchmark/Workflow/Results/cache/pid11700_t4460368032/kaiser_clean_scored.json → /Users/vasiliy/Documents/GitHub/Automated-DomainModel-Benchmark/Workflow/Results/runs
+2026-07-02 15:35:58,270 INFO Workflow.collect: wrote /Users/vasiliy/Documents/GitHub/Automated-DomainModel-Benchmark/Workflow/Results/runs/zenodo_zero_shot_kimi-k2.6_cloud_2026-07-02T13-35-58Z.json (n=45, failed_gen=6, failed_score=0)
+2026-07-02 15:35:58,271 INFO Candidates.zenodo_zero_shot.run: cleared cache: /Users/vasiliy/Documents/GitHub/Automated-DomainModel-Benchmark/Workflow/Results/cache/pid11700_t4460368032
+

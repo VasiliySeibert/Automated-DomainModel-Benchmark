@@ -4,7 +4,7 @@
   "uses_llm": true,
   "harness_default": "ollama",
   "skip_folders": [],
-  "timeout_seconds": 600,
+  "timeout_seconds": 1800,
   "description": "Two-stage zero-shot: stage 1 extracts the domain model in the zenodo DSL, stage 2 translates to canonical PlantUML, then a line-by-line validator repairs mechanical issues and fails the rest. The translate step can be disabled with --no-translate on run.py for A/B comparison.",
   "prompt_files": ["prompt_system.txt", "prompt_task.txt", "prompt_translate.txt"],
   "default_model": "qwen2.5-coder:7b",

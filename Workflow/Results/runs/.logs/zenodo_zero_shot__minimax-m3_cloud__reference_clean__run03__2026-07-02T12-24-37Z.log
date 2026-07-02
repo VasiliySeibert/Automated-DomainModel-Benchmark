@@ -1,0 +1,81 @@
+=== command ===
+/Users/vasiliy/.pyenv/versions/3.12.3/bin/python /Users/vasiliy/Documents/GitHub/Automated-DomainModel-Benchmark/Candidates/AutomatedDomainModelling_zenodo/zero_shot/run.py --dataset reference_clean --metric metrik-4 --run-index 3 --out-dir /Users/vasiliy/Documents/GitHub/Automated-DomainModel-Benchmark/Workflow/Results/runs --results-dir /Users/vasiliy/Documents/GitHub/Automated-DomainModel-Benchmark/Workflow/Results/cache/pid11700_t4460367600 --model minimax-m3:cloud
+
+=== env (subset) ===
+PYTHONPATH=/Users/vasiliy/Documents/GitHub/Automated-DomainModel-Benchmark
+
+=== exit code ===
+0
+
+=== stdout ===
+========================================================================
+Automated DomainModel Benchmark — driver for zenodo_zero_shot
+========================================================================
+  Candidate    : /Users/vasiliy/Documents/GitHub/Automated-DomainModel-Benchmark/Candidates/AutomatedDomainModelling_zenodo/zero_shot/candidate.py
+  Dataset      : reference_clean
+  Metric       : metrik-4  (source: cli)
+  Model        : minimax-m3:cloud  (source: cli)
+  Temperature  : 0.7  (source: config.json::default_temperature)
+  Temp translate: 0.0  (source: config.json::default_temperature_translate)
+  Num predict  : 1024  (source: config.json::default_num_predict)
+  Seed         : None  (source: project_default)
+  Top-p        : None  (source: project_default)
+  Top-k        : None  (source: project_default)
+  Repeat penalty: None  (source: project_default)
+  Timeout      : 1800  (source: config.json::timeout_seconds)
+  Translation  : True  (source: config.json::enable_translation)
+  Think        : False  (source: cli)
+  Run index    : 3
+  Results dir  : /Users/vasiliy/Documents/GitHub/Automated-DomainModel-Benchmark/Workflow/Results/cache/pid11700_t4460367600
+  Output dir   : /Users/vasiliy/Documents/GitHub/Automated-DomainModel-Benchmark/Workflow/Results/runs
+  Steps        : generate score collect
+========================================================================
+
+[generate]  done in 171.3s (rc=0) → /Users/vasiliy/Documents/GitHub/Automated-DomainModel-Benchmark/Workflow/Results/cache/pid11700_t4460367600/reference_clean.json
+
+[score]     done in 0.0s (rc=0) → /Users/vasiliy/Documents/GitHub/Automated-DomainModel-Benchmark/Workflow/Results/cache/pid11700_t4460367600/reference_clean_scored.json
+
+[collect]   done → /Users/vasiliy/Documents/GitHub/Automated-DomainModel-Benchmark/Workflow/Results/runs/zenodo_zero_shot_minimax-m3_cloud_2026-07-02T12-27-28Z.json
+
+[collect]   done in 0.9s (rc=0) → /Users/vasiliy/Documents/GitHub/Automated-DomainModel-Benchmark/Workflow/Results/runs
+
+[run] DONE in 172.2s
+
+
+=== stderr ===
+2026-07-02 14:24:37,414 INFO Candidates.zenodo_zero_shot.run: re-instantiated candidate with resolved parameters
+2026-07-02 14:24:37,415 INFO Workflow.generate: loaded candidate from /Users/vasiliy/Documents/GitHub/Automated-DomainModel-Benchmark/Candidates/AutomatedDomainModelling_zenodo/zero_shot/candidate.py
+2026-07-02 14:24:37,415 INFO Candidates.candidate_interface: reconfigured candidate TwoStageZeroShotCandidate with ['enable_translation', 'model', 'num_predict', 'temperature', 'temperature_translate', 'think']
+2026-07-02 14:24:37,415 INFO Workflow.generate: dataset reference_clean: 8 records
+2026-07-02 14:24:37,415 INFO _ollama: ollama POST http://localhost:11434/api/chat model=minimax-m3:cloud prompt=3995 chars
+2026-07-02 14:24:48,618 INFO _ollama: ollama POST http://localhost:11434/api/chat model=minimax-m3:cloud prompt=2000 chars
+2026-07-02 14:24:56,935 INFO Workflow.generate:   [1/8] LabTracker                      19.52s  failed=True
+2026-07-02 14:24:56,935 INFO _ollama: ollama POST http://localhost:11434/api/chat model=minimax-m3:cloud prompt=3526 chars
+2026-07-02 14:25:10,122 INFO _ollama: ollama POST http://localhost:11434/api/chat model=minimax-m3:cloud prompt=2000 chars
+2026-07-02 14:25:19,439 INFO Workflow.generate:   [2/8] CelO                            22.50s  failed=True
+2026-07-02 14:25:19,439 INFO _ollama: ollama POST http://localhost:11434/api/chat model=minimax-m3:cloud prompt=2176 chars
+2026-07-02 14:25:29,783 INFO _ollama: ollama POST http://localhost:11434/api/chat model=minimax-m3:cloud prompt=2000 chars
+2026-07-02 14:25:39,876 INFO Workflow.generate:   [3/8] TSS                             20.44s  failed=True
+2026-07-02 14:25:39,876 INFO _ollama: ollama POST http://localhost:11434/api/chat model=minimax-m3:cloud prompt=2649 chars
+2026-07-02 14:25:53,131 INFO _ollama: ollama POST http://localhost:11434/api/chat model=minimax-m3:cloud prompt=2000 chars
+2026-07-02 14:26:03,724 INFO Workflow.generate:   [4/8] SHAS                            23.85s  failed=True
+2026-07-02 14:26:03,724 INFO _ollama: ollama POST http://localhost:11434/api/chat model=minimax-m3:cloud prompt=2411 chars
+2026-07-02 14:26:13,731 INFO _ollama: ollama POST http://localhost:11434/api/chat model=minimax-m3:cloud prompt=2000 chars
+2026-07-02 14:26:24,465 INFO Workflow.generate:   [5/8] OTS                             20.74s  failed=True
+2026-07-02 14:26:24,465 INFO _ollama: ollama POST http://localhost:11434/api/chat model=minimax-m3:cloud prompt=4214 chars
+2026-07-02 14:26:34,910 INFO _ollama: ollama POST http://localhost:11434/api/chat model=minimax-m3:cloud prompt=2000 chars
+2026-07-02 14:26:43,736 INFO Workflow.generate:   [6/8] Block                           19.27s  failed=True
+2026-07-02 14:26:43,736 INFO _ollama: ollama POST http://localhost:11434/api/chat model=minimax-m3:cloud prompt=2909 chars
+2026-07-02 14:26:57,795 INFO _ollama: ollama POST http://localhost:11434/api/chat model=minimax-m3:cloud prompt=2000 chars
+2026-07-02 14:27:07,986 INFO Workflow.generate:   [7/8] TileO                           24.25s  failed=True
+2026-07-02 14:27:07,986 INFO _ollama: ollama POST http://localhost:11434/api/chat model=minimax-m3:cloud prompt=3624 chars
+2026-07-02 14:27:19,429 INFO _ollama: ollama POST http://localhost:11434/api/chat model=minimax-m3:cloud prompt=2000 chars
+2026-07-02 14:27:28,671 INFO Workflow.generate:   [8/8] HBMS                            20.68s  failed=True
+2026-07-02 14:27:28,673 INFO Workflow.generate: wrote /Users/vasiliy/Documents/GitHub/Automated-DomainModel-Benchmark/Workflow/Results/cache/pid11700_t4460367600/reference_clean.json (8 records, 8 failed, 171.3s)
+2026-07-02 14:27:28,673 INFO Workflow.score: scoring /Users/vasiliy/Documents/GitHub/Automated-DomainModel-Benchmark/Workflow/Results/cache/pid11700_t4460367600/reference_clean.json → /Users/vasiliy/Documents/GitHub/Automated-DomainModel-Benchmark/Workflow/Results/cache/pid11700_t4460367600/reference_clean_scored.json (metric=metrik-4)
+2026-07-02 14:27:28,674 INFO Workflow.score:   scored 8/8
+2026-07-02 14:27:28,683 INFO Workflow.score: wrote /Users/vasiliy/Documents/GitHub/Automated-DomainModel-Benchmark/Workflow/Results/cache/pid11700_t4460367600/reference_clean_scored.json (n=8, failed=8)
+2026-07-02 14:27:28,684 INFO Workflow.collect: collecting /Users/vasiliy/Documents/GitHub/Automated-DomainModel-Benchmark/Workflow/Results/cache/pid11700_t4460367600/reference_clean_scored.json → /Users/vasiliy/Documents/GitHub/Automated-DomainModel-Benchmark/Workflow/Results/runs
+2026-07-02 14:27:29,598 INFO Workflow.collect: wrote /Users/vasiliy/Documents/GitHub/Automated-DomainModel-Benchmark/Workflow/Results/runs/zenodo_zero_shot_minimax-m3_cloud_2026-07-02T12-27-28Z.json (n=8, failed_gen=8, failed_score=0)
+2026-07-02 14:27:29,599 INFO Candidates.zenodo_zero_shot.run: cleared cache: /Users/vasiliy/Documents/GitHub/Automated-DomainModel-Benchmark/Workflow/Results/cache/pid11700_t4460367600
+

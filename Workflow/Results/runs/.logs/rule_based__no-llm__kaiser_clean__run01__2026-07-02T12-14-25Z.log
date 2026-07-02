@@ -1,0 +1,97 @@
+=== command ===
+/Users/vasiliy/.pyenv/versions/3.12.3/bin/python /Users/vasiliy/Documents/GitHub/Automated-DomainModel-Benchmark/Candidates/rule_based/run.py --dataset kaiser_clean --metric metrik-4 --run-index 1 --out-dir /Users/vasiliy/Documents/GitHub/Automated-DomainModel-Benchmark/Workflow/Results/runs --results-dir /Users/vasiliy/Documents/GitHub/Automated-DomainModel-Benchmark/Workflow/Results/cache/pid11700_t4455081520
+
+=== env (subset) ===
+PYTHONPATH=/Users/vasiliy/Documents/GitHub/Automated-DomainModel-Benchmark
+
+=== exit code ===
+0
+
+=== stdout ===
+========================================================================
+Automated DomainModel Benchmark — driver for rule_based
+========================================================================
+  Candidate    : /Users/vasiliy/Documents/GitHub/Automated-DomainModel-Benchmark/Candidates/rule_based/candidate.py
+  Dataset      : kaiser_clean
+  Metric       : metrik-4  (source: cli)
+  Run index    : 1
+  Results dir  : /Users/vasiliy/Documents/GitHub/Automated-DomainModel-Benchmark/Workflow/Results/cache/pid11700_t4455081520
+  Output dir   : /Users/vasiliy/Documents/GitHub/Automated-DomainModel-Benchmark/Workflow/Results/runs
+  Steps        : generate score collect
+========================================================================
+
+[generate]  done in 3.6s (rc=0) → /Users/vasiliy/Documents/GitHub/Automated-DomainModel-Benchmark/Workflow/Results/cache/pid11700_t4455081520/kaiser_clean.json
+
+[score]     done in 212.2s (rc=0) → /Users/vasiliy/Documents/GitHub/Automated-DomainModel-Benchmark/Workflow/Results/cache/pid11700_t4455081520/kaiser_clean_scored.json
+
+[collect]   done → /Users/vasiliy/Documents/GitHub/Automated-DomainModel-Benchmark/Workflow/Results/runs/rule_based_2026-07-02T12-18-01Z.json
+
+[collect]   done in 0.0s (rc=0) → /Users/vasiliy/Documents/GitHub/Automated-DomainModel-Benchmark/Workflow/Results/runs
+
+[run] DONE in 215.9s
+
+
+=== stderr ===
+2026-07-02 14:14:26,832 INFO Workflow.generate: loaded candidate from /Users/vasiliy/Documents/GitHub/Automated-DomainModel-Benchmark/Candidates/rule_based/candidate.py
+2026-07-02 14:14:26,832 INFO Workflow.generate: dataset kaiser_clean: 45 records
+2026-07-02 14:14:26,905 INFO Workflow.generate:   [1/45] AirTravel                       0.07s  failed=False
+2026-07-02 14:14:26,962 INFO Workflow.generate:   [2/45] AlphaInsurance                  0.06s  failed=False
+2026-07-02 14:14:26,998 INFO Workflow.generate:   [3/45] BankAccount                     0.04s  failed=False
+2026-07-02 14:14:27,046 INFO Workflow.generate:   [4/45] Boeing                          0.05s  failed=False
+2026-07-02 14:14:27,158 INFO Workflow.generate:   [5/45] BuildingManagement              0.11s  failed=False
+2026-07-02 14:14:27,225 INFO Workflow.generate:   [6/45] BusTransportationManagementSystem  0.07s  failed=False
+2026-07-02 14:14:27,282 INFO Workflow.generate:   [7/45] CardGameApp                     0.06s  failed=False
+2026-07-02 14:14:27,355 INFO Workflow.generate:   [8/45] CelO                            0.07s  failed=False
+2026-07-02 14:14:27,410 INFO Workflow.generate:   [9/45] ClothingCompany                 0.05s  failed=False
+2026-07-02 14:14:27,501 INFO Workflow.generate:   [10/45] Cruise                          0.09s  failed=False
+2026-07-02 14:14:27,612 INFO Workflow.generate:   [11/45] DestroyBlockGame                0.11s  failed=False
+2026-07-02 14:14:27,671 INFO Workflow.generate:   [12/45] EUScienceConnect                0.06s  failed=False
+2026-07-02 14:14:27,697 INFO Workflow.generate:   [13/45] Ebike                           0.03s  failed=False
+2026-07-02 14:14:27,765 INFO Workflow.generate:   [14/45] Facepage                        0.07s  failed=False
+2026-07-02 14:14:27,825 INFO Workflow.generate:   [15/45] FilmSet                         0.06s  failed=False
+2026-07-02 14:14:27,897 INFO Workflow.generate:   [16/45] FitnessCompanyConan             0.07s  failed=False
+2026-07-02 14:14:27,944 INFO Workflow.generate:   [17/45] GameArea                        0.05s  failed=False
+2026-07-02 14:14:28,024 INFO Workflow.generate:   [18/45] GasStation_KUL                  0.08s  failed=False
+2026-07-02 14:14:28,054 INFO Workflow.generate:   [19/45] GasStation_TUW                  0.03s  failed=False
+2026-07-02 14:14:28,140 INFO Workflow.generate:   [20/45] HelpingHands                    0.09s  failed=False
+2026-07-02 14:14:28,244 INFO Workflow.generate:   [21/45] HomeForTheElderly               0.10s  failed=False
+2026-07-02 14:14:28,307 INFO Workflow.generate:   [22/45] HospitalHouseMD                 0.06s  failed=False
+2026-07-02 14:14:28,387 INFO Workflow.generate:   [23/45] HotelBookingManagementSystem    0.08s  failed=False
+2026-07-02 14:14:28,424 INFO Workflow.generate:   [24/45] House                           0.04s  failed=False
+2026-07-02 14:14:28,479 INFO Workflow.generate:   [25/45] Kinepolis                       0.06s  failed=False
+2026-07-02 14:14:28,558 INFO Workflow.generate:   [26/45] LabTracker                      0.08s  failed=False
+2026-07-02 14:14:28,596 INFO Workflow.generate:   [27/45] Louvre                          0.04s  failed=False
+2026-07-02 14:14:28,676 INFO Workflow.generate:   [28/45] Menso                           0.08s  failed=False
+2026-07-02 14:14:28,734 INFO Workflow.generate:   [29/45] Musicmatic                      0.06s  failed=False
+2026-07-02 14:14:28,774 WARNING _loaded_candidate_7803322180013192151: rule_based: dropping malformed line: 'Wvvayawe -- Yrwrgpsa'
+2026-07-02 14:14:28,774 INFO Workflow.generate:   [30/45] OnlineTutoringSystem            0.04s  failed=False
+2026-07-02 14:14:28,857 INFO Workflow.generate:   [31/45] PizzaDeliveryWithEntertainment  0.08s  failed=False
+2026-07-02 14:14:28,893 INFO Workflow.generate:   [32/45] ProjectManagement               0.04s  failed=False
+2026-07-02 14:14:28,926 INFO Workflow.generate:   [33/45] School                          0.03s  failed=False
+2026-07-02 14:14:29,012 INFO Workflow.generate:   [34/45] SellingGoods                    0.09s  failed=False
+2026-07-02 14:14:29,050 INFO Workflow.generate:   [35/45] Sightseeing                     0.04s  failed=False
+2026-07-02 14:14:29,114 INFO Workflow.generate:   [36/45] SmartHomeAutomationSystem       0.07s  failed=False
+2026-07-02 14:14:29,177 INFO Workflow.generate:   [37/45] Sober                           0.06s  failed=False
+2026-07-02 14:14:29,193 WARNING _loaded_candidate_7803322180013192151: rule_based: dropping malformed line: 'Ixxswqvp -- Bxvsgrkx'
+2026-07-02 14:14:29,193 INFO Workflow.generate:   [38/45] StudentAppointment              0.02s  failed=False
+2026-07-02 14:14:29,228 WARNING _loaded_candidate_7803322180013192151: rule_based: dropping malformed line: 'Licacsnn -- Azikbjil'
+2026-07-02 14:14:29,228 INFO Workflow.generate:   [39/45] TeamSportsScoutingSystem        0.04s  failed=False
+2026-07-02 14:14:29,296 INFO Workflow.generate:   [40/45] TileOGame                       0.07s  failed=False
+2026-07-02 14:14:29,343 WARNING _loaded_candidate_7803322180013192151: rule_based: dropping malformed line: 'Tvdgxanp -- Zhhulntl'
+2026-07-02 14:14:29,343 INFO Workflow.generate:   [41/45] TransportCompany                0.05s  failed=False
+2026-07-02 14:14:29,388 INFO Workflow.generate:   [42/45] TreatmentPlans                  0.04s  failed=False
+2026-07-02 14:14:29,443 INFO Workflow.generate:   [43/45] TruckLogistics                  0.06s  failed=False
+2026-07-02 14:14:29,483 INFO Workflow.generate:   [44/45] University                      0.04s  failed=False
+2026-07-02 14:14:29,581 INFO Workflow.generate:   [45/45] eHome2020                       0.10s  failed=False
+2026-07-02 14:14:29,582 INFO Workflow.generate: wrote /Users/vasiliy/Documents/GitHub/Automated-DomainModel-Benchmark/Workflow/Results/cache/pid11700_t4455081520/kaiser_clean.json (45 records, 0 failed, 2.8s)
+2026-07-02 14:14:29,582 INFO Workflow.score: scoring /Users/vasiliy/Documents/GitHub/Automated-DomainModel-Benchmark/Workflow/Results/cache/pid11700_t4455081520/kaiser_clean.json → /Users/vasiliy/Documents/GitHub/Automated-DomainModel-Benchmark/Workflow/Results/cache/pid11700_t4455081520/kaiser_clean_scored.json (metric=metrik-4)
+2026-07-02 14:15:19,126 INFO Workflow.score:   scored 10/45
+2026-07-02 14:16:24,641 INFO Workflow.score:   scored 20/45
+2026-07-02 14:16:44,513 INFO Workflow.score:   scored 30/45
+2026-07-02 14:17:48,202 INFO Workflow.score:   scored 40/45
+2026-07-02 14:18:01,809 INFO Workflow.score:   scored 45/45
+2026-07-02 14:18:01,816 INFO Workflow.score: wrote /Users/vasiliy/Documents/GitHub/Automated-DomainModel-Benchmark/Workflow/Results/cache/pid11700_t4455081520/kaiser_clean_scored.json (n=45, failed=0)
+2026-07-02 14:18:01,817 INFO Workflow.collect: collecting /Users/vasiliy/Documents/GitHub/Automated-DomainModel-Benchmark/Workflow/Results/cache/pid11700_t4455081520/kaiser_clean_scored.json → /Users/vasiliy/Documents/GitHub/Automated-DomainModel-Benchmark/Workflow/Results/runs
+2026-07-02 14:18:01,835 INFO Workflow.collect: wrote /Users/vasiliy/Documents/GitHub/Automated-DomainModel-Benchmark/Workflow/Results/runs/rule_based_2026-07-02T12-18-01Z.json (n=45, failed_gen=0, failed_score=0)
+2026-07-02 14:18:01,836 INFO Candidates.rule_based.run: cleared cache: /Users/vasiliy/Documents/GitHub/Automated-DomainModel-Benchmark/Workflow/Results/cache/pid11700_t4455081520
+

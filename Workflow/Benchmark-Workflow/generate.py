@@ -56,7 +56,7 @@ REPO_ROOT = Path(__file__).resolve().parent.parent
 if str(REPO_ROOT) not in sys.path:
     sys.path.insert(0, str(REPO_ROOT))
 
-from Candidates.candidate_interface import load_candidate
+from Candidates.candidate_interface import load_candidate, reconfigure_candidate
 from Data import load_dataset
 
 
@@ -112,11 +112,28 @@ def main(argv: list[str] | None = None) -> int:
     ap.add_argument("--out", required=True, help="Output JSON path.")
     ap.add_argument("--limit", type=int, default=None,
                     help="Run only the first N records.")
+    ap.add_argument("--settings-json", default=None,
+                    help="Optional JSON object string of resolved candidate "
+                         "settings (model, temperature, etc.). If the "
+                         "candidate's class accepts any of these kwargs, "
+                         "the candidate is re-instantiated with them before "
+                         "running. Default: no reconfiguration.")
     args = ap.parse_args(argv)
 
     candidate_path = Path(args.candidate).resolve()
     candidate = load_candidate(candidate_path)
     log.info("loaded candidate from %s", candidate_path)
+
+    if args.settings_json:
+        try:
+            settings = json.loads(args.settings_json)
+        except json.JSONDecodeError as exc:
+            log.error("--settings-json is not valid JSON: %s", exc)
+            return 1
+        if isinstance(settings, dict):
+            reconfigure_candidate(candidate, settings)
+        else:
+            log.warning("--settings-json must decode to an object; ignoring")
 
     rows = load_dataset(args.dataset)
     if args.limit is not None:

@@ -1,0 +1,54 @@
+=== command ===
+/Users/vasiliy/.pyenv/versions/3.12.3/bin/python /Users/vasiliy/Documents/GitHub/Automated-DomainModel-Benchmark/Candidates/rule_based/run.py --dataset reference_clean --metric metrik-4 --run-index 1 --out-dir /Users/vasiliy/Documents/GitHub/Automated-DomainModel-Benchmark/Workflow/Results/runs --results-dir /Users/vasiliy/Documents/GitHub/Automated-DomainModel-Benchmark/Workflow/Results/cache/pid11700_t4460367168
+
+=== env (subset) ===
+PYTHONPATH=/Users/vasiliy/Documents/GitHub/Automated-DomainModel-Benchmark
+
+=== exit code ===
+0
+
+=== stdout ===
+========================================================================
+Automated DomainModel Benchmark — driver for rule_based
+========================================================================
+  Candidate    : /Users/vasiliy/Documents/GitHub/Automated-DomainModel-Benchmark/Candidates/rule_based/candidate.py
+  Dataset      : reference_clean
+  Metric       : metrik-4  (source: cli)
+  Run index    : 1
+  Results dir  : /Users/vasiliy/Documents/GitHub/Automated-DomainModel-Benchmark/Workflow/Results/cache/pid11700_t4460367168
+  Output dir   : /Users/vasiliy/Documents/GitHub/Automated-DomainModel-Benchmark/Workflow/Results/runs
+  Steps        : generate score collect
+========================================================================
+
+[generate]  done in 1.5s (rc=0) → /Users/vasiliy/Documents/GitHub/Automated-DomainModel-Benchmark/Workflow/Results/cache/pid11700_t4460367168/reference_clean.json
+
+[score]     done in 79.2s (rc=0) → /Users/vasiliy/Documents/GitHub/Automated-DomainModel-Benchmark/Workflow/Results/cache/pid11700_t4460367168/reference_clean_scored.json
+
+[collect]   done → /Users/vasiliy/Documents/GitHub/Automated-DomainModel-Benchmark/Workflow/Results/runs/rule_based_2026-07-02T12-15-46Z.json
+
+[collect]   done in 0.0s (rc=0) → /Users/vasiliy/Documents/GitHub/Automated-DomainModel-Benchmark/Workflow/Results/runs
+
+[run] DONE in 80.8s
+
+
+=== stderr ===
+2026-07-02 14:14:26,832 INFO Workflow.generate: loaded candidate from /Users/vasiliy/Documents/GitHub/Automated-DomainModel-Benchmark/Candidates/rule_based/candidate.py
+2026-07-02 14:14:26,833 INFO Workflow.generate: dataset reference_clean: 8 records
+2026-07-02 14:14:26,924 INFO Workflow.generate:   [1/8] LabTracker                      0.09s  failed=False
+2026-07-02 14:14:26,995 INFO Workflow.generate:   [2/8] CelO                            0.07s  failed=False
+2026-07-02 14:14:27,034 WARNING _loaded_candidate_3275589006235892681: rule_based: dropping malformed line: 'Azrurqyp -- Dzhpwovk'
+2026-07-02 14:14:27,034 INFO Workflow.generate:   [3/8] TSS                             0.04s  failed=False
+2026-07-02 14:14:27,129 INFO Workflow.generate:   [4/8] SHAS                            0.10s  failed=False
+2026-07-02 14:14:27,173 WARNING _loaded_candidate_3275589006235892681: rule_based: dropping malformed line: 'Gkmbflvp -- Lfebpmyw'
+2026-07-02 14:14:27,174 INFO Workflow.generate:   [5/8] OTS                             0.04s  failed=False
+2026-07-02 14:14:27,289 INFO Workflow.generate:   [6/8] Block                           0.12s  failed=False
+2026-07-02 14:14:27,360 INFO Workflow.generate:   [7/8] TileO                           0.07s  failed=False
+2026-07-02 14:14:27,442 INFO Workflow.generate:   [8/8] HBMS                            0.08s  failed=False
+2026-07-02 14:14:27,442 INFO Workflow.generate: wrote /Users/vasiliy/Documents/GitHub/Automated-DomainModel-Benchmark/Workflow/Results/cache/pid11700_t4460367168/reference_clean.json (8 records, 0 failed, 0.6s)
+2026-07-02 14:14:27,442 INFO Workflow.score: scoring /Users/vasiliy/Documents/GitHub/Automated-DomainModel-Benchmark/Workflow/Results/cache/pid11700_t4460367168/reference_clean.json → /Users/vasiliy/Documents/GitHub/Automated-DomainModel-Benchmark/Workflow/Results/cache/pid11700_t4460367168/reference_clean_scored.json (metric=metrik-4)
+2026-07-02 14:15:46,683 INFO Workflow.score:   scored 8/8
+2026-07-02 14:15:46,690 INFO Workflow.score: wrote /Users/vasiliy/Documents/GitHub/Automated-DomainModel-Benchmark/Workflow/Results/cache/pid11700_t4460367168/reference_clean_scored.json (n=8, failed=0)
+2026-07-02 14:15:46,690 INFO Workflow.collect: collecting /Users/vasiliy/Documents/GitHub/Automated-DomainModel-Benchmark/Workflow/Results/cache/pid11700_t4460367168/reference_clean_scored.json → /Users/vasiliy/Documents/GitHub/Automated-DomainModel-Benchmark/Workflow/Results/runs
+2026-07-02 14:15:46,706 INFO Workflow.collect: wrote /Users/vasiliy/Documents/GitHub/Automated-DomainModel-Benchmark/Workflow/Results/runs/rule_based_2026-07-02T12-15-46Z.json (n=8, failed_gen=0, failed_score=0)
+2026-07-02 14:15:46,706 INFO Candidates.rule_based.run: cleared cache: /Users/vasiliy/Documents/GitHub/Automated-DomainModel-Benchmark/Workflow/Results/cache/pid11700_t4460367168
+

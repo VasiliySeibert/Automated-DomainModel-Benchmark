@@ -291,6 +291,21 @@ def main(argv: list[str] | None = None) -> int:
     score    = _load_step("_wf_score",    WORKFLOW_PKG / "score.py")
     collect  = _load_step("_wf_collect",  WORKFLOW_PKG / "collect.py")
 
+    settings = {
+        "uses_llm":             True,
+        "model":                model,
+        "temperature":          temperature,
+        "temperature_translate": temperature_translate,
+        "num_predict":          num_predict,
+        "seed":                 seed,
+        "top_p":                top_p,
+        "top_k":                top_k,
+        "repeat_penalty":       repeat_penalty,
+        "timeout_seconds":      timeout,
+        "enable_translation":   enable_translation,
+        "limit":                args.limit,
+    }
+
     t_total = time.time()
 
     if not args.skip_generate:
@@ -299,6 +314,7 @@ def main(argv: list[str] | None = None) -> int:
             "--candidate", str(candidate_path),
             "--dataset",   args.dataset,
             "--out",       str(raw_json),
+            "--settings-json", json.dumps(settings),
             *(["--limit", str(args.limit)] if args.limit else []),
         ])
         print(f"\n[generate]  done in {time.time()-t0:.1f}s (rc={rc}) → {raw_json}")
@@ -322,20 +338,6 @@ def main(argv: list[str] | None = None) -> int:
         if not scored_json.exists():
             log.error("collect: input %s missing; run score first", scored_json)
             return 1
-        settings = {
-            "uses_llm":             True,
-            "model":                model,
-            "temperature":          temperature,
-            "temperature_translate": temperature_translate,
-            "num_predict":          num_predict,
-            "seed":                 seed,
-            "top_p":                top_p,
-            "top_k":                top_k,
-            "repeat_penalty":       repeat_penalty,
-            "timeout_seconds":      timeout,
-            "enable_translation":   enable_translation,
-            "limit":                args.limit,
-        }
         t0 = time.time()
         rc = collect.main([
             "--in",            str(scored_json),

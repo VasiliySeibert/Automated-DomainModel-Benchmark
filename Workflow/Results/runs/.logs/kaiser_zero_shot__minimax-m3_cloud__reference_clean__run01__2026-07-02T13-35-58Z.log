@@ -1,0 +1,73 @@
+=== command ===
+/Users/vasiliy/.pyenv/versions/3.12.3/bin/python /Users/vasiliy/Documents/GitHub/Automated-DomainModel-Benchmark/Candidates/text2uml-kaiser/run-candidate.py --dataset reference_clean --metric metrik-4 --run-index 1 --out-dir /Users/vasiliy/Documents/GitHub/Automated-DomainModel-Benchmark/Workflow/Results/runs --results-dir /Users/vasiliy/Documents/GitHub/Automated-DomainModel-Benchmark/Workflow/Results/cache/pid11700_t4460368368 --strategy kaiser_zero_shot --model minimax-m3:cloud
+
+=== env (subset) ===
+PYTHONPATH=/Users/vasiliy/Documents/GitHub/Automated-DomainModel-Benchmark
+
+=== exit code ===
+0
+
+=== stdout ===
+========================================================================
+Automated DomainModel Benchmark — driver for kaiser_zero_shot
+========================================================================
+  Strategy     : kaiser_zero_shot
+  Candidate    : /Users/vasiliy/Documents/GitHub/Automated-DomainModel-Benchmark/Candidates/text2uml-kaiser/zero_shot/candidate.py
+  Skip folders : []
+  Dataset      : reference_clean
+  Metric       : metrik-4  (source: cli)
+  Model        : minimax-m3:cloud  (source: cli)
+  Temperature  : 0.7  (source: config.json::default_temperature)
+  Num predict  : 1024  (source: config.json::default_num_predict)
+  Seed         : None  (source: project_default)
+  Top-p        : None  (source: project_default)
+  Top-k        : None  (source: project_default)
+  Repeat penalty: None  (source: project_default)
+  Timeout      : 1800  (source: config.json::timeout_seconds)
+  Think        : False  (source: cli)
+  Run index    : 1
+  Results dir  : /Users/vasiliy/Documents/GitHub/Automated-DomainModel-Benchmark/Workflow/Results/cache/pid11700_t4460368368
+  Output dir   : /Users/vasiliy/Documents/GitHub/Automated-DomainModel-Benchmark/Workflow/Results/runs
+  Steps        : generate score collect
+========================================================================
+
+[generate]  done in 105.6s (rc=0) → /Users/vasiliy/Documents/GitHub/Automated-DomainModel-Benchmark/Workflow/Results/cache/pid11700_t4460368368/reference_clean.json
+
+[score]     done in 0.0s (rc=0) → /Users/vasiliy/Documents/GitHub/Automated-DomainModel-Benchmark/Workflow/Results/cache/pid11700_t4460368368/reference_clean_scored.json
+
+[collect]   done → /Users/vasiliy/Documents/GitHub/Automated-DomainModel-Benchmark/Workflow/Results/runs/kaiser_zero_shot_minimax-m3_cloud_2026-07-02T13-37-44Z.json
+
+[collect]   done in 0.8s (rc=0) → /Users/vasiliy/Documents/GitHub/Automated-DomainModel-Benchmark/Workflow/Results/runs
+
+[run] DONE in 106.4s
+
+
+=== stderr ===
+2026-07-02 15:35:58,679 INFO Candidates.text2uml_kaiser.run_candidate: re-instantiated candidate with resolved parameters
+2026-07-02 15:35:58,680 INFO Workflow.generate: loaded candidate from /Users/vasiliy/Documents/GitHub/Automated-DomainModel-Benchmark/Candidates/text2uml-kaiser/zero_shot/candidate.py
+2026-07-02 15:35:58,680 INFO Candidates.candidate_interface: reconfigured candidate KaiserZeroShotCandidate with ['model', 'num_predict', 'temperature', 'think']
+2026-07-02 15:35:58,681 INFO Workflow.generate: dataset reference_clean: 8 records
+2026-07-02 15:35:58,681 INFO _ollama: ollama POST http://localhost:11434/api/chat model=minimax-m3:cloud prompt=3247 chars
+2026-07-02 15:36:14,632 INFO Workflow.generate:   [1/8] LabTracker                      15.95s  failed=True
+2026-07-02 15:36:14,632 INFO _ollama: ollama POST http://localhost:11434/api/chat model=minimax-m3:cloud prompt=2778 chars
+2026-07-02 15:36:30,163 INFO Workflow.generate:   [2/8] CelO                            15.53s  failed=True
+2026-07-02 15:36:30,163 INFO _ollama: ollama POST http://localhost:11434/api/chat model=minimax-m3:cloud prompt=1428 chars
+2026-07-02 15:36:42,175 INFO Workflow.generate:   [3/8] TSS                             12.01s  failed=True
+2026-07-02 15:36:42,175 INFO _ollama: ollama POST http://localhost:11434/api/chat model=minimax-m3:cloud prompt=1901 chars
+2026-07-02 15:36:55,283 INFO Workflow.generate:   [4/8] SHAS                            13.11s  failed=True
+2026-07-02 15:36:55,283 INFO _ollama: ollama POST http://localhost:11434/api/chat model=minimax-m3:cloud prompt=1663 chars
+2026-07-02 15:37:07,792 INFO Workflow.generate:   [5/8] OTS                             12.51s  failed=True
+2026-07-02 15:37:07,792 INFO _ollama: ollama POST http://localhost:11434/api/chat model=minimax-m3:cloud prompt=3466 chars
+2026-07-02 15:37:19,857 INFO Workflow.generate:   [6/8] Block                           12.06s  failed=True
+2026-07-02 15:37:19,857 INFO _ollama: ollama POST http://localhost:11434/api/chat model=minimax-m3:cloud prompt=2161 chars
+2026-07-02 15:37:31,533 INFO Workflow.generate:   [7/8] TileO                           11.68s  failed=True
+2026-07-02 15:37:31,534 INFO _ollama: ollama POST http://localhost:11434/api/chat model=minimax-m3:cloud prompt=2876 chars
+2026-07-02 15:37:44,231 INFO Workflow.generate:   [8/8] HBMS                            12.70s  failed=True
+2026-07-02 15:37:44,232 INFO Workflow.generate: wrote /Users/vasiliy/Documents/GitHub/Automated-DomainModel-Benchmark/Workflow/Results/cache/pid11700_t4460368368/reference_clean.json (8 records, 8 failed, 105.5s)
+2026-07-02 15:37:44,233 INFO Workflow.score: scoring /Users/vasiliy/Documents/GitHub/Automated-DomainModel-Benchmark/Workflow/Results/cache/pid11700_t4460368368/reference_clean.json → /Users/vasiliy/Documents/GitHub/Automated-DomainModel-Benchmark/Workflow/Results/cache/pid11700_t4460368368/reference_clean_scored.json (metric=metrik-4)
+2026-07-02 15:37:44,233 INFO Workflow.score:   scored 8/8
+2026-07-02 15:37:44,241 INFO Workflow.score: wrote /Users/vasiliy/Documents/GitHub/Automated-DomainModel-Benchmark/Workflow/Results/cache/pid11700_t4460368368/reference_clean_scored.json (n=8, failed=8)
+2026-07-02 15:37:44,242 INFO Workflow.collect: collecting /Users/vasiliy/Documents/GitHub/Automated-DomainModel-Benchmark/Workflow/Results/cache/pid11700_t4460368368/reference_clean_scored.json → /Users/vasiliy/Documents/GitHub/Automated-DomainModel-Benchmark/Workflow/Results/runs
+2026-07-02 15:37:45,078 INFO Workflow.collect: wrote /Users/vasiliy/Documents/GitHub/Automated-DomainModel-Benchmark/Workflow/Results/runs/kaiser_zero_shot_minimax-m3_cloud_2026-07-02T13-37-44Z.json (n=8, failed_gen=8, failed_score=0)
+2026-07-02 15:37:45,078 INFO Candidates.text2uml_kaiser.run_candidate: cleared cache: /Users/vasiliy/Documents/GitHub/Automated-DomainModel-Benchmark/Workflow/Results/cache/pid11700_t4460368368
+

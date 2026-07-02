@@ -1,0 +1,151 @@
+=== command ===
+/Users/vasiliy/.pyenv/versions/3.12.3/bin/python /Users/vasiliy/Documents/GitHub/Automated-DomainModel-Benchmark/Candidates/text2uml-kaiser/run-candidate.py --dataset kaiser_clean --metric metrik-4 --run-index 3 --out-dir /Users/vasiliy/Documents/GitHub/Automated-DomainModel-Benchmark/Workflow/Results/runs --results-dir /Users/vasiliy/Documents/GitHub/Automated-DomainModel-Benchmark/Workflow/Results/cache/pid11700_t4460368320 --strategy kaiser_zero_shot --model minimax-m3:cloud
+
+=== env (subset) ===
+PYTHONPATH=/Users/vasiliy/Documents/GitHub/Automated-DomainModel-Benchmark
+
+=== exit code ===
+0
+
+=== stdout ===
+========================================================================
+Automated DomainModel Benchmark — driver for kaiser_zero_shot
+========================================================================
+  Strategy     : kaiser_zero_shot
+  Candidate    : /Users/vasiliy/Documents/GitHub/Automated-DomainModel-Benchmark/Candidates/text2uml-kaiser/zero_shot/candidate.py
+  Skip folders : []
+  Dataset      : kaiser_clean
+  Metric       : metrik-4  (source: cli)
+  Model        : minimax-m3:cloud  (source: cli)
+  Temperature  : 0.7  (source: config.json::default_temperature)
+  Num predict  : 1024  (source: config.json::default_num_predict)
+  Seed         : None  (source: project_default)
+  Top-p        : None  (source: project_default)
+  Top-k        : None  (source: project_default)
+  Repeat penalty: None  (source: project_default)
+  Timeout      : 1800  (source: config.json::timeout_seconds)
+  Think        : False  (source: cli)
+  Run index    : 3
+  Results dir  : /Users/vasiliy/Documents/GitHub/Automated-DomainModel-Benchmark/Workflow/Results/cache/pid11700_t4460368320
+  Output dir   : /Users/vasiliy/Documents/GitHub/Automated-DomainModel-Benchmark/Workflow/Results/runs
+  Steps        : generate score collect
+========================================================================
+
+[generate]  done in 629.4s (rc=0) → /Users/vasiliy/Documents/GitHub/Automated-DomainModel-Benchmark/Workflow/Results/cache/pid11700_t4460368320/kaiser_clean.json
+
+[score]     done in 168.6s (rc=0) → /Users/vasiliy/Documents/GitHub/Automated-DomainModel-Benchmark/Workflow/Results/cache/pid11700_t4460368320/kaiser_clean_scored.json
+
+[collect]   done → /Users/vasiliy/Documents/GitHub/Automated-DomainModel-Benchmark/Workflow/Results/runs/kaiser_zero_shot_minimax-m3_cloud_2026-07-02T13-48-02Z.json
+
+[collect]   done in 0.0s (rc=0) → /Users/vasiliy/Documents/GitHub/Automated-DomainModel-Benchmark/Workflow/Results/runs
+
+[run] DONE in 798.0s
+
+
+=== stderr ===
+2026-07-02 15:34:44,428 INFO Candidates.text2uml_kaiser.run_candidate: re-instantiated candidate with resolved parameters
+2026-07-02 15:34:44,429 INFO Workflow.generate: loaded candidate from /Users/vasiliy/Documents/GitHub/Automated-DomainModel-Benchmark/Candidates/text2uml-kaiser/zero_shot/candidate.py
+2026-07-02 15:34:44,429 INFO Candidates.candidate_interface: reconfigured candidate KaiserZeroShotCandidate with ['model', 'num_predict', 'temperature', 'think']
+2026-07-02 15:34:44,430 INFO Workflow.generate: dataset kaiser_clean: 45 records
+2026-07-02 15:34:44,430 INFO _ollama: ollama POST http://localhost:11434/api/chat model=minimax-m3:cloud prompt=1526 chars
+2026-07-02 15:34:59,533 INFO Workflow.generate:   [1/45] AirTravel                       15.10s  failed=True
+2026-07-02 15:34:59,533 INFO _ollama: ollama POST http://localhost:11434/api/chat model=minimax-m3:cloud prompt=2096 chars
+2026-07-02 15:35:13,290 INFO Workflow.generate:   [2/45] AlphaInsurance                  13.76s  failed=True
+2026-07-02 15:35:13,290 INFO _ollama: ollama POST http://localhost:11434/api/chat model=minimax-m3:cloud prompt=666 chars
+2026-07-02 15:35:28,343 INFO Workflow.generate:   [3/45] BankAccount                     15.05s  failed=False
+2026-07-02 15:35:28,343 INFO _ollama: ollama POST http://localhost:11434/api/chat model=minimax-m3:cloud prompt=1417 chars
+2026-07-02 15:35:47,185 INFO Workflow.generate:   [4/45] Boeing                          18.84s  failed=True
+2026-07-02 15:35:47,185 INFO _ollama: ollama POST http://localhost:11434/api/chat model=minimax-m3:cloud prompt=2035 chars
+2026-07-02 15:36:02,851 INFO Workflow.generate:   [5/45] BuildingManagement              15.67s  failed=True
+2026-07-02 15:36:02,851 INFO _ollama: ollama POST http://localhost:11434/api/chat model=minimax-m3:cloud prompt=1885 chars
+2026-07-02 15:36:19,442 INFO Workflow.generate:   [6/45] BusTransportationManagementSystem  16.59s  failed=False
+2026-07-02 15:36:19,442 INFO _ollama: ollama POST http://localhost:11434/api/chat model=minimax-m3:cloud prompt=972 chars
+2026-07-02 15:36:33,881 INFO Workflow.generate:   [7/45] CardGameApp                     14.44s  failed=True
+2026-07-02 15:36:33,881 INFO _ollama: ollama POST http://localhost:11434/api/chat model=minimax-m3:cloud prompt=2816 chars
+2026-07-02 15:36:48,137 INFO Workflow.generate:   [8/45] CelO                            14.26s  failed=True
+2026-07-02 15:36:48,137 INFO _ollama: ollama POST http://localhost:11434/api/chat model=minimax-m3:cloud prompt=1411 chars
+2026-07-02 15:37:00,614 INFO Workflow.generate:   [9/45] ClothingCompany                 12.48s  failed=True
+2026-07-02 15:37:00,614 INFO _ollama: ollama POST http://localhost:11434/api/chat model=minimax-m3:cloud prompt=1219 chars
+2026-07-02 15:37:14,763 INFO Workflow.generate:   [10/45] Cruise                          14.15s  failed=True
+2026-07-02 15:37:14,763 INFO _ollama: ollama POST http://localhost:11434/api/chat model=minimax-m3:cloud prompt=3474 chars
+2026-07-02 15:37:26,988 INFO Workflow.generate:   [11/45] DestroyBlockGame                12.22s  failed=True
+2026-07-02 15:37:26,988 INFO _ollama: ollama POST http://localhost:11434/api/chat model=minimax-m3:cloud prompt=2088 chars
+2026-07-02 15:37:41,229 INFO Workflow.generate:   [12/45] EUScienceConnect                14.24s  failed=True
+2026-07-02 15:37:41,229 INFO _ollama: ollama POST http://localhost:11434/api/chat model=minimax-m3:cloud prompt=774 chars
+2026-07-02 15:37:55,433 INFO Workflow.generate:   [13/45] Ebike                           14.20s  failed=False
+2026-07-02 15:37:55,433 INFO _ollama: ollama POST http://localhost:11434/api/chat model=minimax-m3:cloud prompt=2181 chars
+2026-07-02 15:38:07,784 INFO Workflow.generate:   [14/45] Facepage                        12.35s  failed=True
+2026-07-02 15:38:07,784 INFO _ollama: ollama POST http://localhost:11434/api/chat model=minimax-m3:cloud prompt=1481 chars
+2026-07-02 15:38:22,939 INFO Workflow.generate:   [15/45] FilmSet                         15.15s  failed=True
+2026-07-02 15:38:22,939 INFO _ollama: ollama POST http://localhost:11434/api/chat model=minimax-m3:cloud prompt=1681 chars
+2026-07-02 15:38:36,062 INFO Workflow.generate:   [16/45] FitnessCompanyConan             13.12s  failed=False
+2026-07-02 15:38:36,062 INFO _ollama: ollama POST http://localhost:11434/api/chat model=minimax-m3:cloud prompt=1004 chars
+2026-07-02 15:38:48,202 INFO Workflow.generate:   [17/45] GameArea                        12.14s  failed=True
+2026-07-02 15:38:48,202 INFO _ollama: ollama POST http://localhost:11434/api/chat model=minimax-m3:cloud prompt=2693 chars
+2026-07-02 15:39:01,202 INFO Workflow.generate:   [18/45] GasStation_KUL                  13.00s  failed=True
+2026-07-02 15:39:01,202 INFO _ollama: ollama POST http://localhost:11434/api/chat model=minimax-m3:cloud prompt=970 chars
+2026-07-02 15:39:15,833 INFO Workflow.generate:   [19/45] GasStation_TUW                  14.63s  failed=True
+2026-07-02 15:39:15,833 INFO _ollama: ollama POST http://localhost:11434/api/chat model=minimax-m3:cloud prompt=2674 chars
+2026-07-02 15:39:28,335 INFO Workflow.generate:   [20/45] HelpingHands                    12.50s  failed=True
+2026-07-02 15:39:28,336 INFO _ollama: ollama POST http://localhost:11434/api/chat model=minimax-m3:cloud prompt=3790 chars
+2026-07-02 15:39:42,979 INFO Workflow.generate:   [21/45] HomeForTheElderly               14.64s  failed=True
+2026-07-02 15:39:42,980 INFO _ollama: ollama POST http://localhost:11434/api/chat model=minimax-m3:cloud prompt=2153 chars
+2026-07-02 15:39:58,339 INFO Workflow.generate:   [22/45] HospitalHouseMD                 15.36s  failed=True
+2026-07-02 15:39:58,339 INFO _ollama: ollama POST http://localhost:11434/api/chat model=minimax-m3:cloud prompt=2841 chars
+2026-07-02 15:40:15,643 INFO Workflow.generate:   [23/45] HotelBookingManagementSystem    17.30s  failed=True
+2026-07-02 15:40:15,643 INFO _ollama: ollama POST http://localhost:11434/api/chat model=minimax-m3:cloud prompt=980 chars
+2026-07-02 15:40:30,286 INFO Workflow.generate:   [24/45] House                           14.64s  failed=False
+2026-07-02 15:40:30,286 INFO _ollama: ollama POST http://localhost:11434/api/chat model=minimax-m3:cloud prompt=1874 chars
+2026-07-02 15:40:41,755 INFO Workflow.generate:   [25/45] Kinepolis                       11.47s  failed=True
+2026-07-02 15:40:41,755 INFO _ollama: ollama POST http://localhost:11434/api/chat model=minimax-m3:cloud prompt=3253 chars
+2026-07-02 15:40:55,169 INFO Workflow.generate:   [26/45] LabTracker                      13.41s  failed=True
+2026-07-02 15:40:55,169 INFO _ollama: ollama POST http://localhost:11434/api/chat model=minimax-m3:cloud prompt=1717 chars
+2026-07-02 15:41:06,368 INFO Workflow.generate:   [27/45] Louvre                          11.20s  failed=True
+2026-07-02 15:41:06,368 INFO _ollama: ollama POST http://localhost:11434/api/chat model=minimax-m3:cloud prompt=2895 chars
+2026-07-02 15:41:24,047 INFO Workflow.generate:   [28/45] Menso                           17.68s  failed=False
+2026-07-02 15:41:24,047 INFO _ollama: ollama POST http://localhost:11434/api/chat model=minimax-m3:cloud prompt=1986 chars
+2026-07-02 15:41:37,153 INFO Workflow.generate:   [29/45] Musicmatic                      13.11s  failed=True
+2026-07-02 15:41:37,153 INFO _ollama: ollama POST http://localhost:11434/api/chat model=minimax-m3:cloud prompt=1769 chars
+2026-07-02 15:41:52,309 INFO Workflow.generate:   [30/45] OnlineTutoringSystem            15.15s  failed=True
+2026-07-02 15:41:52,309 INFO _ollama: ollama POST http://localhost:11434/api/chat model=minimax-m3:cloud prompt=3497 chars
+2026-07-02 15:42:09,205 INFO Workflow.generate:   [31/45] PizzaDeliveryWithEntertainment  16.90s  failed=True
+2026-07-02 15:42:09,205 INFO _ollama: ollama POST http://localhost:11434/api/chat model=minimax-m3:cloud prompt=1072 chars
+2026-07-02 15:42:16,270 INFO Workflow.generate:   [32/45] ProjectManagement               7.07s  failed=False
+2026-07-02 15:42:16,270 INFO _ollama: ollama POST http://localhost:11434/api/chat model=minimax-m3:cloud prompt=1009 chars
+2026-07-02 15:42:32,245 INFO Workflow.generate:   [33/45] School                          15.97s  failed=False
+2026-07-02 15:42:32,246 INFO _ollama: ollama POST http://localhost:11434/api/chat model=minimax-m3:cloud prompt=3367 chars
+2026-07-02 15:42:47,811 INFO Workflow.generate:   [34/45] SellingGoods                    15.57s  failed=False
+2026-07-02 15:42:47,811 INFO _ollama: ollama POST http://localhost:11434/api/chat model=minimax-m3:cloud prompt=578 chars
+2026-07-02 15:43:00,303 INFO Workflow.generate:   [35/45] Sightseeing                     12.49s  failed=False
+2026-07-02 15:43:00,303 INFO _ollama: ollama POST http://localhost:11434/api/chat model=minimax-m3:cloud prompt=1901 chars
+2026-07-02 15:43:14,741 INFO Workflow.generate:   [36/45] SmartHomeAutomationSystem       14.44s  failed=True
+2026-07-02 15:43:14,741 INFO _ollama: ollama POST http://localhost:11434/api/chat model=minimax-m3:cloud prompt=2447 chars
+2026-07-02 15:43:30,308 INFO Workflow.generate:   [37/45] Sober                           15.57s  failed=True
+2026-07-02 15:43:30,308 INFO _ollama: ollama POST http://localhost:11434/api/chat model=minimax-m3:cloud prompt=717 chars
+2026-07-02 15:43:42,696 INFO Workflow.generate:   [38/45] StudentAppointment              12.39s  failed=False
+2026-07-02 15:43:42,696 INFO _ollama: ollama POST http://localhost:11434/api/chat model=minimax-m3:cloud prompt=1433 chars
+2026-07-02 15:43:55,496 INFO Workflow.generate:   [39/45] TeamSportsScoutingSystem        12.80s  failed=True
+2026-07-02 15:43:55,496 INFO _ollama: ollama POST http://localhost:11434/api/chat model=minimax-m3:cloud prompt=2164 chars
+2026-07-02 15:44:06,965 INFO Workflow.generate:   [40/45] TileOGame                       11.47s  failed=True
+2026-07-02 15:44:06,965 INFO _ollama: ollama POST http://localhost:11434/api/chat model=minimax-m3:cloud prompt=2049 chars
+2026-07-02 15:44:21,608 INFO Workflow.generate:   [41/45] TransportCompany                14.64s  failed=True
+2026-07-02 15:44:21,608 INFO _ollama: ollama POST http://localhost:11434/api/chat model=minimax-m3:cloud prompt=1464 chars
+2026-07-02 15:44:32,872 INFO Workflow.generate:   [42/45] TreatmentPlans                  11.26s  failed=True
+2026-07-02 15:44:32,872 INFO _ollama: ollama POST http://localhost:11434/api/chat model=minimax-m3:cloud prompt=803 chars
+2026-07-02 15:44:48,233 INFO Workflow.generate:   [43/45] TruckLogistics                  15.36s  failed=False
+2026-07-02 15:44:48,233 INFO _ollama: ollama POST http://localhost:11434/api/chat model=minimax-m3:cloud prompt=861 chars
+2026-07-02 15:45:02,158 INFO Workflow.generate:   [44/45] University                      13.93s  failed=False
+2026-07-02 15:45:02,158 INFO _ollama: ollama POST http://localhost:11434/api/chat model=minimax-m3:cloud prompt=2600 chars
+2026-07-02 15:45:13,832 INFO Workflow.generate:   [45/45] eHome2020                       11.67s  failed=True
+2026-07-02 15:45:13,834 INFO Workflow.generate: wrote /Users/vasiliy/Documents/GitHub/Automated-DomainModel-Benchmark/Workflow/Results/cache/pid11700_t4460368320/kaiser_clean.json (45 records, 32 failed, 629.4s)
+2026-07-02 15:45:13,835 INFO Workflow.score: scoring /Users/vasiliy/Documents/GitHub/Automated-DomainModel-Benchmark/Workflow/Results/cache/pid11700_t4460368320/kaiser_clean.json → /Users/vasiliy/Documents/GitHub/Automated-DomainModel-Benchmark/Workflow/Results/cache/pid11700_t4460368320/kaiser_clean_scored.json (metric=metrik-4)
+2026-07-02 15:45:29,787 INFO Workflow.score:   scored 10/45
+2026-07-02 15:45:55,531 INFO Workflow.score:   scored 20/45
+2026-07-02 15:46:38,768 INFO Workflow.score:   scored 30/45
+2026-07-02 15:47:52,081 INFO Workflow.score:   scored 40/45
+2026-07-02 15:48:02,420 INFO Workflow.score:   scored 45/45
+2026-07-02 15:48:02,426 INFO Workflow.score: wrote /Users/vasiliy/Documents/GitHub/Automated-DomainModel-Benchmark/Workflow/Results/cache/pid11700_t4460368320/kaiser_clean_scored.json (n=45, failed=32)
+2026-07-02 15:48:02,427 INFO Workflow.collect: collecting /Users/vasiliy/Documents/GitHub/Automated-DomainModel-Benchmark/Workflow/Results/cache/pid11700_t4460368320/kaiser_clean_scored.json → /Users/vasiliy/Documents/GitHub/Automated-DomainModel-Benchmark/Workflow/Results/runs
+2026-07-02 15:48:02,441 INFO Workflow.collect: wrote /Users/vasiliy/Documents/GitHub/Automated-DomainModel-Benchmark/Workflow/Results/runs/kaiser_zero_shot_minimax-m3_cloud_2026-07-02T13-48-02Z.json (n=45, failed_gen=32, failed_score=0)
+2026-07-02 15:48:02,442 INFO Candidates.text2uml_kaiser.run_candidate: cleared cache: /Users/vasiliy/Documents/GitHub/Automated-DomainModel-Benchmark/Workflow/Results/cache/pid11700_t4460368320
+

@@ -4,7 +4,7 @@
   "uses_llm": true,
   "harness_default": "ollama",
   "skip_folders": [],
-  "timeout_seconds": 600,
+  "timeout_seconds": 1800,
   "description": "Single-call direct generation, no examples. Verbatim reuse of _ZERO_SHOT_SYSTEM from text2uml-kaiser/src/run.py. Two-stage: LLM call (single-shot) + line-by-line validator.",
   "prompt_file": "prompt.txt",
   "user_template": "Transform into plant uml this specification text: {nlt}",

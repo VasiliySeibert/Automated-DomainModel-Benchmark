@@ -271,6 +271,11 @@ def _build_argparser() -> argparse.ArgumentParser:
                    help="Ollama repeat_penalty. Default: null (server default).")
     p.add_argument("--timeout", type=int, default=None,
                    help="Per-call Ollama timeout in seconds. Default: config.json::timeout_seconds (600).")
+    p.add_argument("--think", action="store_true", dest="think",
+                    help="Enable Ollama thinking mode (cloud tags only).")
+    p.add_argument("--no-think", action="store_false", dest="think",
+                    help="Disable Ollama thinking mode. (default)")
+    p.set_defaults(think=False)
     p.add_argument("--name", default=None,
                     help="Optional disambiguation token inserted into "
                          "the output filename before the timestamp "
@@ -342,6 +347,7 @@ def main(argv: Optional[list[str]] = None) -> int:
     print(f"  Top-k        : {top_k}  (source: {top_k_source})")
     print(f"  Repeat penalty: {repeat_penalty}  (source: {repeat_penalty_source})")
     print(f"  Timeout      : {timeout}  (source: {timeout_source})")
+    print(f"  Think        : {args.think}  (source: cli)")
     print(f"  Run index    : {args.run_index}")
     print(f"  Results dir  : {results_dir}")
     print(f"  Output dir   : {out_dir}")
@@ -368,8 +374,25 @@ def main(argv: Optional[list[str]] = None) -> int:
         top_k=top_k,
         repeat_penalty=repeat_penalty,
         timeout=timeout,
+        think=args.think,
     )
     log.info("re-instantiated candidate with resolved parameters")
+
+    settings = {
+        "uses_llm":             True,
+        "model":                model,
+        "temperature":          temperature,
+        "temperature_translate": None,
+        "num_predict":          num_predict,
+        "seed":                 seed,
+        "top_p":                top_p,
+        "top_k":                top_k,
+        "repeat_penalty":       repeat_penalty,
+        "timeout_seconds":      timeout,
+        "enable_translation":   None,
+        "think":                args.think,
+        "limit":                args.limit,
+    }
 
     generate = _load_step("_wf_generate", WORKFLOW_PKG / "generate.py")
     score    = _load_step("_wf_score",    WORKFLOW_PKG / "score.py")
@@ -383,6 +406,7 @@ def main(argv: Optional[list[str]] = None) -> int:
             "--candidate", str(candidate_path),
             "--dataset",   args.dataset,
             "--out",       str(raw_json),
+            "--settings-json", json.dumps(settings),
             *(["--limit", str(args.limit)] if args.limit else []),
         ])
         print(f"\n[generate]  done in {time.time()-t0:.1f}s (rc={rc}) → {raw_json}")
@@ -406,20 +430,6 @@ def main(argv: Optional[list[str]] = None) -> int:
         if not scored_json.exists():
             log.error("collect: input %s missing; run score first", scored_json)
             return 1
-        settings = {
-            "uses_llm":             True,
-            "model":                model,
-            "temperature":          temperature,
-            "temperature_translate": None,
-            "num_predict":          num_predict,
-            "seed":                 seed,
-            "top_p":                top_p,
-            "top_k":                top_k,
-            "repeat_penalty":       repeat_penalty,
-            "timeout_seconds":      timeout,
-            "enable_translation":   None,
-            "limit":                args.limit,
-        }
         collect_args = [
             "--in",            str(scored_json),
             "--candidate-id",  candidate_id,

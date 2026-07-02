@@ -4,23 +4,23 @@ A Candidate is a callable that takes a natural-language specification
 (`nlt`) and returns a `CandidateOutput` containing a PlantUML string.
 
 The workflow calls a Candidate once per record, persists the raw
-output, scores it in a separate step, and visualises the results.
+output, scores it in a separate step, and collects the results.
 The workflow itself has no candidate-specific knowledge — model
 selection, prompt construction, and response parsing are the
 candidate's responsibility.
-
-The canonical (and currently only) implementation is the dummy in
-`Candidates/dummy_candidate/candidate.py`. Real LLM-driven
-candidates (one_shot, CoT, rule-based, …) will be migrated to this
-interface in a follow-up step.
 """
 from __future__ import annotations
 
 import importlib.util
+import inspect
+import logging
 import sys
 from dataclasses import dataclass
 from pathlib import Path
-from typing import Optional, Protocol, runtime_checkable
+from typing import Any, Mapping, Optional, Protocol, runtime_checkable
+
+
+log = logging.getLogger(__name__)
 
 
 # ─── Public types ────────────────────────────────────────────────────────────
@@ -121,9 +121,51 @@ def load_candidate(path: str | Path) -> Candidate:
     return cand
 
 
+def reconfigure_candidate(candidate: Any, settings: Mapping[str, Any]) -> None:
+    """Re-instantiate a candidate's state from a settings mapping.
+
+    Filters ``settings`` down to the keyword arguments actually
+    accepted by the candidate's class ``__init__`` (looking at
+    ``type(candidate).__init__``) and calls ``candidate.__init__``
+    with them. For candidates whose classes take no LLM kwargs
+    (e.g. ``DummyCandidate``, ``RuleBasedCandidate``) this is a
+    no-op — the settings mapping is ignored entirely.
+
+    This exists because the per-candidate driver re-instantiates the
+    candidate in *its* process, but ``generate.py`` loads the
+    candidate in a fresh subprocess that doesn't see those changes.
+    The settings have to be re-applied inside the subprocess.
+    """
+    try:
+        sig = inspect.signature(type(candidate).__init__)
+        accepted = {
+            name
+            for name, param in sig.parameters.items()
+            if param.kind in (
+                inspect.Parameter.POSITIONAL_OR_KEYWORD,
+                inspect.Parameter.KEYWORD_ONLY,
+            )
+        }
+    except (TypeError, ValueError):
+        accepted = set()
+    kwargs = {k: v for k, v in settings.items() if k in accepted and v is not None}
+    if not kwargs:
+        return
+    try:
+        candidate.__init__(**kwargs)
+        log.info("reconfigured candidate %s with %s",
+                 type(candidate).__name__, sorted(kwargs))
+    except TypeError as exc:
+        log.warning(
+            "could not reconfigure candidate %s: %s",
+            type(candidate).__name__, exc,
+        )
+
+
 __all__ = [
     "Candidate",
     "CandidateInput",
     "CandidateOutput",
     "load_candidate",
+    "reconfigure_candidate",
 ]

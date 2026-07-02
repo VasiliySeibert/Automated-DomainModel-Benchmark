@@ -213,6 +213,11 @@ def main(argv: list[str] | None = None) -> int:
                     help="Per-call Ollama timeout in seconds. Default: config.json::timeout_seconds (600).")
     ap.add_argument("--no-translate", action="store_true",
                     help="Disable stage 2 (translation prompt). A/B comparison mode.")
+    ap.add_argument("--think", action="store_true", dest="think",
+                    help="Enable Ollama thinking mode (cloud tags only).")
+    ap.add_argument("--no-think", action="store_false", dest="think",
+                    help="Disable Ollama thinking mode. (default)")
+    ap.set_defaults(think=False)
     args = ap.parse_args(argv)
 
     candidate_path = THIS_DIR / "candidate.py"
@@ -273,6 +278,7 @@ def main(argv: list[str] | None = None) -> int:
     print(f"  Repeat penalty: {repeat_penalty}  (source: {repeat_penalty_source})")
     print(f"  Timeout      : {timeout}  (source: {timeout_source})")
     print(f"  Translation  : {enable_translation}  (source: {enable_translation_source})")
+    print(f"  Think        : {args.think}  (source: cli)")
     print(f"  Run index    : {args.run_index}")
     print(f"  Results dir  : {results_dir}")
     print(f"  Output dir   : {out_dir}")
@@ -296,12 +302,29 @@ def main(argv: list[str] | None = None) -> int:
         repeat_penalty=repeat_penalty,
         timeout=timeout,
         enable_translation=enable_translation,
+        think=args.think,
     )
     log.info("re-instantiated candidate with resolved parameters")
 
     generate = _load_step("_wf_generate", WORKFLOW_PKG / "generate.py")
     score    = _load_step("_wf_score",    WORKFLOW_PKG / "score.py")
     collect  = _load_step("_wf_collect",  WORKFLOW_PKG / "collect.py")
+
+    settings = {
+        "uses_llm":             True,
+        "model":                model,
+        "temperature":          temperature,
+        "temperature_translate": temperature_translate,
+        "num_predict":          num_predict,
+        "seed":                 seed,
+        "top_p":                top_p,
+        "top_k":                top_k,
+        "repeat_penalty":       repeat_penalty,
+        "timeout_seconds":      timeout,
+        "enable_translation":   enable_translation,
+        "think":                args.think,
+        "limit":                args.limit,
+    }
 
     t_total = time.time()
 
@@ -311,6 +334,7 @@ def main(argv: list[str] | None = None) -> int:
             "--candidate", str(candidate_path),
             "--dataset",   args.dataset,
             "--out",       str(raw_json),
+            "--settings-json", json.dumps(settings),
             *(["--limit", str(args.limit)] if args.limit else []),
         ])
         print(f"\n[generate]  done in {time.time()-t0:.1f}s (rc={rc}) → {raw_json}")
@@ -334,20 +358,6 @@ def main(argv: list[str] | None = None) -> int:
         if not scored_json.exists():
             log.error("collect: input %s missing; run score first", scored_json)
             return 1
-        settings = {
-            "uses_llm":             True,
-            "model":                model,
-            "temperature":          temperature,
-            "temperature_translate": temperature_translate,
-            "num_predict":          num_predict,
-            "seed":                 seed,
-            "top_p":                top_p,
-            "top_k":                top_k,
-            "repeat_penalty":       repeat_penalty,
-            "timeout_seconds":      timeout,
-            "enable_translation":   enable_translation,
-            "limit":                args.limit,
-        }
         t0 = time.time()
         rc = collect.main([
             "--in",            str(scored_json),
