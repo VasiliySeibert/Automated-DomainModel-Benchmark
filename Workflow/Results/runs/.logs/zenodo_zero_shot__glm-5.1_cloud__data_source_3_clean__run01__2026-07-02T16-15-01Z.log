@@ -1,0 +1,26 @@
+=== command ===
+/Users/vasiliy/.pyenv/versions/3.12.3/bin/python /Users/vasiliy/Documents/GitHub/Automated-DomainModel-Benchmark/Candidates/AutomatedDomainModelling_zenodo/zero_shot/run.py --dataset data_source_3_clean --metric metrik-4 --run-index 1 --out-dir /Users/vasiliy/Documents/GitHub/Automated-DomainModel-Benchmark/Workflow/Results/runs --results-dir /Users/vasiliy/Documents/GitHub/Automated-DomainModel-Benchmark/Workflow/Results/cache/pid21966_t4462168208 --model glm-5.1:cloud
+
+=== env (subset) ===
+PYTHONPATH=/Users/vasiliy/Documents/GitHub/Automated-DomainModel-Benchmark
+
+=== exit code ===
+2
+
+=== stdout ===
+
+
+=== stderr ===
+usage: run.py [-h] --dataset
+              {kaiser_clean,reference_clean,data-source-1,data-source-2}
+              [--results-dir RESULTS_DIR] [--out-dir OUT_DIR] [--limit LIMIT]
+              [--metric {metrik-1,metrik-2,metrik-3,metrik-4,metrik-5}]
+              [--run-index RUN_INDEX] [--skip-generate] [--skip-score]
+              [--skip-collect] [--keep-cache] [--model MODEL]
+              [--temperature TEMPERATURE]
+              [--temperature-translate TEMPERATURE_TRANSLATE]
+              [--num-predict NUM_PREDICT] [--seed SEED] [--top-p TOP_P]
+              [--top-k TOP_K] [--repeat-penalty REPEAT_PENALTY]
+              [--timeout TIMEOUT] [--no-translate] [--think] [--no-think]
+run.py: error: argument --dataset: invalid choice: 'data_source_3_clean' (choose from 'kaiser_clean', 'reference_clean', 'data-source-1', 'data-source-2')
+

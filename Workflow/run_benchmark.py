@@ -112,7 +112,6 @@ _IS_NON_LLM = {"rule_based"}
 
 
 DEFAULT_LLMS: list[Optional[str]] = [
-    "minimax-m3:cloud",
     "glm-5.1:cloud",
     "kimi-k2.6:cloud",
 ]

@@ -135,7 +135,8 @@ def main(argv: list[str] | None = None) -> int:
     ap = argparse.ArgumentParser(description=__doc__)
     ap.add_argument("--dataset", required=True,
                     choices=["kaiser_clean", "reference_clean",
-                             "data-source-1", "data-source-2"],
+                             "data_source_3_clean",
+                             "data-source-1", "data-source-2", "data-source-3"],
                     help="Dataset name (or data-source-N alias).")
     ap.add_argument("--results-dir", default=None,
                     help="Directory for the intermediate cache JSONs. "
