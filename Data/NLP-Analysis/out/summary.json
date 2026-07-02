@@ -1,0 +1,1744 @@
+{
+  "metadata": {
+    "generated_at_utc": "2026-07-02T20:20:27.905423+00:00",
+    "pipeline_version": "1.1",
+    "datasets": [
+      "data_source_3",
+      "kaiser",
+      "reference"
+    ],
+    "n_records_total": 98,
+    "source_files": [
+      "cross_dataset.csv",
+      "nlt_sentence_stats.csv",
+      "nlt_style.csv",
+      "parser_warnings.csv",
+      "per_element_match.csv",
+      "per_record.csv",
+      "rel_kind_coverage.csv",
+      "per_record.jsonl"
+    ]
+  },
+  "dataset_overview": {
+    "data_source_3": {
+      "n_records": 45,
+      "nlt": {
+        "words_mean": 315.8222222222222,
+        "words_median": 300.0,
+        "words_min": 96,
+        "words_max": 674,
+        "sentences_mean": 19.91111111111111,
+        "sentences_median": 19.0,
+        "type_token_ratio_mean": 0.45507111111111104
+      },
+      "diagram": {
+        "classes_mean": 9.422222222222222,
+        "classes_median": 9.0,
+        "classes_min": 5,
+        "classes_max": 17,
+        "attributes_mean": 12.866666666666667,
+        "enums_mean": 0.7555555555555555,
+        "relationships_mean": 11.11111111111111,
+        "relationships_median": 10.0,
+        "rels_with_card_pct": 74.8
+      }
+    },
+    "kaiser": {
+      "n_records": 45,
+      "nlt": {
+        "words_mean": 315.8222222222222,
+        "words_median": 300.0,
+        "words_min": 96,
+        "words_max": 674,
+        "sentences_mean": 19.91111111111111,
+        "sentences_median": 19.0,
+        "type_token_ratio_mean": 0.45507111111111104
+      },
+      "diagram": {
+        "classes_mean": 9.444444444444445,
+        "classes_median": 9.0,
+        "classes_min": 5,
+        "classes_max": 17,
+        "attributes_mean": 13.0,
+        "enums_mean": 0.7333333333333333,
+        "relationships_mean": 11.911111111111111,
+        "relationships_median": 11.0,
+        "rels_with_card_pct": 69.96268656716418
+      }
+    },
+    "reference": {
+      "n_records": 8,
+      "nlt": {
+        "words_mean": 422.875,
+        "words_median": 428.0,
+        "words_min": 237,
+        "words_max": 671,
+        "sentences_mean": 26.5,
+        "sentences_median": 25.0,
+        "type_token_ratio_mean": 0.39817500000000006
+      },
+      "diagram": {
+        "classes_mean": 14.375,
+        "classes_median": 14.0,
+        "classes_min": 12,
+        "classes_max": 18,
+        "attributes_mean": 10.25,
+        "enums_mean": 2.75,
+        "relationships_mean": 21.625,
+        "relationships_median": 20.0,
+        "rels_with_card_pct": 63.005780346820806
+      }
+    }
+  },
+  "relationship_type_counts": {
+    "by_dataset": {
+      "data_source_3": {
+        "association": 278,
+        "aggregation": 5,
+        "inheritance": 102,
+        "composition": 54,
+        "dependency": 0,
+        "directed": 48,
+        "association_class": 13
+      },
+      "kaiser": {
+        "association": 268,
+        "aggregation": 6,
+        "inheritance": 102,
+        "composition": 60,
+        "dependency": 48,
+        "directed": 52,
+        "association_class": 0
+      },
+      "reference": {
+        "association": 87,
+        "aggregation": 0,
+        "inheritance": 34,
+        "composition": 52,
+        "dependency": 0,
+        "directed": 0,
+        "association_class": 0
+      }
+    },
+    "total": {
+      "association": 633,
+      "aggregation": 11,
+      "inheritance": 238,
+      "composition": 166,
+      "dependency": 48,
+      "directed": 100,
+      "association_class": 13
+    }
+  },
+  "cardinality_pattern_counts": {
+    "kaiser": [
+      [
+        "*",
+        "*",
+        185
+      ],
+      [
+        "1",
+        "*",
+        77
+      ],
+      [
+        "1",
+        "0..*",
+        64
+      ],
+      [
+        "*",
+        "1",
+        30
+      ],
+      [
+        "1",
+        "0..1",
+        24
+      ],
+      [
+        "1",
+        "1",
+        22
+      ],
+      [
+        "1..1",
+        "0..*",
+        18
+      ],
+      [
+        "0..1",
+        "0..*",
+        12
+      ],
+      [
+        "0..*",
+        "1",
+        12
+      ],
+      [
+        "0..*",
+        "0..*",
+        11
+      ],
+      [
+        "0..*",
+        "0..1",
+        10
+      ],
+      [
+        "0..1",
+        "*",
+        8
+      ],
+      [
+        "*",
+        "0..1",
+        8
+      ],
+      [
+        "0..*",
+        "*",
+        7
+      ],
+      [
+        "0..1",
+        "0..1",
+        6
+      ],
+      [
+        "0..1",
+        "1",
+        6
+      ],
+      [
+        "1",
+        "1..*",
+        4
+      ],
+      [
+        "1",
+        "0..2",
+        3
+      ],
+      [
+        "1..*",
+        "*",
+        3
+      ],
+      [
+        "1..*",
+        "1..*",
+        2
+      ],
+      [
+        "0..*",
+        "0..2",
+        1
+      ],
+      [
+        "1",
+        "1..5",
+        1
+      ],
+      [
+        "*",
+        "4",
+        1
+      ],
+      [
+        "*",
+        "0..48",
+        1
+      ],
+      [
+        "*",
+        "1..3",
+        1
+      ],
+      [
+        "*",
+        "1..2",
+        1
+      ],
+      [
+        "1",
+        "1..99",
+        1
+      ],
+      [
+        "1",
+        "1..2",
+        1
+      ],
+      [
+        "1",
+        "1..12",
+        1
+      ],
+      [
+        "1",
+        "0..1*",
+        1
+      ],
+      [
+        "0..5",
+        "*",
+        1
+      ],
+      [
+        "1",
+        "2",
+        1
+      ],
+      [
+        "1..1",
+        "0..1",
+        1
+      ],
+      [
+        "7",
+        "1",
+        1
+      ],
+      [
+        "*",
+        "1..*",
+        1
+      ],
+      [
+        "*",
+        "0..3",
+        1
+      ],
+      [
+        "1",
+        "10..31",
+        1
+      ],
+      [
+        "1..20",
+        "*",
+        1
+      ],
+      [
+        "1",
+        "2..4",
+        1
+      ],
+      [
+        "1",
+        "0..32",
+        1
+      ],
+      [
+        "2",
+        "0..4",
+        1
+      ],
+      [
+        "0..4",
+        "0..1",
+        1
+      ],
+      [
+        "1..*",
+        "0..*",
+        1
+      ],
+      [
+        "2..*",
+        "1",
+        1
+      ]
+    ],
+    "reference": [
+      [
+        "*",
+        "*",
+        72
+      ],
+      [
+        "1",
+        "*",
+        52
+      ],
+      [
+        "1",
+        "1",
+        11
+      ],
+      [
+        "1",
+        "0..1",
+        9
+      ],
+      [
+        "*",
+        "1",
+        6
+      ],
+      [
+        "0..1",
+        "1",
+        5
+      ],
+      [
+        "0..1",
+        "*",
+        4
+      ],
+      [
+        "1",
+        "0..2",
+        2
+      ],
+      [
+        "*",
+        "0..1",
+        2
+      ],
+      [
+        "1",
+        "1..*",
+        2
+      ],
+      [
+        "0..*",
+        "1",
+        1
+      ],
+      [
+        "*",
+        "7",
+        1
+      ],
+      [
+        "0..1",
+        "0..1",
+        1
+      ],
+      [
+        "0..32",
+        "*",
+        1
+      ],
+      [
+        "0..4",
+        "2",
+        1
+      ],
+      [
+        "0..4",
+        "0..1",
+        1
+      ],
+      [
+        "0..5",
+        "*",
+        1
+      ],
+      [
+        "0..*",
+        "*",
+        1
+      ]
+    ],
+    "data_source_3": [
+      [
+        "*",
+        "*",
+        150
+      ],
+      [
+        "1",
+        "*",
+        77
+      ],
+      [
+        "1",
+        "0..*",
+        64
+      ],
+      [
+        "*",
+        "1",
+        30
+      ],
+      [
+        "1",
+        "0..1",
+        23
+      ],
+      [
+        "1",
+        "1",
+        22
+      ],
+      [
+        "1..1",
+        "0..*",
+        18
+      ],
+      [
+        "0..1",
+        "0..*",
+        12
+      ],
+      [
+        "0..*",
+        "1",
+        12
+      ],
+      [
+        "0..*",
+        "0..*",
+        11
+      ],
+      [
+        "0..*",
+        "0..1",
+        10
+      ],
+      [
+        "0..1",
+        "*",
+        8
+      ],
+      [
+        "*",
+        "0..1",
+        8
+      ],
+      [
+        "0..1",
+        "1",
+        7
+      ],
+      [
+        "0..1",
+        "0..1",
+        6
+      ],
+      [
+        "0..*",
+        "*",
+        6
+      ],
+      [
+        "1",
+        "1..*",
+        4
+      ],
+      [
+        "1",
+        "0..2",
+        3
+      ],
+      [
+        "1..*",
+        "*",
+        3
+      ],
+      [
+        "1..*",
+        "1..*",
+        2
+      ],
+      [
+        "0..*",
+        "0..2",
+        1
+      ],
+      [
+        "1",
+        "1..5",
+        1
+      ],
+      [
+        "*",
+        "4",
+        1
+      ],
+      [
+        "*",
+        "0..48",
+        1
+      ],
+      [
+        "*",
+        "1..3",
+        1
+      ],
+      [
+        "*",
+        "1..2",
+        1
+      ],
+      [
+        "1",
+        "1..99",
+        1
+      ],
+      [
+        "1",
+        "1..2",
+        1
+      ],
+      [
+        "1",
+        "1..12",
+        1
+      ],
+      [
+        "1",
+        "0..1*",
+        1
+      ],
+      [
+        "0..5",
+        "*",
+        1
+      ],
+      [
+        "1",
+        "2",
+        1
+      ],
+      [
+        "1..1",
+        "0..1",
+        1
+      ],
+      [
+        "7",
+        "1",
+        1
+      ],
+      [
+        "*",
+        "1..*",
+        1
+      ],
+      [
+        "*",
+        "0..3",
+        1
+      ],
+      [
+        "10..31",
+        "1",
+        1
+      ],
+      [
+        "1..20",
+        "*",
+        1
+      ],
+      [
+        "1",
+        "2..4",
+        1
+      ],
+      [
+        "1",
+        "0..32",
+        1
+      ],
+      [
+        "2",
+        "0..4",
+        1
+      ],
+      [
+        "0..4",
+        "0..1",
+        1
+      ],
+      [
+        "1..*",
+        "0..*",
+        1
+      ],
+      [
+        "2..*",
+        "1",
+        1
+      ]
+    ],
+    "total": [
+      [
+        "*",
+        "*",
+        407
+      ],
+      [
+        "1",
+        "*",
+        206
+      ],
+      [
+        "1",
+        "0..*",
+        128
+      ],
+      [
+        "*",
+        "1",
+        66
+      ],
+      [
+        "1",
+        "0..1",
+        56
+      ],
+      [
+        "1",
+        "1",
+        55
+      ],
+      [
+        "1..1",
+        "0..*",
+        36
+      ],
+      [
+        "0..*",
+        "1",
+        25
+      ],
+      [
+        "0..1",
+        "0..*",
+        24
+      ],
+      [
+        "0..*",
+        "0..*",
+        22
+      ],
+      [
+        "0..*",
+        "0..1",
+        20
+      ],
+      [
+        "0..1",
+        "*",
+        20
+      ],
+      [
+        "0..1",
+        "1",
+        18
+      ],
+      [
+        "*",
+        "0..1",
+        18
+      ],
+      [
+        "0..*",
+        "*",
+        14
+      ],
+      [
+        "0..1",
+        "0..1",
+        13
+      ],
+      [
+        "1",
+        "1..*",
+        10
+      ],
+      [
+        "1",
+        "0..2",
+        8
+      ],
+      [
+        "1..*",
+        "*",
+        6
+      ],
+      [
+        "1..*",
+        "1..*",
+        4
+      ],
+      [
+        "0..5",
+        "*",
+        3
+      ],
+      [
+        "0..4",
+        "0..1",
+        3
+      ],
+      [
+        "0..*",
+        "0..2",
+        2
+      ],
+      [
+        "1",
+        "1..5",
+        2
+      ],
+      [
+        "*",
+        "4",
+        2
+      ],
+      [
+        "*",
+        "0..48",
+        2
+      ],
+      [
+        "*",
+        "1..3",
+        2
+      ],
+      [
+        "*",
+        "1..2",
+        2
+      ],
+      [
+        "1",
+        "1..99",
+        2
+      ],
+      [
+        "1",
+        "1..2",
+        2
+      ],
+      [
+        "1",
+        "1..12",
+        2
+      ],
+      [
+        "1",
+        "0..1*",
+        2
+      ],
+      [
+        "1",
+        "2",
+        2
+      ],
+      [
+        "1..1",
+        "0..1",
+        2
+      ],
+      [
+        "7",
+        "1",
+        2
+      ],
+      [
+        "*",
+        "1..*",
+        2
+      ],
+      [
+        "*",
+        "0..3",
+        2
+      ],
+      [
+        "1..20",
+        "*",
+        2
+      ],
+      [
+        "1",
+        "2..4",
+        2
+      ],
+      [
+        "1",
+        "0..32",
+        2
+      ],
+      [
+        "2",
+        "0..4",
+        2
+      ],
+      [
+        "1..*",
+        "0..*",
+        2
+      ],
+      [
+        "2..*",
+        "1",
+        2
+      ],
+      [
+        "1",
+        "10..31",
+        1
+      ],
+      [
+        "*",
+        "7",
+        1
+      ],
+      [
+        "0..32",
+        "*",
+        1
+      ],
+      [
+        "0..4",
+        "2",
+        1
+      ],
+      [
+        "10..31",
+        "1",
+        1
+      ]
+    ]
+  },
+  "attribute_type_counts": {
+    "String": 502,
+    "Int": 170,
+    "int": 122,
+    "Date": 71,
+    "Double": 62,
+    "string": 60,
+    "Boolean": 44,
+    "double": 32,
+    "DateTime": 24,
+    "float": 14,
+    "Float": 12,
+    "date": 12,
+    "Time": 11,
+    "boolean": 7,
+    "Battery": 4,
+    "(untyped)": 4,
+    "long": 4,
+    "Integer": 4,
+    "CompletionStatus": 3,
+    "AttendeeStatus": 3,
+    "LevelOfTutoring": 3,
+    "SessionStatus": 3,
+    "PaymentKind": 3,
+    "DeviceStatus": 3,
+    "CommandType": 3,
+    "CommandStatus": 3,
+    "RuleStatus": 3,
+    "ScoutingStatus": 3,
+    "ScoutKind": 3,
+    "Recommendation": 3,
+    "Position": 3,
+    "Shift": 2,
+    "Suit": 2,
+    "SoloType": 2,
+    "Frame": 2,
+    "DriveSystem": 2,
+    "Controller": 2,
+    "Motor": 2,
+    "State": 2,
+    "Genre": 2,
+    "ItemCategory": 2,
+    "RoomAvailability": 2,
+    "RoomType": 2,
+    "BookingStatus": 2,
+    "PaymentType": 2,
+    "BMType": 2,
+    "Interval": 2,
+    "DayOfWeek": 2,
+    "AccessType": 2,
+    "Mode": 2,
+    "Color": 2,
+    "VehicleType": 2,
+    "Sting": 2,
+    "Long": 2,
+    "time": 1,
+    "BinaryOp": 1
+  },
+  "lexical_coverage": {
+    "data_source_3": {
+      "classes_n": {
+        "mean": 9.42,
+        "median": 9.0
+      },
+      "classes_L1": {
+        "mean": 87.77,
+        "median": 88.89
+      },
+      "classes_L2": {
+        "mean": 93.46,
+        "median": 100.0
+      },
+      "classes_L3": {
+        "mean": 87.77,
+        "median": 88.89
+      },
+      "classes_L4": {
+        "mean": 94.2,
+        "median": 100.0
+      },
+      "classes_absent": {
+        "mean": 4.83,
+        "median": 0.0
+      },
+      "attrs_n": {
+        "mean": 12.87,
+        "median": 12.0
+      },
+      "attrs_L1": {
+        "mean": 78.73,
+        "median": 86.67
+      },
+      "attrs_L2": {
+        "mean": 82.18,
+        "median": 88.89
+      },
+      "attrs_L3": {
+        "mean": 78.73,
+        "median": 86.67
+      },
+      "attrs_L4": {
+        "mean": 84.85,
+        "median": 90.91
+      },
+      "attrs_absent": {
+        "mean": 9.44,
+        "median": 6.67
+      },
+      "enum_n": {
+        "mean": 2.53,
+        "median": 0.0
+      },
+      "enum_absent": {
+        "mean": 7.22,
+        "median": 0.0
+      },
+      "rel_src_absent": {
+        "mean": 4.54,
+        "median": 0.0
+      },
+      "rel_tgt_absent": {
+        "mean": 4.54,
+        "median": 0.0
+      }
+    },
+    "kaiser": {
+      "classes_n": {
+        "mean": 9.44,
+        "median": 9.0
+      },
+      "classes_L1": {
+        "mean": 87.77,
+        "median": 88.89
+      },
+      "classes_L2": {
+        "mean": 93.46,
+        "median": 100.0
+      },
+      "classes_L3": {
+        "mean": 87.77,
+        "median": 88.89
+      },
+      "classes_L4": {
+        "mean": 94.2,
+        "median": 100.0
+      },
+      "classes_absent": {
+        "mean": 4.83,
+        "median": 0.0
+      },
+      "attrs_n": {
+        "mean": 13.0,
+        "median": 12.0
+      },
+      "attrs_L1": {
+        "mean": 78.62,
+        "median": 86.67
+      },
+      "attrs_L2": {
+        "mean": 82.07,
+        "median": 88.89
+      },
+      "attrs_L3": {
+        "mean": 78.62,
+        "median": 86.67
+      },
+      "attrs_L4": {
+        "mean": 84.77,
+        "median": 90.91
+      },
+      "attrs_absent": {
+        "mean": 9.55,
+        "median": 6.67
+      },
+      "enum_n": {
+        "mean": 2.42,
+        "median": 0.0
+      },
+      "enum_absent": {
+        "mean": 5.95,
+        "median": 0.0
+      },
+      "rel_src_absent": {
+        "mean": 5.29,
+        "median": 0.0
+      },
+      "rel_tgt_absent": {
+        "mean": 5.29,
+        "median": 0.0
+      }
+    },
+    "reference": {
+      "classes_n": {
+        "mean": 14.38,
+        "median": 14.0
+      },
+      "classes_L1": {
+        "mean": 87.09,
+        "median": 86.76
+      },
+      "classes_L2": {
+        "mean": 87.78,
+        "median": 88.98
+      },
+      "classes_L3": {
+        "mean": 87.09,
+        "median": 86.76
+      },
+      "classes_L4": {
+        "mean": 89.79,
+        "median": 90.88
+      },
+      "classes_absent": {
+        "mean": 7.66,
+        "median": 2.78
+      },
+      "attrs_n": {
+        "mean": 10.25,
+        "median": 11.0
+      },
+      "attrs_L1": {
+        "mean": 44.93,
+        "median": 54.7
+      },
+      "attrs_L2": {
+        "mean": 49.09,
+        "median": 65.26
+      },
+      "attrs_L3": {
+        "mean": 44.93,
+        "median": 54.7
+      },
+      "attrs_L4": {
+        "mean": 50.9,
+        "median": 63.59
+      },
+      "attrs_absent": {
+        "mean": 10.22,
+        "median": 3.34
+      },
+      "enum_n": {
+        "mean": 9.38,
+        "median": 10.5
+      },
+      "enum_absent": {
+        "mean": 21.95,
+        "median": 9.54
+      },
+      "rel_src_absent": {
+        "mean": 12.16,
+        "median": 2.17
+      },
+      "rel_tgt_absent": {
+        "mean": 12.16,
+        "median": 2.17
+      }
+    }
+  },
+  "dep_binding": {
+    "data_source_3": {
+      "pct_attrs_bound": 67.934,
+      "pct_rels_bound": 79.53,
+      "avg_hop_class_attr": 2.15,
+      "avg_hop_rel": 1.762
+    },
+    "kaiser": {
+      "pct_attrs_bound": 67.824,
+      "pct_rels_bound": 75.398,
+      "avg_hop_class_attr": 2.139,
+      "avg_hop_rel": 1.854
+    },
+    "reference": {
+      "pct_attrs_bound": 43.12,
+      "pct_rels_bound": 65.274,
+      "avg_hop_class_attr": 1.33,
+      "avg_hop_rel": 1.465
+    }
+  },
+  "rel_kind_coverage": {
+    "data_source_3": {
+      "aggregation": {
+        "n": 5,
+        "n_bound": 4,
+        "pct_bound": 80.0
+      },
+      "association": {
+        "n": 278,
+        "n_bound": 238,
+        "pct_bound": 85.61
+      },
+      "association_class": {
+        "n": 13,
+        "n_bound": 9,
+        "pct_bound": 69.23
+      },
+      "composition": {
+        "n": 54,
+        "n_bound": 45,
+        "pct_bound": 83.33
+      },
+      "dependency": {
+        "n": 0,
+        "n_bound": 0,
+        "pct_bound": 0.0
+      },
+      "directed": {
+        "n": 48,
+        "n_bound": 35,
+        "pct_bound": 72.92
+      },
+      "inheritance": {
+        "n": 102,
+        "n_bound": 71,
+        "pct_bound": 69.61
+      }
+    },
+    "kaiser": {
+      "aggregation": {
+        "n": 6,
+        "n_bound": 5,
+        "pct_bound": 83.33
+      },
+      "association": {
+        "n": 268,
+        "n_bound": 230,
+        "pct_bound": 85.82
+      },
+      "association_class": {
+        "n": 0,
+        "n_bound": 0,
+        "pct_bound": 0.0
+      },
+      "composition": {
+        "n": 60,
+        "n_bound": 48,
+        "pct_bound": 80.0
+      },
+      "dependency": {
+        "n": 48,
+        "n_bound": 35,
+        "pct_bound": 72.92
+      },
+      "directed": {
+        "n": 52,
+        "n_bound": 39,
+        "pct_bound": 75.0
+      },
+      "inheritance": {
+        "n": 102,
+        "n_bound": 71,
+        "pct_bound": 69.61
+      }
+    },
+    "reference": {
+      "aggregation": {
+        "n": 0,
+        "n_bound": 0,
+        "pct_bound": 0.0
+      },
+      "association": {
+        "n": 87,
+        "n_bound": 77,
+        "pct_bound": 88.51
+      },
+      "association_class": {
+        "n": 0,
+        "n_bound": 0,
+        "pct_bound": 0.0
+      },
+      "composition": {
+        "n": 52,
+        "n_bound": 29,
+        "pct_bound": 55.77
+      },
+      "dependency": {
+        "n": 0,
+        "n_bound": 0,
+        "pct_bound": 0.0
+      },
+      "directed": {
+        "n": 0,
+        "n_bound": 0,
+        "pct_bound": 0.0
+      },
+      "inheritance": {
+        "n": 34,
+        "n_bound": 22,
+        "pct_bound": 64.71
+      }
+    }
+  },
+  "nlt_style": {
+    "data_source_3": {
+      "passive_ratio": 0.3114,
+      "hedge_density": 0.0149,
+      "modal_density": 0.0171,
+      "entity_density": 0.0239,
+      "modal_count": 6.6,
+      "hedge_count": 5.6222,
+      "named_entities": 8.6
+    },
+    "kaiser": {
+      "passive_ratio": 0.3114,
+      "hedge_density": 0.0149,
+      "modal_density": 0.0171,
+      "entity_density": 0.0239,
+      "modal_count": 6.6,
+      "hedge_count": 5.6222,
+      "named_entities": 8.6
+    },
+    "reference": {
+      "passive_ratio": 0.2465,
+      "hedge_density": 0.0188,
+      "modal_density": 0.0202,
+      "entity_density": 0.0179,
+      "modal_count": 9.5,
+      "hedge_count": 8.75,
+      "named_entities": 8.75
+    }
+  },
+  "sentence_stats": {
+    "data_source_3": {
+      "sents_per_record_mean": 18.0,
+      "sentence_length_words_mean": 17.55,
+      "sentence_length_words_median": 16.0,
+      "pct_sents_with_class_hit": 80.62,
+      "pct_sents_with_attr_hit": 60.0,
+      "pct_sents_with_rel_endpoint_hit": 80.62
+    },
+    "kaiser": {
+      "sents_per_record_mean": 18.0,
+      "sentence_length_words_mean": 17.55,
+      "sentence_length_words_median": 16.0,
+      "pct_sents_with_class_hit": 80.62,
+      "pct_sents_with_attr_hit": 60.74,
+      "pct_sents_with_rel_endpoint_hit": 80.86
+    },
+    "reference": {
+      "sents_per_record_mean": 22.25,
+      "sentence_length_words_mean": 19.01,
+      "sentence_length_words_median": 18.0,
+      "pct_sents_with_class_hit": 92.13,
+      "pct_sents_with_attr_hit": 35.39,
+      "pct_sents_with_rel_endpoint_hit": 92.13
+    }
+  },
+  "parser_warnings": {
+    "total_warnings": 0
+  },
+  "correlation_matrix": {
+    "columns": [
+      "n_words",
+      "n_sentences",
+      "n_classes",
+      "n_attributes",
+      "n_relationships",
+      "cov_classes_absent",
+      "cov_attrs_absent",
+      "pct_attrs_bound",
+      "pct_rels_bound"
+    ],
+    "spearman": {
+      "n_words": {
+        "n_words": 1.0,
+        "n_sentences": 0.913,
+        "n_classes": 0.4,
+        "n_attributes": 0.42,
+        "n_relationships": 0.388,
+        "cov_classes_absent": -0.192,
+        "cov_attrs_absent": 0.344,
+        "pct_attrs_bound": 0.128,
+        "pct_rels_bound": 0.12
+      },
+      "n_sentences": {
+        "n_words": 0.913,
+        "n_sentences": 1.0,
+        "n_classes": 0.419,
+        "n_attributes": 0.447,
+        "n_relationships": 0.419,
+        "cov_classes_absent": -0.131,
+        "cov_attrs_absent": 0.316,
+        "pct_attrs_bound": 0.161,
+        "pct_rels_bound": 0.063
+      },
+      "n_classes": {
+        "n_words": 0.4,
+        "n_sentences": 0.419,
+        "n_classes": 1.0,
+        "n_attributes": 0.408,
+        "n_relationships": 0.932,
+        "cov_classes_absent": 0.179,
+        "cov_attrs_absent": 0.164,
+        "pct_attrs_bound": -0.23,
+        "pct_rels_bound": -0.268
+      },
+      "n_attributes": {
+        "n_words": 0.42,
+        "n_sentences": 0.447,
+        "n_classes": 0.408,
+        "n_attributes": 1.0,
+        "n_relationships": 0.387,
+        "cov_classes_absent": 0.094,
+        "cov_attrs_absent": 0.445,
+        "pct_attrs_bound": 0.018,
+        "pct_rels_bound": -0.099
+      },
+      "n_relationships": {
+        "n_words": 0.388,
+        "n_sentences": 0.419,
+        "n_classes": 0.932,
+        "n_attributes": 0.387,
+        "n_relationships": 1.0,
+        "cov_classes_absent": 0.268,
+        "cov_attrs_absent": 0.115,
+        "pct_attrs_bound": -0.182,
+        "pct_rels_bound": -0.345
+      },
+      "cov_classes_absent": {
+        "n_words": -0.192,
+        "n_sentences": -0.131,
+        "n_classes": 0.179,
+        "n_attributes": 0.094,
+        "n_relationships": 0.268,
+        "cov_classes_absent": 1.0,
+        "cov_attrs_absent": -0.038,
+        "pct_attrs_bound": 0.068,
+        "pct_rels_bound": -0.629
+      },
+      "cov_attrs_absent": {
+        "n_words": 0.344,
+        "n_sentences": 0.316,
+        "n_classes": 0.164,
+        "n_attributes": 0.445,
+        "n_relationships": 0.115,
+        "cov_classes_absent": -0.038,
+        "cov_attrs_absent": 1.0,
+        "pct_attrs_bound": -0.257,
+        "pct_rels_bound": 0.088
+      },
+      "pct_attrs_bound": {
+        "n_words": 0.128,
+        "n_sentences": 0.161,
+        "n_classes": -0.23,
+        "n_attributes": 0.018,
+        "n_relationships": -0.182,
+        "cov_classes_absent": 0.068,
+        "cov_attrs_absent": -0.257,
+        "pct_attrs_bound": 1.0,
+        "pct_rels_bound": 0.105
+      },
+      "pct_rels_bound": {
+        "n_words": 0.12,
+        "n_sentences": 0.063,
+        "n_classes": -0.268,
+        "n_attributes": -0.099,
+        "n_relationships": -0.345,
+        "cov_classes_absent": -0.629,
+        "cov_attrs_absent": 0.088,
+        "pct_attrs_bound": 0.105,
+        "pct_rels_bound": 1.0
+      }
+    },
+    "spearman_p": {
+      "n_words": {
+        "n_words": 0.0,
+        "n_sentences": 0.0,
+        "n_classes": 0.0,
+        "n_attributes": 0.0,
+        "n_relationships": 0.0001,
+        "cov_classes_absent": 0.0584,
+        "cov_attrs_absent": 0.0005,
+        "pct_attrs_bound": 0.2104,
+        "pct_rels_bound": 0.2406
+      },
+      "n_sentences": {
+        "n_words": 0.0,
+        "n_sentences": 0.0,
+        "n_classes": 0.0,
+        "n_attributes": 0.0,
+        "n_relationships": 0.0,
+        "cov_classes_absent": 0.1978,
+        "cov_attrs_absent": 0.0015,
+        "pct_attrs_bound": 0.1128,
+        "pct_rels_bound": 0.5408
+      },
+      "n_classes": {
+        "n_words": 0.0,
+        "n_sentences": 0.0,
+        "n_classes": 0.0,
+        "n_attributes": 0.0,
+        "n_relationships": 0.0,
+        "cov_classes_absent": 0.0774,
+        "cov_attrs_absent": 0.1076,
+        "pct_attrs_bound": 0.0227,
+        "pct_rels_bound": 0.0077
+      },
+      "n_attributes": {
+        "n_words": 0.0,
+        "n_sentences": 0.0,
+        "n_classes": 0.0,
+        "n_attributes": 0.0,
+        "n_relationships": 0.0001,
+        "cov_classes_absent": 0.3595,
+        "cov_attrs_absent": 0.0,
+        "pct_attrs_bound": 0.857,
+        "pct_rels_bound": 0.3299
+      },
+      "n_relationships": {
+        "n_words": 0.0001,
+        "n_sentences": 0.0,
+        "n_classes": 0.0,
+        "n_attributes": 0.0001,
+        "n_relationships": 0.0,
+        "cov_classes_absent": 0.0076,
+        "cov_attrs_absent": 0.2585,
+        "pct_attrs_bound": 0.0727,
+        "pct_rels_bound": 0.0005
+      },
+      "cov_classes_absent": {
+        "n_words": 0.0584,
+        "n_sentences": 0.1978,
+        "n_classes": 0.0774,
+        "n_attributes": 0.3595,
+        "n_relationships": 0.0076,
+        "cov_classes_absent": 0.0,
+        "cov_attrs_absent": 0.7086,
+        "pct_attrs_bound": 0.5074,
+        "pct_rels_bound": 0.0
+      },
+      "cov_attrs_absent": {
+        "n_words": 0.0005,
+        "n_sentences": 0.0015,
+        "n_classes": 0.1076,
+        "n_attributes": 0.0,
+        "n_relationships": 0.2585,
+        "cov_classes_absent": 0.7086,
+        "cov_attrs_absent": 0.0,
+        "pct_attrs_bound": 0.0107,
+        "pct_rels_bound": 0.3864
+      },
+      "pct_attrs_bound": {
+        "n_words": 0.2104,
+        "n_sentences": 0.1128,
+        "n_classes": 0.0227,
+        "n_attributes": 0.857,
+        "n_relationships": 0.0727,
+        "cov_classes_absent": 0.5074,
+        "cov_attrs_absent": 0.0107,
+        "pct_attrs_bound": 0.0,
+        "pct_rels_bound": 0.302
+      },
+      "pct_rels_bound": {
+        "n_words": 0.2406,
+        "n_sentences": 0.5408,
+        "n_classes": 0.0077,
+        "n_attributes": 0.3299,
+        "n_relationships": 0.0005,
+        "cov_classes_absent": 0.0,
+        "cov_attrs_absent": 0.3864,
+        "pct_attrs_bound": 0.302,
+        "pct_rels_bound": 0.0
+      }
+    }
+  },
+  "cross_dataset_kaiser_vs_data_source_3": {
+    "jaccard_classes": {
+      "n": 45,
+      "mean": 0.9944,
+      "min": 0.8333,
+      "max": 1.0,
+      "median": 1.0,
+      "n_perfect": 43
+    },
+    "jaccard_attributes": {
+      "n": 45,
+      "mean": 0.9919,
+      "min": 0.7895,
+      "max": 1.0,
+      "median": 1.0,
+      "n_perfect": 43
+    },
+    "jaccard_rels": {
+      "n": 45,
+      "mean": 0.9244,
+      "min": 0.5,
+      "max": 1.0,
+      "median": 1.0,
+      "n_perfect": 24
+    },
+    "records_with_imperfect_classes": [
+      {
+        "id": "BusTransportationManagementSystem",
+        "only_in_kaiser": [
+          "shift"
+        ],
+        "only_in_data_source_3": []
+      },
+      {
+        "id": "FilmSet",
+        "only_in_kaiser": [],
+        "only_in_data_source_3": [
+          "n1"
+        ]
+      }
+    ],
+    "records_with_lowest_rel_jaccard": [
+      {
+        "id": "StudentAppointment",
+        "kaiser_n": 8,
+        "data_source_3_n": 6,
+        "jaccard": 0.5
+      },
+      {
+        "id": "ProjectManagement",
+        "kaiser_n": 10,
+        "data_source_3_n": 8,
+        "jaccard": 0.6
+      },
+      {
+        "id": "Sightseeing",
+        "kaiser_n": 8,
+        "data_source_3_n": 7,
+        "jaccard": 0.75
+      },
+      {
+        "id": "CelO",
+        "kaiser_n": 14,
+        "data_source_3_n": 11,
+        "jaccard": 0.7692
+      },
+      {
+        "id": "University",
+        "kaiser_n": 10,
+        "data_source_3_n": 9,
+        "jaccard": 0.8
+      }
+    ]
+  },
+  "lexically_absent_classes": {
+    "n_total": 50,
+    "n_unique": 21,
+    "by_name": {
+      "Person": 8,
+      "Registration": 3,
+      "User": 3,
+      "Payment": 3,
+      "RuntimeElement": 3,
+      "Employee": 2,
+      "Airplane": 2,
+      "Scoreboard": 2,
+      "Category": 2,
+      "Manufacturer": 2,
+      "Book": 2,
+      "Item": 2,
+      "Date": 2,
+      "Consultation": 2,
+      "Affiliation": 2,
+      "Assignment": 2,
+      "Transporter": 2,
+      "Participation": 2,
+      "Resident": 2,
+      "CelO": 1,
+      "TSS": 1
+    }
+  },
+  "records_with_extreme_recoverability": {
+    "highest_5": [
+      {
+        "dataset": "kaiser",
+        "id": "SellingGoods",
+        "pct_rels_bound": 100.0,
+        "pct_attrs_bound": 66.7
+      },
+      {
+        "dataset": "data_source_3",
+        "id": "Boeing",
+        "pct_rels_bound": 100.0,
+        "pct_attrs_bound": 70.0
+      },
+      {
+        "dataset": "kaiser",
+        "id": "BankAccount",
+        "pct_rels_bound": 100.0,
+        "pct_attrs_bound": 100.0
+      },
+      {
+        "dataset": "kaiser",
+        "id": "Boeing",
+        "pct_rels_bound": 100.0,
+        "pct_attrs_bound": 70.0
+      },
+      {
+        "dataset": "data_source_3",
+        "id": "BankAccount",
+        "pct_rels_bound": 100.0,
+        "pct_attrs_bound": 100.0
+      }
+    ],
+    "lowest_5": [
+      {
+        "dataset": "data_source_3",
+        "id": "AirTravel",
+        "pct_rels_bound": 43.8,
+        "pct_attrs_bound": 47.8
+      },
+      {
+        "dataset": "data_source_3",
+        "id": "HelpingHands",
+        "pct_rels_bound": 41.7,
+        "pct_attrs_bound": 78.6
+      },
+      {
+        "dataset": "kaiser",
+        "id": "University",
+        "pct_rels_bound": 40.0,
+        "pct_attrs_bound": 40.0
+      },
+      {
+        "dataset": "kaiser",
+        "id": "HelpingHands",
+        "pct_rels_bound": 38.5,
+        "pct_attrs_bound": 78.6
+      },
+      {
+        "dataset": "reference",
+        "id": "CelO",
+        "pct_rels_bound": 36.8,
+        "pct_attrs_bound": 73.3
+      }
+    ]
+  }
+}

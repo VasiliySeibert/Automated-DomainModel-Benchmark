@@ -1,0 +1,6 @@
+inflect>=7.0
+spacy>=3.7
+nltk>=3.8
+pandas>=2.0
+matplotlib>=3.7
+# spaCy English model: en_core_web_sm

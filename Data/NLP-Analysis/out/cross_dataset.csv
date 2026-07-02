@@ -1,0 +1,46 @@
+id,kaiser_n_classes,data_source_3_n_classes,kaiser_n_rels,data_source_3_n_rels,jaccard_classes,jaccard_attributes,jaccard_rels,only_in_kaiser_classes,only_in_data_source_3_classes,only_in_kaiser_rels,only_in_data_source_3_rels
+AirTravel,12,12,18,16,1.0,1.0,0.9333,,,flightexecution|ticket,
+AlphaInsurance,10,10,11,10,1.0,1.0,0.8182,,,claimcase|report,"(claimcase, estimator)|report"
+BankAccount,6,6,5,5,1.0,1.0,1.0,,,,
+Boeing,6,6,6,6,1.0,1.0,1.0,,,,
+BuildingManagement,10,10,11,11,1.0,1.0,1.0,,,,
+BusTransportationManagementSystem,6,5,4,4,0.8333,1.0,1.0,shift,,,
+CardGameApp,10,10,13,13,1.0,1.0,1.0,,,,
+CelO,10,10,14,11,1.0,1.0,0.7692,,,attendee|registration;event|taskstatus,"(event, checklisttask)|taskstatus"
+ClothingCompany,7,7,10,8,1.0,1.0,0.8889,,,manufacturer|product,
+Cruise,9,9,9,9,1.0,1.0,1.0,,,,
+DestroyBlockGame,14,14,19,19,1.0,1.0,1.0,,,,
+EUScienceConnect,8,8,11,9,1.0,1.0,0.9,,,article|author,
+Ebike,9,9,10,10,1.0,1.0,1.0,,,,
+Facepage,9,9,12,10,1.0,1.0,0.8889,,,personalaccount|privilege,
+FilmSet,11,11,15,14,0.9167,1.0,0.9286,,n1,,"(book, screenplay)|n1"
+FitnessCompanyConan,8,8,9,9,1.0,1.0,1.0,,,,
+GameArea,6,6,7,7,1.0,1.0,1.0,,,,
+GasStation_KUL,7,7,7,7,1.0,1.0,1.0,,,,
+GasStation_TUW,5,5,6,6,1.0,1.0,1.0,,,,
+HelpingHands,11,11,13,12,1.0,1.0,0.9231,,,date|volunteer,
+HomeForTheElderly,10,10,12,10,1.0,1.0,0.9091,,,bed|proposal,
+HospitalHouseMD,6,6,6,6,1.0,1.0,1.0,,,,
+HotelBookingManagementSystem,15,15,22,22,1.0,1.0,1.0,,,,
+House,11,11,11,9,1.0,1.0,0.9,,,house|joblog,
+Kinepolis,11,11,15,15,1.0,1.0,1.0,,,,
+LabTracker,12,12,13,12,1.0,1.0,0.8462,,,appointment|lab,"(lab, requisition)|appointment"
+Louvre,7,7,7,7,1.0,1.0,1.0,,,,
+Menso,11,11,11,11,1.0,1.0,1.0,,,,
+Musicmatic,8,8,12,10,1.0,1.0,0.9,,,hit|track,
+OnlineTutoringSystem,12,12,16,16,1.0,1.0,1.0,,,,
+PizzaDeliveryWithEntertainment,9,9,13,12,1.0,1.0,0.8462,,,employment|pizzarestaurant,"(pizzarestaurant, entertainer)|employment"
+ProjectManagement,7,7,10,8,1.0,1.0,0.6,,,researchgroup|researchgroupmember;workpackage|workpackageleader,"(researchgroup, researcher)|researchgroupmember;(workpackage, researchgroup)|workpackageleader"
+School,9,9,11,9,1.0,1.0,0.8889,,,teacher|teacherassignment,
+SellingGoods,8,8,9,9,1.0,1.0,1.0,,,,
+Sightseeing,7,7,8,7,1.0,1.0,0.75,,,discount|visitor,"(visitor, guidedtour)|discount"
+SmartHomeAutomationSystem,17,17,27,27,1.0,1.0,1.0,,,,
+Sober,9,9,11,9,1.0,0.7895,0.9,,,car|involved,
+StudentAppointment,6,6,8,6,1.0,1.0,0.5,,,coursesubscription|student;course|teachingassistant,"(student, course)|coursesubscription;(course, assistant)|teachingassistant"
+TeamSportsScoutingSystem,11,11,17,17,1.0,1.0,1.0,,,,
+TileOGame,16,16,21,21,1.0,0.8462,1.0,,,,
+TransportCompany,11,11,17,14,1.0,1.0,0.8125,,,n1|partnerfirm;n1|order,"(order, administrationemployee)|n1"
+TreatmentPlans,14,14,19,18,1.0,1.0,0.8947,,,advisedexaminationtype|treatmentplan,"(treatmentplan, examinationtype)|advisedexaminationtype"
+TruckLogistics,7,7,10,10,1.0,1.0,1.0,,,,
+University,9,9,10,9,1.0,1.0,0.8,,,participation|researchassociate,"(researchassociate, project)|participation"
+eHome2020,8,8,10,10,1.0,1.0,1.0,,,,
