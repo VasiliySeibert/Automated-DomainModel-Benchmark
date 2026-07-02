@@ -1,8 +1,7 @@
 """Smoke test for `Candidates/rule_based/run.py`.
 
 Runs the per-candidate driver end-to-end on the first three records of
-`kaiser_clean` with the visualiser skipped (matplotlib is optional and
-not installed in the base environment). The test passes if the driver
+`kaiser_clean` with the collector skipped. The test passes if the driver
 exits 0 and the resulting `_scored.json` is well-formed and contains
 non-failed records with metric scores.
 
@@ -54,7 +53,7 @@ def test_run_py_smoke(tmp_path: Path) -> None:
             "--results-dir", str(out_dir),
             "--out-dir", str(out_dir),
             "--limit", "3",
-            "--skip-visualise",
+            "--skip-collect",
         ],
         cwd=str(REPO),
         env={**os.environ, "PYTHONPATH": str(REPO)},
@@ -99,7 +98,7 @@ def test_run_py_metric_override(tmp_path: Path) -> None:
             "--out-dir", str(out_dir),
             "--limit", "1",
             "--metric", "metrik-4",
-            "--skip-visualise",
+            "--skip-collect",
         ],
         cwd=str(REPO),
         env={**os.environ, "PYTHONPATH": str(REPO)},

@@ -10,18 +10,24 @@ the three pipeline steps that live in ``Workflow/Benchmark-Workflow/``::
     generate.py   --candidate <strategy-folder> \\
                    --dataset <dataset> --out <results-dir>/<dataset>.json
     score.py      --in <results-dir>/<dataset>.json --metric <metric>
-    visualise.py  --in <results-dir>/<dataset>_scored.json \\
-                   --out-dir <out-dir> --metric <metric>
+    collect.py    --in <results-dir>/<dataset>_scored.json \\
+                   --candidate-id <strategy> \\
+                   --candidate-dir <strategy-folder> \\
+                   --dataset <dataset> --metric <metric> \\
+                   --settings-json '{...}' \\
+                   --out-dir <out-dir> --run-index <N>
 
-Output folder (default, when ``--results-dir`` is not set)::
+Output folder (defaults, when neither flag is set)::
 
-    Workflow/Results/<CANDIDATE_ID>_<model_sanitized>_<dataset>_<timestamp>/
+    --results-dir : Workflow/Results/cache/
+    --out-dir     : Workflow/Results/runs/
 
-with ``<timestamp>`` of the form ``2026-06-30T19-53-18Z`` (UTC,
-seconds precision). The auto-named default makes every invocation
-land in a unique folder, so re-runs with different model or
-sampling parameters never clobber each other. The ``--name SUFFIX``
-flag appends ``_<SUFFIX>`` to the folder basename for ad-hoc
+The final artifact is a single timestamped JSON per run, named::
+
+    <candidate-id>[_<model-sanitized>]_<utc>.json
+
+with ``<utc>`` of the form ``2026-07-02T14-32-11Z``. The ``--name SUFFIX``
+flag inserts an additional token before the timestamp for ad-hoc
 disambiguation (e.g. ``--name seed42``).
 
 Usage::
@@ -40,7 +46,7 @@ Usage::
         --strategy zenodo_zero_shot --dataset kaiser_clean \\
         --model glm-5.1:cloud --temperature 0.7 --no-translate
 
-    # Re-run only the visualiser.
+    # Re-run only the collector.
     PYTHONPATH=. python Candidates/AutomatedDomainModelling_zenodo/run-candidate.py \\
         --strategy zenodo_zero_shot --dataset kaiser_clean \\
         --skip-generate --skip-score
@@ -49,6 +55,11 @@ Usage::
     PYTHONPATH=. python Candidates/AutomatedDomainModelling_zenodo/run-candidate.py \\
         --strategy zenodo_zero_shot --dataset kaiser_clean \\
         --results-dir /tmp/my-experiment
+
+    # Repeated runs (e.g. for stability analysis)
+    PYTHONPATH=. python Candidates/AutomatedDomainModelling_zenodo/run-candidate.py \\
+        --strategy zenodo_zero_shot --dataset kaiser_clean \\
+        --run-index 2
 
 Model + sampling resolution order (per flag):
       1. CLI flag value.
@@ -68,10 +79,9 @@ import importlib.util
 import json
 import logging
 import os
-import re
+import shutil
 import sys
 import time
-from datetime import datetime, timezone
 from pathlib import Path
 from typing import Optional
 
@@ -129,50 +139,6 @@ logging.basicConfig(
     format="%(asctime)s %(levelname)s %(name)s: %(message)s",
 )
 log = logging.getLogger("Candidates.zenodo.run_candidate")
-
-
-# ---------------------------------------------------------------------------
-# Path / timestamp helpers.
-# ---------------------------------------------------------------------------
-
-_INVALID_PATH_CHARS = re.compile(r"[^\w.-]")
-
-
-def _sanitize_model_for_path(model: str) -> str:
-    """Sanitise an Ollama model tag for use as a folder name component.
-
-    Replaces any character outside ``[A-Za-z0-9_.-]`` with an underscore.
-    The four known cloud tags (e.g. ``glm-5.1:cloud``) all collapse to
-    filesystem-safe forms.
-    """
-    return _INVALID_PATH_CHARS.sub("_", model)
-
-
-def _utc_timestamp() -> str:
-    """Return the current UTC time as ``YYYY-MM-DDTHH-MM-SSZ``.
-
-    Seconds precision is enough for the use case (every invocation of
-    the driver produces a unique folder within a one-second window).
-    The ``Z`` suffix makes the timezone explicit.
-    """
-    return datetime.now(timezone.utc).strftime("%Y-%m-%dT%H-%M-%SZ")
-
-
-def _default_results_dir(
-    candidate_id: str, model: str, dataset: str, timestamp: str, name: str = ""
-) -> Path:
-    """Compute the auto-named default output folder.
-
-    Shape: ``Workflow/Results/<candidate_id>_<model>_<dataset>_<timestamp>/``.
-    ``<model>`` is sanitised (``:`` → ``_`` etc.). If ``name`` is non-empty
-    it is appended to the basename (e.g. ``..._<name>``).
-    """
-    sanitized_model = _sanitize_model_for_path(model)
-    parts = [candidate_id, sanitized_model, dataset, timestamp]
-    folder = "_".join(parts)
-    if name:
-        folder = f"{folder}_{name}"
-    return REPO_ROOT / "Workflow" / "Results" / folder
 
 
 # ---------------------------------------------------------------------------
@@ -268,21 +234,30 @@ def _build_argparser() -> argparse.ArgumentParser:
                             "data-source-1", "data-source-2"],
                    help="Dataset name (or data-source-N alias).")
     p.add_argument("--results-dir", default=None,
-                   help="Output directory. Default: auto-named "
-                        "<CANDIDATE_ID>_<model>_<dataset>_<timestamp>/ "
-                        "under Workflow/Results/.")
+                    help="Directory for the intermediate cache JSONs. "
+                         "Default: Workflow/Results/cache/.")
     p.add_argument("--out-dir", default=None,
-                   help="Directory for visualiser outputs "
-                        "(_summary.csv, _bucket_*.csv, _errors.csv, "
-                        "heatmap_*.png). Default: same as --results-dir.")
+                    help="Directory for the final timestamped run JSON. "
+                         "Default: Workflow/Results/runs/.")
     p.add_argument("--limit", type=int, default=None,
-                   help="Run only the first N records.")
+                    help="Run only the first N records.")
     p.add_argument("--metric", default=None, choices=METRIC_NAMES,
-                   help="Metric to score with. Default: read from "
-                        "<strategy-folder>/metric.json, else metrik-4.")
+                    help="Metric to score with. Default: read from "
+                         "<strategy-folder>/metric.json, else metrik-4.")
+    p.add_argument("--run-index", type=int, default=1,
+                    help="1-based run index for repeated runs of the "
+                         "same (strategy, model, dataset, settings). "
+                         "Encoded in the output filename.")
     p.add_argument("--skip-generate", action="store_true")
     p.add_argument("--skip-score", action="store_true")
-    p.add_argument("--skip-visualise", action="store_true")
+    p.add_argument("--skip-collect", action="store_true")
+    p.add_argument("--skip-visualise", action="store_true",
+                    dest="skip_collect",
+                    help=argparse.SUPPRESS)
+    p.add_argument("--keep-cache", action="store_true",
+                    help="Keep the intermediate cache JSONs (raw + scored) "
+                         "in --results-dir after the run completes. "
+                         "Default: cache is removed.")
 
     p.add_argument("--model", default=None,
                    help="Ollama model tag (e.g. qwen2.5-coder:7b, glm-5.1:cloud). "
@@ -306,8 +281,9 @@ def _build_argparser() -> argparse.ArgumentParser:
     p.add_argument("--no-translate", action="store_true",
                    help="Disable stage 2 (translation prompt). A/B comparison mode.")
     p.add_argument("--name", default=None,
-                   help="Optional suffix appended to the auto-named folder "
-                        "basename for ad-hoc disambiguation (e.g. --name seed42).")
+                    help="Optional disambiguation token inserted into "
+                         "the output filename before the timestamp "
+                         "(e.g. --name seed42).")
     return p
 
 
@@ -353,20 +329,13 @@ def main(argv: Optional[list[str]] = None) -> int:
         enable_translation = cfg.get("enable_translation", True)
         enable_translation_source = "config.json::enable_translation"
 
-    timestamp = _utc_timestamp()
     results_dir = (
         Path(args.results_dir).resolve() if args.results_dir
-        else _default_results_dir(
-            candidate_id=candidate_id,
-            model=model,
-            dataset=args.dataset,
-            timestamp=timestamp,
-            name=args.name or "",
-        )
+        else REPO_ROOT / "Workflow" / "Results" / "cache"
     )
     out_dir = (
         Path(args.out_dir).resolve() if args.out_dir
-        else results_dir
+        else REPO_ROOT / "Workflow" / "Results" / "runs"
     )
     results_dir.mkdir(parents=True, exist_ok=True)
     out_dir.mkdir(parents=True, exist_ok=True)
@@ -392,6 +361,7 @@ def main(argv: Optional[list[str]] = None) -> int:
     print(f"  Repeat penalty: {repeat_penalty}  (source: {repeat_penalty_source})")
     print(f"  Timeout      : {timeout}  (source: {timeout_source})")
     print(f"  Translation  : {enable_translation}  (source: {enable_translation_source})")
+    print(f"  Run index    : {args.run_index}")
     print(f"  Results dir  : {results_dir}")
     print(f"  Output dir   : {out_dir}")
     if args.limit:
@@ -399,7 +369,7 @@ def main(argv: Optional[list[str]] = None) -> int:
     print(f"  Steps        : "
           f"{'generate ' if not args.skip_generate else '(skip)generate '}"
           f"{'score ' if not args.skip_score else '(skip)score '}"
-          f"{'visualise' if not args.skip_visualise else '(skip)visualise'}")
+          f"{'collect' if not args.skip_collect else '(skip)collect'}")
     print("=" * 72)
 
     import importlib
@@ -424,7 +394,7 @@ def main(argv: Optional[list[str]] = None) -> int:
 
     generate = _load_step("_wf_generate", WORKFLOW_PKG / "generate.py")
     score    = _load_step("_wf_score",    WORKFLOW_PKG / "score.py")
-    visualise= _load_step("_wf_visualise",WORKFLOW_PKG / "visualise.py")
+    collect  = _load_step("_wf_collect",  WORKFLOW_PKG / "collect.py")
 
     t_total = time.time()
 
@@ -453,19 +423,56 @@ def main(argv: Optional[list[str]] = None) -> int:
         if rc != 0:
             return rc
 
-    if not args.skip_visualise:
+    if not args.skip_collect:
         if not scored_json.exists():
-            log.error("visualise: input %s missing; run score first", scored_json)
+            log.error("collect: input %s missing; run score first", scored_json)
             return 1
+        settings = {
+            "uses_llm":             True,
+            "model":                model,
+            "temperature":          temperature,
+            "temperature_translate": temperature_translate,
+            "num_predict":          num_predict,
+            "seed":                 seed,
+            "top_p":                top_p,
+            "top_k":                top_k,
+            "repeat_penalty":       repeat_penalty,
+            "timeout_seconds":      timeout,
+            "enable_translation":   enable_translation,
+            "limit":                args.limit,
+        }
+        collect_args = [
+            "--in",            str(scored_json),
+            "--candidate-id",  candidate_id,
+            "--candidate-dir", str(strategy_dir),
+            "--dataset",       args.dataset,
+            "--metric",        metric,
+            "--run-index",     str(args.run_index),
+            "--settings-json", json.dumps(settings),
+            "--out-dir",       str(out_dir),
+        ]
+        if args.name:
+            collect_args.insert(
+                collect_args.index("--run-index") + 2,
+                "--name",
+            )
+            collect_args.insert(
+                collect_args.index("--name") + 1,
+                args.name,
+            )
         t0 = time.time()
-        rc = visualise.main([
-            "--in",      str(scored_json),
-            "--out-dir", str(out_dir),
-            "--metric",  metric,
-        ])
-        print(f"\n[visualise] done in {time.time()-t0:.1f}s (rc={rc}) → {out_dir}")
+        rc = collect.main(collect_args)
+        print(f"\n[collect]   done in {time.time()-t0:.1f}s (rc={rc}) → {out_dir}")
         if rc != 0:
             return rc
+        if not args.keep_cache:
+            try:
+                shutil.rmtree(results_dir)
+                log.info("cleared cache: %s", results_dir)
+            except FileNotFoundError:
+                pass
+            except OSError as exc:
+                log.warning("could not clear cache %s: %s", results_dir, exc)
 
     print(f"\n[run] DONE in {time.time()-t_total:.1f}s")
     return 0

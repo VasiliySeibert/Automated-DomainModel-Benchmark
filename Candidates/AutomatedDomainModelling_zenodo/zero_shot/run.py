@@ -7,8 +7,12 @@ pipeline steps that live in `Workflow/Benchmark-Workflow/`:
     generate.py   --candidate Candidates/AutomatedDomainModelling_zenodo/zero_shot \\
                    --dataset <dataset> --out <results-dir>/<dataset>.json
     score.py      --in <results-dir>/<dataset>.json --metric <metric>
-    visualise.py  --in <results-dir>/<dataset>_scored.json \\
-                   --out-dir <out-dir> --metric <metric>
+    collect.py    --in <results-dir>/<dataset>_scored.json \\
+                   --candidate-id zenodo_zero_shot \\
+                   --candidate-dir Candidates/AutomatedDomainModelling_zenodo/zero_shot \\
+                   --dataset <dataset> --metric <metric> \\
+                   --settings-json '{...}' \\
+                   --out-dir <out-dir> --run-index <N>
 
 Usage:
     # First, make sure Ollama is running and the model is pulled:
@@ -23,9 +27,13 @@ Usage:
         --dataset kaiser_clean --model minimax-m3:cloud --temperature 0.0 \\
         --no-translate
 
-    # Re-run only the visualiser
+    # Re-run only the collector
     PYTHONPATH=. python Candidates/AutomatedDomainModelling_zenodo/zero_shot/run.py \\
         --dataset kaiser_clean --skip-generate --skip-score
+
+    # Repeated runs (e.g. for stability analysis)
+    PYTHONPATH=. python Candidates/AutomatedDomainModelling_zenodo/zero_shot/run.py \\
+        --dataset kaiser_clean --run-index 2
 
 Model + sampling resolution order (per flag):
       1. CLI flag value.
@@ -39,14 +47,14 @@ Metric resolution order (same as the other drivers):
          ({"default_metric": "metrik-1"}).
       3. Project default: metrik-4.
 
-Output layout (under --results-dir, default Workflow/Results/zenodo_zero_shot/):
-    <results-dir>/<dataset>.json         # step 1: raw generate output
-    <results-dir>/<dataset>_scored.json  # step 2: scored
-    <out-dir>/_summary.csv               # step 3: aggregation table
-    <out-dir>/_summary.json              # step 3: aggregation table (json)
-    <out-dir>/_bucket_<dataset>_<element>_<metric>.csv
-    <out-dir>/_errors.csv                # step 3: failure log
-    <out-dir>/heatmap_<dataset>_<element>_<metric>.png
+Output layout:
+    <results-dir>/<dataset>.json                                # step 1 cache
+    <results-dir>/<dataset>_scored.json                         # step 2 cache
+    <out-dir>/<candidate-id>[_<model>]_<utc>.json               # step 3 artifact
+
+Defaults:
+    --results-dir : Workflow/Results/cache/
+    --out-dir     : Workflow/Results/runs/
 """
 from __future__ import annotations
 
@@ -55,6 +63,7 @@ import importlib.util
 import json
 import logging
 import os
+import shutil
 import sys
 import time
 from pathlib import Path
@@ -158,20 +167,30 @@ def main(argv: list[str] | None = None) -> int:
                              "data-source-1", "data-source-2"],
                     help="Dataset name (or data-source-N alias).")
     ap.add_argument("--results-dir", default=None,
-                    help="Directory for the JSONs and aggregator outputs. "
-                         "Default: Workflow/Results/zenodo_zero_shot/")
+                    help="Directory for the intermediate cache JSONs. "
+                         "Default: Workflow/Results/cache/.")
     ap.add_argument("--out-dir", default=None,
-                    help="Directory for visualiser outputs "
-                         "(_summary.csv, _bucket_*.csv, _errors.csv, "
-                         "heatmap_*.png). Default: same as --results-dir.")
+                    help="Directory for the final timestamped run JSON. "
+                         "Default: Workflow/Results/runs/.")
     ap.add_argument("--limit", type=int, default=None,
                     help="Run only the first N records.")
     ap.add_argument("--metric", default=None, choices=METRIC_NAMES,
                     help="Metric to score with. Default: read from "
                          "Candidates/AutomatedDomainModelling_zenodo/zero_shot/metric.json, else metrik-4.")
+    ap.add_argument("--run-index", type=int, default=1,
+                    help="1-based run index for repeated runs of the "
+                         "same (candidate, model, dataset, settings). "
+                         "Encoded in the output filename.")
     ap.add_argument("--skip-generate", action="store_true")
     ap.add_argument("--skip-score", action="store_true")
-    ap.add_argument("--skip-visualise", action="store_true")
+    ap.add_argument("--skip-collect", action="store_true")
+    ap.add_argument("--skip-visualise", action="store_true",
+                    dest="skip_collect",
+                    help=argparse.SUPPRESS)
+    ap.add_argument("--keep-cache", action="store_true",
+                    help="Keep the intermediate cache JSONs (raw + scored) "
+                         "in --results-dir after the run completes. "
+                         "Default: cache is removed.")
 
     ap.add_argument("--model", default=None,
                     help="Ollama model tag (e.g. qwen2.5-coder:7b, minimax-m3:cloud). "
@@ -226,11 +245,11 @@ def main(argv: list[str] | None = None) -> int:
 
     results_dir = (
         Path(args.results_dir).resolve() if args.results_dir
-        else REPO_ROOT / "Workflow" / "Results" / CANDIDATE_ID
+        else REPO_ROOT / "Workflow" / "Results" / "cache"
     )
     out_dir = (
         Path(args.out_dir).resolve() if args.out_dir
-        else results_dir
+        else REPO_ROOT / "Workflow" / "Results" / "runs"
     )
     results_dir.mkdir(parents=True, exist_ok=True)
     out_dir.mkdir(parents=True, exist_ok=True)
@@ -254,6 +273,7 @@ def main(argv: list[str] | None = None) -> int:
     print(f"  Repeat penalty: {repeat_penalty}  (source: {repeat_penalty_source})")
     print(f"  Timeout      : {timeout}  (source: {timeout_source})")
     print(f"  Translation  : {enable_translation}  (source: {enable_translation_source})")
+    print(f"  Run index    : {args.run_index}")
     print(f"  Results dir  : {results_dir}")
     print(f"  Output dir   : {out_dir}")
     if args.limit:
@@ -261,7 +281,7 @@ def main(argv: list[str] | None = None) -> int:
     print(f"  Steps        : "
           f"{'generate ' if not args.skip_generate else '(skip)generate '}"
           f"{'score ' if not args.skip_score else '(skip)score '}"
-          f"{'visualise' if not args.skip_visualise else '(skip)visualise'}")
+          f"{'collect' if not args.skip_collect else '(skip)collect'}")
     print("=" * 72)
 
     import Candidates.AutomatedDomainModelling_zenodo.zero_shot.candidate as cand_mod
@@ -281,7 +301,7 @@ def main(argv: list[str] | None = None) -> int:
 
     generate = _load_step("_wf_generate", WORKFLOW_PKG / "generate.py")
     score    = _load_step("_wf_score",    WORKFLOW_PKG / "score.py")
-    visualise= _load_step("_wf_visualise",WORKFLOW_PKG / "visualise.py")
+    collect  = _load_step("_wf_collect",  WORKFLOW_PKG / "collect.py")
 
     t_total = time.time()
 
@@ -310,19 +330,46 @@ def main(argv: list[str] | None = None) -> int:
         if rc != 0:
             return rc
 
-    if not args.skip_visualise:
+    if not args.skip_collect:
         if not scored_json.exists():
-            log.error("visualise: input %s missing; run score first", scored_json)
+            log.error("collect: input %s missing; run score first", scored_json)
             return 1
+        settings = {
+            "uses_llm":             True,
+            "model":                model,
+            "temperature":          temperature,
+            "temperature_translate": temperature_translate,
+            "num_predict":          num_predict,
+            "seed":                 seed,
+            "top_p":                top_p,
+            "top_k":                top_k,
+            "repeat_penalty":       repeat_penalty,
+            "timeout_seconds":      timeout,
+            "enable_translation":   enable_translation,
+            "limit":                args.limit,
+        }
         t0 = time.time()
-        rc = visualise.main([
-            "--in",      str(scored_json),
-            "--out-dir", str(out_dir),
-            "--metric",  metric,
+        rc = collect.main([
+            "--in",            str(scored_json),
+            "--candidate-id",  CANDIDATE_ID,
+            "--candidate-dir", str(THIS_DIR),
+            "--dataset",       args.dataset,
+            "--metric",        metric,
+            "--run-index",     str(args.run_index),
+            "--settings-json", json.dumps(settings),
+            "--out-dir",       str(out_dir),
         ])
-        print(f"\n[visualise] done in {time.time()-t0:.1f}s (rc={rc}) → {out_dir}")
+        print(f"\n[collect]   done in {time.time()-t0:.1f}s (rc={rc}) → {out_dir}")
         if rc != 0:
             return rc
+        if not args.keep_cache:
+            try:
+                shutil.rmtree(results_dir)
+                log.info("cleared cache: %s", results_dir)
+            except FileNotFoundError:
+                pass
+            except OSError as exc:
+                log.warning("could not clear cache %s: %s", results_dir, exc)
 
     print(f"\n[run] DONE in {time.time()-t_total:.1f}s")
     return 0

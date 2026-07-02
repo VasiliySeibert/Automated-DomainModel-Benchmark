@@ -7,8 +7,12 @@ steps that live in `Workflow/Benchmark-Workflow/`:
     generate.py   --candidate Candidates/rule_based/candidate.py \\
                    --dataset <dataset> --out <results-dir>/<dataset>.json
     score.py      --in <results-dir>/<dataset>.json --metric <metric>
-    visualise.py  --in <results-dir>/<dataset>_scored.json \\
-                   --out-dir <out-dir> --metric <metric>
+    collect.py    --in <results-dir>/<dataset>_scored.json \\
+                   --candidate-id rule_based \\
+                   --candidate-dir Candidates/rule_based \\
+                   --dataset <dataset> --metric <metric> \\
+                   --settings-json '{...}' \\
+                   --out-dir <out-dir> --run-index <N>
 
 Usage:
     PYTHONPATH=. python Candidates/rule_based/run.py \\
@@ -20,17 +24,20 @@ Usage:
     PYTHONPATH=. python Candidates/rule_based/run.py \\
         --dataset kaiser_clean --metric metrik-4
 
-    # Re-run only the visualiser
+    # Re-run only the collector (skip generate + score)
     PYTHONPATH=. python Candidates/rule_based/run.py \\
         --dataset kaiser_clean --skip-generate --skip-score
+
+    # Repeated runs (e.g. for stability analysis)
+    PYTHONPATH=. python Candidates/rule_based/run.py \\
+        --dataset kaiser_clean --run-index 2
 
 Prerequisite:
     pip install 'spacy>=3.7,<4.0'
     python -m spacy download en_core_web_sm==3.8.0
 
 If spaCy is missing, every record is recorded as `failed=True` in the
-generated JSON and surfaces in `_errors.csv`; the pipeline does not
-crash.
+generated JSON and the pipeline does not crash.
 
 Metric selection:
     Resolution order:
@@ -39,16 +46,14 @@ Metric selection:
          ({"default_metric": "metrik-1"}).
       3. Project default: metrik-4.
 
-Output layout (under --results-dir, default Workflow/Results/rule_based/):
-    <results-dir>/<dataset>.json         # step 1: raw generate output
-    <results-dir>/<dataset>_scored.json  # step 2: scored
-    <out-dir>/_summary.csv               # step 3: aggregation table
-    <out-dir>/_summary.json              # step 3: aggregation table (json)
-    <out-dir>/_bucket_<dataset>_<element>_<metric>.csv
-    <out-dir>/_errors.csv                # step 3: failure log
-    <out-dir>/heatmap_<dataset>_<element>_<metric>.png
-    # Default: <out-dir> == <results-dir> so every artefact lives
-    # inside Workflow/Results/rule_based/.
+Output layout:
+    <results-dir>/<dataset>.json                                # step 1 cache
+    <results-dir>/<dataset>_scored.json                         # step 2 cache
+    <out-dir>/<candidate-id>[_<model>]_<utc>.json               # step 3 artifact
+
+Defaults:
+    --results-dir : Workflow/Results/cache/
+    --out-dir     : Workflow/Results/runs/
 """
 from __future__ import annotations
 
@@ -56,6 +61,7 @@ import argparse
 import importlib.util
 import json
 import logging
+import shutil
 import sys
 import time
 from pathlib import Path
@@ -132,20 +138,30 @@ def main(argv: list[str] | None = None) -> int:
                              "data-source-1", "data-source-2"],
                     help="Dataset name (or data-source-N alias).")
     ap.add_argument("--results-dir", default=None,
-                    help="Directory for the JSONs and aggregator outputs. "
-                         "Default: Workflow/Results/rule_based/")
+                    help="Directory for the intermediate cache JSONs. "
+                         "Default: Workflow/Results/cache/.")
     ap.add_argument("--out-dir", default=None,
-                    help="Directory for visualiser outputs "
-                         "(_summary.csv, _bucket_*.csv, _errors.csv, "
-                         "heatmap_*.png). Default: same as --results-dir.")
+                    help="Directory for the final timestamped run JSON. "
+                         "Default: Workflow/Results/runs/.")
     ap.add_argument("--limit", type=int, default=None,
                     help="Run only the first N records.")
     ap.add_argument("--metric", default=None, choices=METRIC_NAMES,
                     help="Metric to score with. Default: read from "
                          "Candidates/rule_based/metric.json, else metrik-4.")
+    ap.add_argument("--run-index", type=int, default=1,
+                    help="1-based run index for repeated runs of the "
+                         "same (candidate, model, dataset, settings). "
+                         "Encoded in the output filename.")
     ap.add_argument("--skip-generate", action="store_true")
     ap.add_argument("--skip-score", action="store_true")
-    ap.add_argument("--skip-visualise", action="store_true")
+    ap.add_argument("--skip-collect", action="store_true")
+    ap.add_argument("--skip-visualise", action="store_true",
+                    dest="skip_collect",
+                    help=argparse.SUPPRESS)
+    ap.add_argument("--keep-cache", action="store_true",
+                    help="Keep the intermediate cache JSONs (raw + scored) "
+                         "in --results-dir after the run completes. "
+                         "Default: cache is removed.")
     args = ap.parse_args(argv)
 
     candidate_path = THIS_DIR / "candidate.py"
@@ -154,11 +170,11 @@ def main(argv: list[str] | None = None) -> int:
 
     results_dir = (
         Path(args.results_dir).resolve() if args.results_dir
-        else REPO_ROOT / "Workflow" / "Results" / CANDIDATE_ID
+        else REPO_ROOT / "Workflow" / "Results" / "cache"
     )
     out_dir = (
         Path(args.out_dir).resolve() if args.out_dir
-        else results_dir
+        else REPO_ROOT / "Workflow" / "Results" / "runs"
     )
     results_dir.mkdir(parents=True, exist_ok=True)
     out_dir.mkdir(parents=True, exist_ok=True)
@@ -172,6 +188,7 @@ def main(argv: list[str] | None = None) -> int:
     print(f"  Candidate    : {candidate_path}")
     print(f"  Dataset      : {args.dataset}")
     print(f"  Metric       : {metric}  (source: {metric_source})")
+    print(f"  Run index    : {args.run_index}")
     print(f"  Results dir  : {results_dir}")
     print(f"  Output dir   : {out_dir}")
     if args.limit:
@@ -179,12 +196,12 @@ def main(argv: list[str] | None = None) -> int:
     print(f"  Steps        : "
           f"{'generate ' if not args.skip_generate else '(skip)generate '}"
           f"{'score ' if not args.skip_score else '(skip)score '}"
-          f"{'visualise' if not args.skip_visualise else '(skip)visualise'}")
+          f"{'collect' if not args.skip_collect else '(skip)collect'}")
     print("=" * 72)
 
     generate = _load_step("_wf_generate", WORKFLOW_PKG / "generate.py")
     score    = _load_step("_wf_score",    WORKFLOW_PKG / "score.py")
-    visualise= _load_step("_wf_visualise",WORKFLOW_PKG / "visualise.py")
+    collect  = _load_step("_wf_collect",  WORKFLOW_PKG / "collect.py")
 
     t_total = time.time()
 
@@ -213,19 +230,46 @@ def main(argv: list[str] | None = None) -> int:
         if rc != 0:
             return rc
 
-    if not args.skip_visualise:
+    if not args.skip_collect:
         if not scored_json.exists():
-            log.error("visualise: input %s missing; run score first", scored_json)
+            log.error("collect: input %s missing; run score first", scored_json)
             return 1
+        settings = {
+            "uses_llm": False,
+            "model": None,
+            "temperature": None,
+            "temperature_translate": None,
+            "num_predict": None,
+            "seed": None,
+            "top_p": None,
+            "top_k": None,
+            "repeat_penalty": None,
+            "timeout_seconds": None,
+            "enable_translation": None,
+            "limit": args.limit,
+        }
         t0 = time.time()
-        rc = visualise.main([
-            "--in",      str(scored_json),
-            "--out-dir", str(out_dir),
-            "--metric",  metric,
+        rc = collect.main([
+            "--in",            str(scored_json),
+            "--candidate-id",  CANDIDATE_ID,
+            "--candidate-dir", str(THIS_DIR),
+            "--dataset",       args.dataset,
+            "--metric",        metric,
+            "--run-index",     str(args.run_index),
+            "--settings-json", json.dumps(settings),
+            "--out-dir",       str(out_dir),
         ])
-        print(f"\n[visualise] done in {time.time()-t0:.1f}s (rc={rc}) → {out_dir}")
+        print(f"\n[collect]   done in {time.time()-t0:.1f}s (rc={rc}) → {out_dir}")
         if rc != 0:
             return rc
+        if not args.keep_cache:
+            try:
+                shutil.rmtree(results_dir)
+                log.info("cleared cache: %s", results_dir)
+            except FileNotFoundError:
+                pass
+            except OSError as exc:
+                log.warning("could not clear cache %s: %s", results_dir, exc)
 
     print(f"\n[run] DONE in {time.time()-t_total:.1f}s")
     return 0
